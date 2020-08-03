@@ -1,0 +1,27 @@
+Language: 'English'
+Prefix: '&7[&2ASH&7] &r'
+Servername: 'hub'
+Mysql:
+  Status: false
+  Host: '127.0.0.1'
+  Port: 3306
+  DatabaseName: 'mydatabase'
+  SSLEnabled: false
+  AutoReconnect: true
+  VerifyServerCertificate: false
+  User: 'admin'
+  Password: 'not_0123456789'
+  TableNameI: 'ashPluginUser'
+  TableNameII: 'ashDistributionChest'
+  TableNameIII: 'ashStorageChest'
+  TableNameIV: 'ashItemFilterSet'
+  TableNameV: 'ashTransferLog'
+  TableNameVI: 'ashCrossServerTransfer'
+TransferSchedularTimer: 15 #In Minuten when the Schedular run and distributed the items to the storagechests.
+
+maximumDistributionChest: 500
+maximumStorageChestPerDistributionChest: 500
+maximumItemFilterSet: 500
+
+IsAutomaticDistribution: false
+BlockBreakDistributionChestDeleteLinkedStorageChest: true

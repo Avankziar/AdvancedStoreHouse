@@ -1,0 +1,80 @@
+Build 2 =============================================================================================================================
+- Befehle einbauen um per Gui die Einstellungen der verteilerkisten und Lagerkisten aufzurufen und zu ändern.
+
+Base & Build 1=======================================================================================================================
+- +mysql TableI
+- +Erstellung von Verteilerkisten
+- +Erstellung von Lagerkisten
+- +Öffnen von GUI der Lagerkisten
+- +Hinzufügen und Entfernen von Item für die GUI
+- +Items werden in dem Urspungszustand versetzt beim Hinzufügen der Gui.
+- +CancelAction funktioniert
+- +Wenn Lagerkiste voll ist & KEINE Endlagerkiste da ist, Item bleibt zurück.
+- +Endlager wird berücksichtigt.
+- +Mehrfach Lagerkisten funktioneren.
+
+- +/ash cancel
+- +/ash delete
+- +/ash dc autodistr
+- +/ash dc chestname
+- +/ash dc create
+- +/ash dc delete
+- +/ash dc info
+- +/ash dc list
+- +/ash dc member
+- +/ash dc position
+- +/ash dc search
+- +/ash dc select
+- +/ash dc switch
+- +/ash endstorage
+- +/ash gui
+- +/ash ifs
+- +/ash ifs create
+- +/ash ifs delete
+- +/ash ifs list
+- +/ash ifs select
+- +/ash ifs update
+- +/ash mode
+- +/ash override
+- +/ash playerinfo
+- +/ash priority
+- +/ash sc create
+- +/ash sc delete
+- +/ash sc openitemfiler
+- +/ash sc position
+- +/ash sc select
+- +/ash sc update
+
+- +Verteilerkiste kann Lagerkiste sein.
+- +Öfen können Lagerkisten sein. Jedoch wird das erste Item immer oben reingesetzt.
+- +Trichter können Lagerkisten sein. Und füllen dann ihrer Natur entsprechent in den bspw. Ofen korrekt ein.
+- +Öfen können Verteilerkisten sein. Müssen aber korrekt eingestellt sein. Die ziehen alles :D
+- +Doppelkisten können verteilerkisten und lagerkisten sein.
+- +Schmelzöfen können als vk un lk.
+- +Räucheröfen ^^
+- +Fäßer ^^
+- +Redstonekisten ^^
+- +Shulerkisten ^^
+- +Dropper ^^
+- +Werfer ^^
+- +Braustände ^^ (Aber sie nehmen anscheinden nur Items, welche explizit in die Slots passen. Bspw. Normale Kisten nahmen sie net...)
+
+Befehle die fehlen:
+
+- //Bei gefüllten shulkerkisten verteilungsvorgang testen
+- +Verteilung bezüglich Prio und ID testen
+- +Beim erstellen von Lagerkisten den befehl endlagerkisten vorher schalten um zu prüfen ob die Action abgebrochen ist.
+- +verteilerkiste nach namen holen
+- +bei block abbau von verteilerkisten per config boolean auch lagerkisten mitlöschen
+- +listen lagerkisten befehl ändern wie bei homes && neues symbol mit clickevent welches openitemfilter cmd ausführt.
+  	&& neues symbol hinzufügen für den Infobefehl.  
+- +Bei ActionAbbruch benachrichtigen
+- +Automatische Verteileren bei verteilerkisten deaktiveren können per befehl
+- +In verteilerlist cmd zusatz symbol für infobefehl machen.
+- +NormalPrio per Hebel und cmd switchen können.
+- +Eine "Telefonkette" für Verteilerkisten einbauen, dass wenn eine Verteilung getriggert wird, sow soll geprüft werden, dass
+  Wenn die Lagerkisten auch Verteilerkisten sind, sollen diese auch getriggert werden.
+- +Bei einem Sc GUI die Priorität mitangeben
+- +Symbol zum Löschen für Verteilerkisten und lagerkisten in den Listen cmd machen, jedoch SuggestCommand
+
+- Im Schedular abfragen, dass wenn der block kein Container ist, die Verteilerkisten und Lagerkisten löschen.

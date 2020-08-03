@@ -1,2 +1,2 @@
-# AdvancedStoreHouse
-A Store System Plugin for Minecraft
+# AdvanceEconomyPlus
+A Economy Plugin for Spigot and more.

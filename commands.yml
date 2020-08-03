@@ -1,0 +1,210 @@
+Bypass:
+  Delete: 'ash.bypass.delete'
+  ItemFilterSet: 'ash.bypass.itemfilterset'
+  ItemFilterSetSelect: 'ash.bypass.itemfiltersetselect'
+  ItemFilterSetList: 'ash.bypass.itemfiltersetlist'
+  ItemFilterSetUpdate: 'ash.bypass.itemfiltersetupdate'
+  Info: 'ash.bypass.info'
+  Select: 'ash.bypass.select'
+  PlayerInfo: 'ash.bypass.playerinfo'
+  List: 'ash.bypass.list'
+  Search: 'ash.bypass.search'
+Custom:
+  DistributionChest: 'ash.count.distributionchest.' #For your PermSystem, take the perm and placed in the permsystem. Than write at the End a number or *. * mean the players can create unlimited. A number means the player can create only so many. And by a number pay attention to rise or lower the numbers in the configs.
+  ItemFilterSet: 'ash.count.itemfilterset.'
+  StorageChest: 'ash.count.storagechest.'
+ash:
+  Name: 'ash'
+  Permission: 'ash.cmd.ash'
+  Suggestion: '/ash'
+  #Base and Info Command
+ash_blockinfo:
+  Argument: 'blockinfo'
+  Permission: 'ash.cmd.blockinfo'
+  Suggestion: '/ash blockinfo'
+  #Togglt Mode to show with shift + rightclick all BlockInfos.
+ash_cancel:
+  Argument: 'cancel'
+  Permission: 'ash.cmd.cancel'
+  Suggestion: '/ash cancel'
+  #Cancel all Actions from the player
+ash_dc:
+  Argument: 'distributionchest'
+  Permission: 'ash.cmd.distributionchest'
+  Suggestion: '/ash distributionchest'
+  #Default Command for DistributionChest
+ash_dc_autodistr:
+  Argument: 'automaticdistribution'
+  Permission: 'ash.cmd.distributionchest.automaticdistribution'
+  Suggestion: '/ash distributionchest automaticdistribution'
+  #Toggle automaticdistribution per schedular loop
+ash_dc_chestname:
+  Argument: 'chestname'
+  Permission: 'ash.cmd.distributionchest.chestname'
+  Suggestion: '/ash distributionchest chestname'
+  #Set a chestname for a distributionchest
+ash_dc_create:
+  Argument: 'create'
+  Permission: 'ash.cmd.distributionchest.create'
+  Suggestion: '/ash distribution create'
+  #Place the player in the Create Mode for a DistributionChest. After CmdInput, shift rightclick of the chest
+ash_dc_delete:
+  Argument: 'delete'
+  Permission: 'ash.cmd.distributionchest.delete'
+  Suggestion: '/ash distributionchest delete [true/false(DeleteAllLinkedStorageChest)]'
+  #Delete a Distributionchest, which you have be selected
+ash_dc_info:
+  Argument: 'info'
+  Permission: 'ash.cmd.distributionchest.info'
+  Suggestion: '/ash distributionchest info'
+  #Information cmd for a distributionchest
+ash_dc_list:
+  Argument: 'list'
+  Permission: 'ash.cmd.distributionchest.list'
+  Suggestion: '/ash distributionchest list'
+  #Shows all Dc Names and ID
+ash_dc_member:
+  Argument: 'member'
+  Permission: 'ash.cmd.distributionchest.member'
+  Suggestion: '/ash distributionchest member <playername>'
+  #Add and remove a player from a storagesytem as member
+ash_dc_position:
+  Argument: 'position'
+  Permission: 'ash.cmd.distributionchest.position'
+  Suggestion: '/ash distributionchest position'
+  #Toggle the PositionUpdate Mode for DistributionChests. !Select a Distributionchest with a another command to!
+ash_dc_select:
+  Argument: 'select'
+  Permission: 'ash.cmd.distributionchest.select'
+  Suggestion: '/ash distributionchest select <ID>'
+  #Select a DistributionChest
+ash_dc_switch:
+  Argument: 'switch'
+  Permission: 'ash.cmd.distributionchest.switch'
+  Suggestion: '/ash distributionchest switch'
+  #Switch between desc and asc by distribution from the Prioritys
+ash_endstorage:
+  Argument: 'endstorage'
+  Permission: 'ash.cmd.endstorage'
+  Suggestion: '/ash endstorage'
+  #Toggled EndStorage boolean.
+ash_gui:
+  Argument: 'gui'
+  Permission: 'ash.cmd.gui'
+  Suggestion: '/ash gui'
+  #Toggle NONE and Construct Mode.
+ash_itemfilterset:
+  Argument: 'itemfilterset'
+  Permission: 'ash.cmd.itemfilterset'
+  Suggestion: '/ash itemfilterset'
+  #Default Command for ItemFilterSet
+ash_itemfilterset_create:
+  Argument: 'create'
+  Permission: 'ash.cmd.itemfilterset.create'
+  Suggestion: '/ash itemfilterset create <Name>'
+  #Create a new ItemFilterSet (GUi)
+ash_itemfilterset_delete:
+  Argument: 'delete'
+  Permission: 'ash.cmd.itemfilterset.delete'
+  Suggestion: '/ash itemfilterset delete'
+  #Delete ItemFilterSet. Admins may use IDs over Names, because Names are pro User and ID are not. Bypass is Bypass.ItemFilterSet
+ash_itemfilterset_list:
+  Argument: 'list'
+  Permission: 'ash.cmd.itemfilterset.list'
+  Suggestion: '/ash itemfilterset list [Page] [Player]'
+  #List from Your ItemFilterSets or from the player. Bypass is Bypass.ItemFilterSet
+ash_itemfilterset_name:
+  Argument: 'name'
+  Permission: 'ash.cmd.itemfilterset.name'
+  Suggestion: '/ash itemfilterset name <Name>'
+  #Set a new name for a selected Itemfilterset
+ash_itemfilterset_select:
+  Argument: 'select'
+  Permission: 'ash.cmd.itemfilterset.select'
+  Suggestion: '/ash itemfilterset select <Name/ID> [Player]'
+  #Select a ItemFliterSet for your RAM of the executing player. Bypass is Bypass.ItemFilterSetSelect
+ash_itemfilterset_update:
+  Argument: 'update'
+  Permission: 'ash.cmd.itemfilterset.update'
+  Suggestion: '/ash itemfilterset update [Player]'
+  #Open a ItemFilterSet in a GUI. Bypass is Bypass.ItemFilterSetUpdate
+ash_mode:
+  Argument: 'mode'
+  Permission: 'ash.cmd.mode'
+  Suggestion: '/ash mode <Modus>'
+  #Select a Mode. Admin only!
+ash_override:
+  Argument: 'override'
+  Permission: 'ash.cmd.override'
+  Suggestion: '/ash override'
+  #Toggled Override in the RAM. Override is a overTheTop für Override the DistributionChestID by a StorageChest.
+ash_playerinfo:
+  Argument: 'playerinfo'
+  Permission: 'ash.cmd.playerinfo'
+  Suggestion: '/ash playerinfo [Player]'
+  #Show all Info from the Player.
+ash_priority:
+  Argument: 'priority'
+  Permission: 'ash.cmd.priority'
+  Suggestion: '/ash priority <Number>'
+  #Set a Priority in the RAM. From -2 Billions to +2 Billions rougthly.
+ash_sc:
+  Argument: 'storagechest'
+  Permission: 'ash.cmd.storagechest'
+  Suggestion: '/ash storagechest'
+  #Default Command for StorageChest
+ash_sc_create:
+  Argument: 'create'
+  Permission: 'ash.cmd.storagechest.create'
+  Suggestion: '/ash storagechest create'
+  #Toggle StorageChest CreateMode
+ash_sc_delete:
+  Argument: 'delete'
+  Permission: 'ash.cmd.storagechest.delete'
+  Suggestion: '/ash storagechest delete'
+  #Delete selected StorageChest.
+ash_sc_info:
+  Argument: 'info'
+  Permission: 'ash.cmd.storagechest.info'
+  Suggestion: '/ash storagechest info'
+  #Infocommand for the selected storagechest
+ash_sc_list:
+  Argument: 'list'
+  Permission: 'ash.cmd.storagechest.list'
+  Suggestion: '/ash storagechest list'
+  #Shows all Storagechestid from you.
+ash_sc_openitemfilter:
+  Argument: 'openitemfilter'
+  Permission: 'ash.cmd.storagechest.openitemfilter'
+  Suggestion: '/ash storagechest openitemfilter'
+  #Open from far the ItemFilterSet GUI from a Storagechest
+ash_sc_position:
+  Argument: 'position'
+  Permission: 'ash.cmd.storagechest.position'
+  Suggestion: '/ash storagechest position'
+  #Toggle the PositionUpdate Mode for StorageChests. !Select a Storagechest with a another command to!
+ash_sc_select:
+  Argument: 'select'
+  Permission: 'ash.cmd.storagechest.select'
+  Suggestion: '/ash storagechest select <id>'
+  #Select a StorageChest. Bypass is Bypass.Select
+ash_sc_update:
+  Argument: 'update'
+  Permission: 'ash.cmd.update'
+  Suggestion: '/ash storagechest update'
+  #Enable Update Mode for StorageChest
+ash_dc_search:
+  Argument: 'search'
+  Permission: 'ash.cmd.distributionchest.search'
+  Suggestion: '/ash distributionchest search'
+  #Search a distributionchest per Compass etc.
+ash_sc_search:
+  Argument: 'search'
+  Permission: 'ash.cmd.storagechest.search'
+  Suggestion: '/ash storagechest search'
+  #Search a storagechest per compass etc.
+ash_:
+  Argument: ''
+  Permission: 'ash.cmd.'
+  Suggestion: '/ash '
+  #
