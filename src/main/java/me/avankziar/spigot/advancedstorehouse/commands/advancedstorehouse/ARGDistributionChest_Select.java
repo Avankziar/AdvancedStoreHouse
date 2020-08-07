@@ -1,6 +1,7 @@
 package main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -38,8 +39,29 @@ public class ARGDistributionChest_Select extends ArgumentModule
 			return;
 		}
 		String name = args[2];
+		String otherplayer = player.getName();
+		String otheruuid = player.getUniqueId().toString();
+		if(args.length >= 4)
+		{
+			if(!otherplayer.equals(args[3]))
+			{
+				if(!player.hasPermission(Utility.PERMBYPASSLIST))
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NoPermission")));
+					return;
+				}
+				otherplayer = args[3];
+				UUID uuid = Utility.convertNameToUUID(otherplayer);
+				if(uuid == null)
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("PlayerNotExist")));
+					return;
+				}
+				otheruuid = uuid.toString();
+			}
+		}
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`chestname` = ? AND `owner_uuid` = ?", name, user.getUUID()))
+				"`chestname` = ? AND `owner_uuid` = ?", name, otheruuid))
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.DChestDontExist")));
 			return;

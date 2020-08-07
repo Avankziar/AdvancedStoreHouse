@@ -76,8 +76,13 @@ ash_dc_position:
 ash_dc_select:
   Argument: 'select'
   Permission: 'ash.cmd.distributionchest.select'
-  Suggestion: '/ash distributionchest select <ID>'
+  Suggestion: '/ash distributionchest select <Name> [PlayerName]'
   #Select a DistributionChest
+ash_dc_search:
+  Argument: 'search'
+  Permission: 'ash.cmd.distributionchest.search'
+  Suggestion: '/ash distributionchest search'
+  #Search a distributionchest per Compass etc.
 ash_dc_switch:
   Argument: 'switch'
   Permission: 'ash.cmd.distributionchest.switch'
@@ -190,14 +195,9 @@ ash_sc_select:
   #Select a StorageChest. Bypass is Bypass.Select
 ash_sc_update:
   Argument: 'update'
-  Permission: 'ash.cmd.update'
+  Permission: 'ash.cmd.storagechest.update'
   Suggestion: '/ash storagechest update'
   #Enable Update Mode for StorageChest
-ash_dc_search:
-  Argument: 'search'
-  Permission: 'ash.cmd.distributionchest.search'
-  Suggestion: '/ash distributionchest search'
-  #Search a distributionchest per Compass etc.
 ash_sc_search:
   Argument: 'search'
   Permission: 'ash.cmd.storagechest.search'

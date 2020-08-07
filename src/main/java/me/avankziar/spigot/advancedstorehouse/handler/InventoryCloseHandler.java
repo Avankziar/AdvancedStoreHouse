@@ -108,12 +108,16 @@ public class InventoryCloseHandler implements Listener
 		{
 			return;
 		}
+		boolean dci = false;
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
 				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
 		{
+			debug(player, "distribution not found");
 			if(event.getInventory() instanceof DoubleChestInventory)
 			{
+				debug(player, "distribution == DoubleChestInv");
+				dci = true;
 				loc = isDoubleChest(player, server, loc);
 				if(loc == null)
 				{
@@ -125,6 +129,14 @@ public class InventoryCloseHandler implements Listener
 				debug(player, "Distributionchest dont exist: "
 						+server+" "+loc.getWorld().getName()+" "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ());
 				return;
+			}
+		} else
+		{
+			debug(player, "distribution found!");
+			if(event.getInventory() instanceof DoubleChestInventory)
+			{
+				debug(player, "distribution == DoubleChestInv II");
+				dci = true;
 			}
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
@@ -138,12 +150,36 @@ public class InventoryCloseHandler implements Listener
 				plugin.getMysqlHandler().getList(MysqlHandler.Type.STORAGECHEST, "`priority`", dc.isNormalPriority(), 0, last,
 						"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), true, server));
 		Inventory inventory = event.getView().getTopInventory();
-		ItemStack[] cloneInv = inventory.getContents();
+		ItemStack[] cloneInvL = null;
+		ItemStack[] cloneInvR = null;
+		if(dci)
+		{
+			debug(player, "distribution dci == true");
+			if(inventory instanceof DoubleChestInventory)
+			{
+				debug(player, "distribution is DoubleChestInv");
+				DoubleChestInventory dcinv = (DoubleChestInventory) inventory;
+				cloneInvL = dcinv.getLeftSide().getContents();
+				cloneInvR = dcinv.getRightSide().getContents();
+			}
+		} else
+		{
+			debug(player, "distribution dci == false");
+			cloneInvL = inventory.getContents();
+			cloneInvR = inventory.getContents();
+			int j = 0;
+			for(int i = 0; i < cloneInvR.length; i++)
+			{
+				cloneInvR[i] = null;
+				j = i;
+			}
+			debug(player, "distribution Right side set all null | i = "+j);
+		}
 		
 		//Normal Lager
 		for(StorageChest sc : prioList)
 		{
-			if(ChestHandler.isContentEmpty(cloneInv))
+			if(ChestHandler.isContentEmpty(cloneInvL) && ChestHandler.isContentEmpty(cloneInvR))
 			{
 				debug(player, "distribution Content is Empty");
 				break;
@@ -172,24 +208,18 @@ public class InventoryCloseHandler implements Listener
 				debug(player, "distribution cinv == null");
 				continue;
 			}
-			cloneInv = ChestHandler.distribute(cinv, sc.getContents(), cloneInv, inventory, false);
+			debug(player, "distribution Normal Storage start");
+			cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, false);
+			cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, false);
 		}
-		/*String debug = "";
-		for(ItemStack is : cloneInv)
-		{
-			if(is != null)
-			{
-				debug += is.getType().toString()+" ";
-			}
-		}
-		debug(player, "distribution  From NormalStorage to Endstorage: "+debug);*/
 		//Endlager
-		if(!ChestHandler.isContentEmpty(cloneInv))
+		debug(player, "distribution EndStorage start");
+		if(!ChestHandler.isContentEmpty(cloneInvL) || !ChestHandler.isContentEmpty(cloneInvR))
 		{
 			debug(player, "distribution EndStorage Content isnt Empty");
 			for(StorageChest sc : endList)
 			{
-				if(ChestHandler.isContentEmpty(cloneInv))
+				if(ChestHandler.isContentEmpty(cloneInvL) && ChestHandler.isContentEmpty(cloneInvR))
 				{
 					debug(player, "distribution Content is Empty");
 					break;
@@ -218,8 +248,22 @@ public class InventoryCloseHandler implements Listener
 					debug(player, "distribution cinv == null");
 					continue;
 				}
-				cloneInv = ChestHandler.distribute(cinv, sc.getContents(), cloneInv, inventory, true);
+				cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, true);
+				cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, true);
 			}
+		}
+		
+		debug(player, "distribution not Removed Items set back");
+		if(inventory instanceof DoubleChestInventory)
+		{
+			debug(player, "distribution Removed in DCI");
+			DoubleChestInventory dcinv = (DoubleChestInventory) inventory;
+			dcinv.getLeftSide().setContents(cloneInvL);
+			dcinv.getRightSide().setContents(cloneInvR);
+		} else
+		{
+			debug(player, "distribution Removed in else");
+			inventory.setContents(cloneInvL);
 		}
 		
 		//Ketten Check
@@ -396,11 +440,31 @@ public class InventoryCloseHandler implements Listener
 				debug(player, "ChainDc container inv == null");
 				continue;
 			}
-			ItemStack[] cloneInvc = inventoryc.getContents();
+			ItemStack[] cloneInvLc = null;
+			ItemStack[] cloneInvRc = null;
+			if(inventoryc instanceof DoubleChestInventory)
+			{
+				debug(player, "distribution dci == true");
+				DoubleChestInventory dcinv = (DoubleChestInventory) inventoryc;
+				cloneInvLc = dcinv.getLeftSide().getContents();
+				cloneInvRc = dcinv.getRightSide().getContents();
+			} else
+			{
+				debug(player, "distribution dci == false");
+				cloneInvLc = inventoryc.getContents();
+				cloneInvRc = cloneInvL;
+				int j = 0;
+				for(int i = 0; i < cloneInvL.length; i++)
+				{
+					cloneInvR[i] = null;
+					j = i;
+				}
+				debug(player, "distribution Right side set all null | i = "+j);
+			}
 			
 			for(StorageChest sc : prioListc)
 			{
-				if(ChestHandler.isContentEmpty(cloneInvc))
+				if(ChestHandler.isContentEmpty(cloneInvLc) && ChestHandler.isContentEmpty(cloneInvRc))
 				{
 					debug(player, "distribution Content is Empty");
 					break;
@@ -429,14 +493,15 @@ public class InventoryCloseHandler implements Listener
 					debug(player, "distribution cinv == null");
 					continue;
 				}
-				cloneInvc = ChestHandler.distribute(cinv, sc.getContents(), cloneInvc, inventoryc, false);
+				cloneInvLc = ChestHandler.distribute(cinv, sc.getContents(), cloneInvLc, inventoryc, false);
+				cloneInvRc = ChestHandler.distribute(cinv, sc.getContents(), cloneInvRc, inventoryc, false);
 			}
-			if(!ChestHandler.isContentEmpty(cloneInvc))
+			if(!ChestHandler.isContentEmpty(cloneInvLc) || !ChestHandler.isContentEmpty(cloneInvRc))
 			{
 				debug(player, "distribution EndStorage Content isnt Empty");
 				for(StorageChest sc : endListc)
 				{
-					if(ChestHandler.isContentEmpty(cloneInvc))
+					if(ChestHandler.isContentEmpty(cloneInvLc) && ChestHandler.isContentEmpty(cloneInvRc))
 					{
 						debug(player, "distribution Content is Empty");
 						break;
@@ -465,8 +530,21 @@ public class InventoryCloseHandler implements Listener
 						debug(player, "distribution cinv == null");
 						continue;
 					}
-					cloneInvc = ChestHandler.distribute(cinv, sc.getContents(), cloneInvc, inventoryc, true);
+					cloneInvLc = ChestHandler.distribute(cinv, sc.getContents(), cloneInvLc, inventoryc, true);
+					cloneInvRc = ChestHandler.distribute(cinv, sc.getContents(), cloneInvRc, inventoryc, true);
 				}
+			}
+			debug(player, "distribution not Removed Items set back Chain");
+			if(inventoryc instanceof DoubleChestInventory)
+			{
+				debug(player, "distribution Removed in DCI Chain");
+				DoubleChestInventory dcinv = (DoubleChestInventory) inventoryc;
+				dcinv.getLeftSide().setContents(cloneInvLc);
+				dcinv.getRightSide().setContents(cloneInvRc);
+			} else
+			{
+				debug(player, "distribution Removed in else Chain");
+				inventoryc.setContents(cloneInvLc);
 			}
 		}
 	}

@@ -64,7 +64,7 @@ public class ARGItemFilterSet_Update extends ArgumentModule
 		user.setMode(PluginUser.Mode.CHANGEITEMFILTERSET);
 		user.setItemFilterSet(newifs);
 		PluginUserHandler.addUser(user);
-		Inventory inv = Bukkit.createInventory(null, 6*9, "ItemFilter: "+newifs.getName());
+		Inventory inv = Bukkit.createInventory(null, 6*9, "ItemFilter: "+ifs.getName()+"_Copy");
 		inv.setContents(newifs.getContents());
 		player.openInventory(inv);
 		return;

@@ -170,6 +170,7 @@ public class BackgroundTask
 							cloneInv = ChestHandler.distribute(cinv, sc.getContents(), cloneInv, inventory, true);
 						}
 					}
+					inventory.setContents(cloneInv);
 				}
 			}
 		}.runTaskTimer(plugin, 20L*60, 20L*60*schedular);

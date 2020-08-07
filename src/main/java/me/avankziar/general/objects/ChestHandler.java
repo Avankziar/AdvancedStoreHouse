@@ -105,6 +105,7 @@ public class ChestHandler
 		{
 			if(is != null)
 			{
+				debug("add Item");
 				HashMap<Integer, ItemStack> hm = inventory.addItem(is);
 				if(!hm.isEmpty())
 				{
@@ -131,6 +132,7 @@ public class ChestHandler
 					}
 				} else
 				{
+					debug("hm.isEmpty, Remove complet");
 					toRemoveInv.remove(is);
 				}
 			}

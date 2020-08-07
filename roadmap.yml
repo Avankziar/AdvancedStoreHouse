@@ -1,5 +1,6 @@
 Build 2 =============================================================================================================================
 - Befehle einbauen um per Gui die Einstellungen der verteilerkisten und Lagerkisten aufzurufen und zu ändern.
+- Cmd um alle Lagerkisten abzusuchen, welche das Item als Filter haben als liste
 
 Base & Build 1=======================================================================================================================
 - +mysql TableI

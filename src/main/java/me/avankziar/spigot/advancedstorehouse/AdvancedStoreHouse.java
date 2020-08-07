@@ -221,7 +221,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor dc_list = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_list", 1, 1, 3, null);
 		ArgumentConstructor dc_member = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_member", 1, 2, 2, null);
 		ArgumentConstructor dc_position = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_position", 1, 1, 1, null);
-		ArgumentConstructor dc_select = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_select", 1, 2, 2, null);
+		ArgumentConstructor dc_select = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_select", 1, 2, 3, null);
 		ArgumentConstructor dc_search = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_search", 1, 1, 1, null);
 		ArgumentConstructor dc_switch = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_switch", 1, 1, 1, null);
 		ArgumentConstructor dc = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc", 0, 0, 0, null,
