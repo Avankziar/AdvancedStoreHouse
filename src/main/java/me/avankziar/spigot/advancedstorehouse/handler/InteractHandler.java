@@ -383,6 +383,7 @@ public class InteractHandler implements Listener
 		{
 			debug(event.getPlayer(), "TooMany StorageChest");
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Create.TooManyS")));
+			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getL().getString("CancelAction"));
 			return;
 		}
 		String server = plugin.getYamlHandler().get().getString("Servername");
@@ -395,12 +396,14 @@ public class InteractHandler implements Listener
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Create.StorageChestExist")
 					.replace("%dc%", String.valueOf(user.getDistributionChestID()))));
+			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getL().getString("CancelAction"));
 			return;
 		}
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", user.getDistributionChestID()))
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Create.DistributionChestDontExist")
 					.replace("%dc%", String.valueOf(user.getDistributionChestID()))));
+			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getL().getString("CancelAction"));
 			return;
 		}
 		event.setCancelled(true);

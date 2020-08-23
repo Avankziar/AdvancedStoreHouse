@@ -17,6 +17,7 @@ Mysql:
   TableNameIV: 'ashItemFilterSet'
   TableNameV: 'ashTransferLog'
   TableNameVI: 'ashCrossServerTransfer'
+runTransferSchedularTimer: true
 TransferSchedularTimer: 15 #In Minuten when the Schedular run and distributed the items to the storagechests.
 
 maximumDistributionChest: 500

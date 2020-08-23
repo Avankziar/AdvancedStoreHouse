@@ -17,6 +17,7 @@ import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.Smoker;
+import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -35,7 +36,10 @@ public class BackgroundTask
 	public BackgroundTask(AdvancedStoreHouse plugin) 
 	{
 		this.plugin = plugin;
-		runTask();
+		if(plugin.getYamlHandler().get().getBoolean("runTransferSchedularTimer", false))
+		{
+			runTask();
+		}
 	}
 	
 	private void runTask()
@@ -108,11 +112,27 @@ public class BackgroundTask
 					}
 					Container dccontainer = (Container) dcblock.getState();
 					Inventory inventory = dccontainer.getInventory();
-					ItemStack[] cloneInv = inventory.getContents();
+					ItemStack[] cloneInvL = null;
+					ItemStack[] cloneInvR = null;
+					if(inventory instanceof DoubleChestInventory)
+					{
+						DoubleChestInventory dcinv = (DoubleChestInventory) inventory;
+						cloneInvL = dcinv.getLeftSide().getContents();
+						cloneInvR = dcinv.getRightSide().getContents();
+					} else
+					{
+						cloneInvL = inventory.getContents();
+						cloneInvR = inventory.getContents();
+						for(int i = 0; i < cloneInvR.length; i++)
+						{
+							cloneInvR[i] = null;
+						}
+					}
+					
 					//Normal Lager
 					for(StorageChest sc : prioList)
 					{
-						if(ChestHandler.isContentEmpty(cloneInv))
+						if(ChestHandler.isContentEmpty(cloneInvL) && ChestHandler.isContentEmpty(cloneInvR))
 						{
 							break;
 						}
@@ -136,14 +156,15 @@ public class BackgroundTask
 						{
 							continue;
 						}
-						cloneInv = ChestHandler.distribute(cinv, sc.getContents(), cloneInv, inventory, false);
+						cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, false);
+						cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, false);
 					}
 					//Endlager
-					if(!ChestHandler.isContentEmpty(cloneInv))
+					if(!ChestHandler.isContentEmpty(cloneInvL) || !ChestHandler.isContentEmpty(cloneInvR))
 					{
 						for(StorageChest sc : endList)
 						{
-							if(ChestHandler.isContentEmpty(cloneInv))
+							if(ChestHandler.isContentEmpty(cloneInvL) && ChestHandler.isContentEmpty(cloneInvR))
 							{
 								break;
 							}
@@ -167,10 +188,19 @@ public class BackgroundTask
 							{
 								continue;
 							}
-							cloneInv = ChestHandler.distribute(cinv, sc.getContents(), cloneInv, inventory, true);
+							cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, true);
+							cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, true);
 						}
 					}
-					inventory.setContents(cloneInv);
+					if(inventory instanceof DoubleChestInventory)
+					{
+						DoubleChestInventory dcinv = (DoubleChestInventory) inventory;
+						dcinv.getLeftSide().setContents(cloneInvL);
+						dcinv.getRightSide().setContents(cloneInvR);
+					} else
+					{
+						inventory.setContents(cloneInvL);
+					}
 				}
 			}
 		}.runTaskTimer(plugin, 20L*60, 20L*60*schedular);
