@@ -42,7 +42,8 @@ public class Utility
 	PERMBYPASSSELECT = "",
 	PERMBYPASSPLAYERINFO = "",
 	PERMBYPASSLIST = "",
-	PERMBYPASSSEARCH = "";
+	PERMBYPASSSEARCH = "",
+	PERMBYPASSTRANSFER = "";
 	
 	public Utility(AdvancedStoreHouse plugin)
 	{
@@ -74,6 +75,7 @@ public class Utility
 		PERMBYPASSPLAYERINFO = plugin.getYamlHandler().getCom().getString("Bypass.PlayerInfo", "ash.bypass.playerinfo");
 		PERMBYPASSLIST = plugin.getYamlHandler().getCom().getString("Bypass.List", "ash.bypass.list");
 		PERMBYPASSSEARCH = plugin.getYamlHandler().getCom().getString("Bypass.Search", "ash.bypass.search");
+		PERMBYPASSTRANSFER = plugin.getYamlHandler().getCom().getString("Bypass.Transfer", "ash.bypass.transfer");
 	}
 	
 	public String getPrefix()

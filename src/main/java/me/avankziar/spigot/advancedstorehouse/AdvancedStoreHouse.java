@@ -1,10 +1,12 @@
 package main.java.me.avankziar.spigot.advancedstorehouse;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,7 +21,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import main.java.me.avankziar.general.objects.ChestHandler;
+import main.java.me.avankziar.general.handler.ChestHandler;
+import main.java.me.avankziar.general.handler.ConvertHandler;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.PluginUserHandler;
 import main.java.me.avankziar.spigot.advancedstorehouse.assistance.BackgroundTask;
@@ -27,11 +30,14 @@ import main.java.me.avankziar.spigot.advancedstorehouse.assistance.Utility;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.AshCommandExecutor;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.CommandHelper;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.TabCompletion;
+import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGAutomaticDistributionInfo;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGBlockInfo;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGCancel;
-import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGGui;
+import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDebug;
+import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDebug_ItemMeta;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_AutomaticDistribution;
+import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Breaking;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Chestname;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Create;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Delete;
@@ -42,7 +48,9 @@ import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstoreho
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Search;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Select;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Switch;
+import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Transfer;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGEndStorage;
+import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGGui;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGItemFilterSet;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGItemFilterSet_Create;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGItemFilterSet_Delete;
@@ -71,11 +79,12 @@ import main.java.me.avankziar.spigot.advancedstorehouse.commands.tree.CommandCon
 import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlHandler;
 import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlSetup;
 import main.java.me.avankziar.spigot.advancedstorehouse.database.YamlHandler;
-import main.java.me.avankziar.spigot.advancedstorehouse.handler.InteractHandler;
-import main.java.me.avankziar.spigot.advancedstorehouse.handler.InventoryClickHandler;
-import main.java.me.avankziar.spigot.advancedstorehouse.handler.InventoryCloseHandler;
+import main.java.me.avankziar.spigot.advancedstorehouse.eventhandler.InteractHandler;
+import main.java.me.avankziar.spigot.advancedstorehouse.eventhandler.InventoryClickHandler;
+import main.java.me.avankziar.spigot.advancedstorehouse.eventhandler.InventoryCloseHandler;
 import main.java.me.avankziar.spigot.advancedstorehouse.listener.BlockBreakListener;
 import main.java.me.avankziar.spigot.advancedstorehouse.listener.JoinQuitListener;
+import main.java.me.avankziar.spigot.advancedstorehouse.listener.PlayerCommandPreprocessListener;
 import main.java.me.avankziar.spigot.advancedstorehouse.metrics.Metrics;
 
 public class AdvancedStoreHouse extends JavaPlugin
@@ -132,8 +141,9 @@ public class AdvancedStoreHouse extends JavaPlugin
 		//setupPlayers();
 		backgroundtask = new BackgroundTask(this);
 		setupStrings();
-		setupCommandTree();
+		try {setupCommandTree();} catch (IOException e)	{}
 		ListenerSetup();
+		setupBstats();
 	}
 	
 	public void onDisable()
@@ -196,7 +206,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		infoCommand += baseCommandIName;
 	}
 	
-	private void setupCommandTree()
+	private void setupCommandTree() throws IOException
 	{
 		/*LinkedHashMap<Integer, ArrayList<String>> playerMap = new LinkedHashMap<>();
 		
@@ -204,16 +214,38 @@ public class AdvancedStoreHouse extends JavaPlugin
 		Collections.sort(playerarray);
 		playerMap.put(1, playerarray);*/
 		
+		LinkedHashMap<Integer, ArrayList<String>> playerMapI = new LinkedHashMap<>();
+		LinkedHashMap<Integer, ArrayList<String>> playerMapII = new LinkedHashMap<>();
+		LinkedHashMap<Integer, ArrayList<String>> playerMapIII = new LinkedHashMap<>();
+		LinkedHashMap<Integer, ArrayList<String>> playerMapIV = new LinkedHashMap<>();
+		LinkedHashMap<Integer, ArrayList<String>> playerMapV = new LinkedHashMap<>();
+		
+		setupPlayers();
+		ArrayList<String> playerarray = getPlayers();
+		
+		Collections.sort(playerarray);
+		playerMapI.put(1, playerarray);
+		playerMapII.put(2, playerarray);
+		playerMapIII.put(3, playerarray);
+		playerMapIV.put(4, playerarray);
+		playerMapV.put(5, playerarray);
+		
 		LinkedHashMap<Integer, ArrayList<String>> lhmmode = new LinkedHashMap<>(); 
 		List<PluginUser.Mode> modes = new ArrayList<PluginUser.Mode>(EnumSet.allOf(PluginUser.Mode.class));
 		ArrayList<String> modeList = new ArrayList<String>();
 		for(PluginUser.Mode m : modes) {modeList.add(m.toString());}
 		lhmmode.put(1, modeList);
 		
+		ArgumentConstructor autodistributioninfo = new ArgumentConstructor(yamlHandler, baseCommandI+"_automaticdistributioninfo", 0, 0, 0, null);
+		
 		ArgumentConstructor blockinfo = new ArgumentConstructor(yamlHandler, baseCommandI+"_blockinfo", 0, 0, 0, null);
 		ArgumentConstructor cancel = new ArgumentConstructor(yamlHandler, baseCommandI+"_cancel", 0, 0, 0, null);
 		
+		ArgumentConstructor debug_im = new ArgumentConstructor(yamlHandler, baseCommandI+"_debug_itemmeta", 1, 1, 1, null);
+		ArgumentConstructor debug = new ArgumentConstructor(yamlHandler, baseCommandI+"_debug", 0, 0, 0, null, debug_im);
+		
 		ArgumentConstructor dc_autodistr = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_autodistr", 1, 1, 1, null);
+		ArgumentConstructor dc_breaking = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_breaking", 1, 1, 1, null);
 		ArgumentConstructor dc_chestname = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_chestname", 1, 2, 2, null);
 		ArgumentConstructor dc_create = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_create", 1, 2, 2, null);
 		ArgumentConstructor dc_delete = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_delete", 1, 1, 1, null);
@@ -224,9 +256,10 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor dc_select = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_select", 1, 2, 3, null);
 		ArgumentConstructor dc_search = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_search", 1, 1, 1, null);
 		ArgumentConstructor dc_switch = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_switch", 1, 1, 1, null);
+		ArgumentConstructor dc_transfer = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_transfer", 1, 2, 2, playerMapII);
 		ArgumentConstructor dc = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc", 0, 0, 0, null,
-				dc_autodistr, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member, dc_position, dc_select, dc_search,
-				dc_switch);
+				dc_autodistr, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member, dc_position, dc_select, dc_search,
+				dc_switch, dc_transfer);
 		
 		ArgumentConstructor endstorage = new ArgumentConstructor(yamlHandler, baseCommandI+"_endstorage", 0, 0, 0, null);
 		ArgumentConstructor gui = new ArgumentConstructor(yamlHandler, baseCommandI+"_gui", 0, 0, 0, null);
@@ -258,26 +291,32 @@ public class AdvancedStoreHouse extends JavaPlugin
 				sc_create, sc_delete, sc_info, sc_list, sc_openitemfilter, sc_position, sc_select, sc_search, sc_update);
 		
 		CommandConstructor ash = new CommandConstructor(plugin, baseCommandI,
-				blockinfo, cancel, dc, endstorage, gui, itemfilterset, mode, override, playerinfo, priority, sc);
+				autodistributioninfo, blockinfo, cancel, debug, dc, endstorage, gui, itemfilterset, mode, override, playerinfo, priority, sc);
 		
 		registerCommand(ash.getPath(), ash.getName());
 		getCommand(ash.getName()).setExecutor(new AshCommandExecutor(plugin, ash));
 		getCommand(ash.getName()).setTabCompleter(new TabCompletion(plugin));
 		
 		addingHelps(ash,
-				blockinfo, cancel,
-				dc, dc_autodistr, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member,
-				dc_position, dc_select, dc_search, dc_switch,
+				autodistributioninfo, blockinfo, cancel,
+				debug, debug_im,
+				dc, dc_autodistr, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member,
+				dc_position, dc_select, dc_search, dc_switch, dc_transfer,
 				endstorage, gui,
 				itemfilterset, ifs_create, ifs_delete, ifs_list, ifs_name, ifs_select, ifs_update,
 				mode, override, playerinfo, priority,
 				sc, sc_create, sc_delete, sc_info, sc_list, sc_openitemfilter, sc_position, sc_select, sc_search, sc_update);
 		
+		new ARGAutomaticDistributionInfo(plugin, autodistributioninfo);
 		new ARGBlockInfo(plugin, blockinfo);
 		new ARGCancel(plugin, cancel);
 		
+		new ARGDebug(plugin, debug);
+		new ARGDebug_ItemMeta(plugin, debug_im);
+		
 		new ARGDistributionChest(plugin, dc);
 		new ARGDistributionChest_AutomaticDistribution(plugin, dc_autodistr);
+		new ARGDistributionChest_Breaking(plugin, dc_breaking);
 		new ARGDistributionChest_Chestname(plugin, dc_chestname);
 		new ARGDistributionChest_Create(plugin, dc_create);
 		new ARGDistributionChest_Delete(plugin, dc_delete);
@@ -288,6 +327,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		new ARGDistributionChest_Select(plugin, dc_select);
 		new ARGDistributionChest_Search(plugin, dc_search);
 		new ARGDistributionChest_Switch(plugin, dc_switch);
+		new ARGDistributionChest_Transfer(plugin, dc_transfer);
 		
 		new ARGEndStorage(plugin, endstorage);
 		new ARGGui(plugin, gui);
@@ -352,6 +392,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "AdvancedStoreHouse:sccbungee");*/
 		pm.registerEvents(new JoinQuitListener(plugin), plugin);
 		pm.registerEvents(new BlockBreakListener(plugin), plugin);
+		pm.registerEvents(new PlayerCommandPreprocessListener(), plugin);
 		pm.registerEvents(new InteractHandler(plugin), plugin);
 		pm.registerEvents(new InventoryClickHandler(plugin), plugin);
 		pm.registerEvents(new InventoryCloseHandler(plugin), plugin);
@@ -418,19 +459,19 @@ public class AdvancedStoreHouse extends JavaPlugin
 		this.players = players;
 	}
 	
-	/*public void setupPlayers()
+	public void setupPlayers() throws IOException
 	{
-		ArrayList<ChatUser> cu = ConvertHandler.convertListI(
-				plugin.getMysqlHandler().getTop(MysqlHandler.Type.CHATUSER,
+		ArrayList<PluginUser> cu = ConvertHandler.convertListI(
+				plugin.getMysqlHandler().getTop(MysqlHandler.Type.PLUGINUSER,
 						"`id`", true, 0,
-						plugin.getMysqlHandler().lastID(MysqlHandler.Type.CHATUSER)));
+						plugin.getMysqlHandler().lastID(MysqlHandler.Type.PLUGINUSER)));
 		ArrayList<String> cus = new ArrayList<>();
-		for(ChatUser chus : cu) 
+		for(PluginUser chus : cu) 
 		{
 			cus.add(chus.getName());	
 		}
 		setPlayers(cus);
-	}*/
+	}
 	
 	public void registerCommand(String... aliases) 
 	{

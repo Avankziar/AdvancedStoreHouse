@@ -1,4 +1,4 @@
-package main.java.me.avankziar.spigot.advancedstorehouse.handler;
+package main.java.me.avankziar.spigot.advancedstorehouse.eventhandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,14 +29,16 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import main.java.me.avankziar.general.handler.ChestHandler;
+import main.java.me.avankziar.general.handler.ConvertHandler;
+import main.java.me.avankziar.general.handler.PermissionHandler;
+import main.java.me.avankziar.general.handler.TimeHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
-import main.java.me.avankziar.general.objects.ChestHandler;
-import main.java.me.avankziar.general.objects.ConvertHandler;
 import main.java.me.avankziar.general.objects.DistributionChest;
-import main.java.me.avankziar.general.objects.PermissionHandler;
+import main.java.me.avankziar.general.objects.ItemDistributeObject;
 import main.java.me.avankziar.general.objects.PluginUser;
-import main.java.me.avankziar.general.objects.PluginUser.Mode;
 import main.java.me.avankziar.general.objects.PluginUserHandler;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.advancedstorehouse.AdvancedStoreHouse;
@@ -50,11 +52,13 @@ public class InteractHandler implements Listener
 {
 	private AdvancedStoreHouse plugin;
 	private static HashMap<String, Long> cooldown;
+	public static HashMap<Integer, Long> distributionCooldown;
 	
 	public InteractHandler(AdvancedStoreHouse plugin)
 	{
 		this.plugin = plugin;
 		cooldown = new HashMap<>();
+		distributionCooldown = new HashMap<>();
 	}
 	
 	private void debug(Player player, String s)
@@ -83,7 +87,7 @@ public class InteractHandler implements Listener
 						event.setCancelled(true);
 					}
 				}
-				Player player = event.getPlayer();
+				/*Player player = event.getPlayer();
 				PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 				if(user == null)
 				{
@@ -93,7 +97,7 @@ public class InteractHandler implements Listener
 				if(user.getMode() != Mode.CONSTRUCT)
 				{
 					event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("Cooldown")));
-				}
+				}*/
 				return;
 			} else
 			{
@@ -139,6 +143,7 @@ public class InteractHandler implements Listener
 		if(event.getClickedBlock().getType() == Material.LEVER)
 		{
 			lever(event, player, user);
+			return;
 		}
 		if(event.getClickedBlock().getType() == Material.STONE_BUTTON
 				|| event.getClickedBlock().getType() == Material.POLISHED_BLACKSTONE_BUTTON
@@ -158,11 +163,13 @@ public class InteractHandler implements Listener
 		{
 			debug(event.getPlayer(), "!player.isSneacking");
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getL().getString("CancelAction"));
+			checkIfDistributionChest(event, player, user);
 			return;
 		}
 		switch(user.getMode())
 		{
 		case CONSTRUCT:
+			checkIfDistributionChest(event, player, user);
 			return;
 		case NONE:
 			updateStorageChestItemFilterSet(event, player, user);
@@ -180,13 +187,13 @@ public class InteractHandler implements Listener
 			updateStorageChest(event, player, user);
 			return;
 		case UPDATESTORAGEITEMFILTERSET:
-			//Hier kommt nix
+			checkIfDistributionChest(event, player, user);
 			return;
 		case CREATEITEMFILTERSET:
-			//Hier kommt nix
+			checkIfDistributionChest(event, player, user);
 			return;
 		case CHANGEITEMFILTERSET:
-			//Hier kommt nix
+			checkIfDistributionChest(event, player, user);
 			return;
 		case POSITIONUPDATEDISTRIBUTION:
 			updatePosition(event, player, user, true);
@@ -243,7 +250,8 @@ public class InteractHandler implements Listener
 				Inventory inv = c.getInventory();
 				if(inv instanceof DoubleChestInventory)
 				{
-					l = isDoubleChestII(player, server, l);
+					DoubleChestInventory dcInv = (DoubleChestInventory) inv;
+					l = ChestHandler.isDoubleChestII(plugin, player, server, l, dcInv);
 					if(l == null)
 					{
 						debug(event.getPlayer(), "Loop DoubleChest Loc == null");
@@ -327,6 +335,42 @@ public class InteractHandler implements Listener
 		}
 		event.setCancelled(true);
 		Location loc = event.getClickedBlock().getLocation();
+		String server = plugin.getYamlHandler().get().getString("Servername");
+		if(event.getClickedBlock().getState() instanceof Chest)
+		{
+			Chest chest = (Chest) event.getClickedBlock().getState();
+			if(chest.getInventory() instanceof DoubleChestInventory)
+			{
+				DoubleChestInventory dcinv = (DoubleChestInventory) chest.getInventory();
+				Location left = dcinv.getLeftSide().getLocation();
+				Location right = dcinv.getRightSide().getLocation();
+				if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+						server, left.getWorld().getName(), left.getBlockX(), left.getBlockY(), left.getBlockZ()))
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DoubleChestAlreadyAsDistributionChestExist")));
+					return;
+				} else
+				{
+					if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+							"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+							server, right.getWorld().getName(), right.getBlockX(), right.getBlockY(), right.getBlockZ()))
+					{
+						player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DoubleChestAlreadyAsDistributionChestExist")));
+						return;
+					}
+				}
+			}
+		} else
+		{
+			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
+			{
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("ChestAlreadyAsDistributionChestExist")));
+				return;
+			}
+		}
 		int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.DISTRIBUTIONCHEST)+1;
 		String name = String.valueOf(last);
 		if(user.getDistributionChestName() != null)
@@ -336,7 +380,7 @@ public class InteractHandler implements Listener
 		DistributionChest dc = new DistributionChest(
 				last, user.getUUID(), new ArrayList<String>(), System.currentTimeMillis(),
 				name, true, plugin.getYamlHandler().get().getBoolean("IsAutomaticDistribution", false),
-				plugin.getYamlHandler().get().getString("Servername"),
+				server,
 				loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 		plugin.getMysqlHandler().create(MysqlHandler.Type.DISTRIBUTIONCHEST, dc);
 		last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.DISTRIBUTIONCHEST);
@@ -413,6 +457,41 @@ public class InteractHandler implements Listener
 				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
 				"`id` = ?", user.getDistributionChestID());
+		Location dcloc = new Location(Bukkit.getWorld(dc.getWorld()), dc.getBlockX(), dc.getBlockY(), dc.getBlockZ());
+		Block block = event.getClickedBlock();
+		Location sclocr = null;
+		Location sclocl = null;
+		if(block.getState() != null)
+		{
+			if(block.getState() instanceof Container)
+			{
+				Container c = (Container) block.getState();
+				Inventory inv = c.getInventory();
+				if(inv instanceof DoubleChestInventory)
+				{
+					DoubleChestInventory dcinv = (DoubleChestInventory) inv;
+					sclocr = dcinv.getRightSide().getLocation();
+					sclocl = dcinv.getLeftSide().getLocation();
+				}
+			}
+		}
+		if(sclocr != null)
+		{
+			if(ChestHandler.isLocationsEquals(dcloc, sclocr))
+			{
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Create.SChestDontBeSameAsDChest")));
+				return;
+			}
+		}
+		if(sclocl != null)
+		{
+			if(ChestHandler.isLocationsEquals(dcloc, sclocl))
+			{
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Create.SChestDontBeSameAsDChest")));
+				return;
+			}
+		}
+		
 		String name = "/";
 		String id = "/";
 		if(dc != null)
@@ -688,12 +767,244 @@ public class InteractHandler implements Listener
 			debug(event.getPlayer(), "Not a Button or Plate");
 			return;
 		}
-		Location loc = blocks.getLocation().add(-1, -1, -1);
+		//Location loc = blocks.getLocation().add(-1, -1, -1);
+		Location loc = blocks.getLocation();
 		String server = plugin.getYamlHandler().get().getString("Servername");
 		
-		int reup = 0;
-		int reside = 0;
+		final int radius = plugin.getYamlHandler().get().getInt("ButtonPlateInteractRadius", 3);
+		final int xmax = loc.getBlockX()+radius;
+		final int xmin = loc.getBlockX()-radius;
+		final int ymax = loc.getBlockY()+radius;
+		final int ymin = loc.getBlockY()-radius;
+		final int zmax = loc.getBlockZ()+radius;
+		final int zmin = loc.getBlockZ()-radius;
 		
+		new BukkitRunnable()
+		{
+			int i = 0;
+			ArrayList<DistributionChest> dclist = ConvertHandler.convertListII(
+					plugin.getMysqlHandler().getAllListAt(
+							MysqlHandler.Type.DISTRIBUTIONCHEST,
+							"`id`", false, "`server` = ? AND `world` = ?"
+							+ " AND `blockx` <= ? AND `blockx` >= ?"
+							+ " AND `blocky` <= ? AND `blocky` >= ?"
+							+ " AND `blockz` <= ? AND `blockz` >= ?",
+							server, loc.getWorld().getName(),
+							xmax, xmin,
+							ymax, ymin,
+							zmax, zmin));
+			@Override
+			public void run()
+			{
+				if(i >= dclist.size())
+				{
+					cancel();
+					return;
+				}
+				DistributionChest dc = dclist.get(i);
+				debug(player, "ButtonDc: "+dc.getChestName());
+				if(ChestHandler.isDistributionChestOnCooldown(plugin, dc))
+				{
+					i++;
+					debug(player, "ButtonDc: "+dc.getChestName()+" is on cooldown!");
+					return;
+				}
+				ArrayList<StorageChest> prioList = new ArrayList<>();
+				try
+				{
+					prioList = ConvertHandler.convertListIII(
+							plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`priority`", dc.isNormalPriority(),
+									"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), false, server));
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+				ArrayList<StorageChest> endList = new ArrayList<>();
+				try
+				{
+					endList = ConvertHandler.convertListIII(
+							plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`priority`", dc.isNormalPriority(),
+									"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), true, server));
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+				World world = Bukkit.getWorld(dc.getWorld());
+				if(world == null)
+				{
+					debug(player, "ButtonDc world == null");
+					i++;
+					return;
+				}
+				Block dcblock = new Location(world, dc.getBlockX(), dc.getBlockY(), dc.getBlockZ()).getBlock();
+				if(dcblock == null)
+				{
+					debug(player, "ButtonDc block == null");
+					i++;
+					return;
+				}
+				if(dcblock.getState() == null)
+				{
+					debug(player, "ButtonDc block.getstate == null");
+					i++;
+					return;
+				}
+				if(!(dcblock.getState() instanceof Container))
+				{
+					debug(player, "ButtonDc block.getstate not a container");
+					i++;
+					return;
+				}
+				Inventory inventoryc = ((Container)dcblock.getState()).getInventory();
+				if(inventoryc == null)
+				{
+					debug(player, "ButtonDc container inv == null");
+					i++;
+					return;
+				}
+				int storagechestamount = prioList.size()+endList.size();
+				ChestHandler.setDistributionChestOnCooldown(plugin, dc, storagechestamount);
+				ItemStack[] cloneInvLc = null;
+				ItemStack[] cloneInvRc = null;
+				if(inventoryc instanceof DoubleChestInventory)
+				{
+					debug(player, "Button distribution dci == true");
+					DoubleChestInventory dcinv = (DoubleChestInventory) inventoryc;
+					cloneInvLc = dcinv.getLeftSide().getContents();
+					cloneInvRc = dcinv.getRightSide().getContents();
+				} else
+				{
+					debug(player, "Button distribution dci == false");
+					cloneInvLc = inventoryc.getContents();
+					cloneInvRc = cloneInvLc;
+					int j = 0;
+					for(int i = 0; i < cloneInvLc.length; i++)
+					{
+						cloneInvRc[i] = null;
+						j = i;
+					}
+					debug(player, "Button distribution Right side set all null | i = "+j);
+				}
+				
+				ItemDistributeObject idoc = new ItemDistributeObject(null, null);
+				idoc.chestDistribute(plugin, player, inventoryc, prioList, endList, cloneInvLc, cloneInvRc);
+				i++;
+				
+				ArrayList<StorageChest> prioListF = prioList;
+				ArrayList<StorageChest> endListF = endList;
+				
+				//Kettenverteilung
+				debug(player, "ButtonDc distribution starts");
+				try
+				{
+					new BukkitRunnable()
+					{
+						//Kettekisten bestimmung
+						ArrayList<DistributionChest> chain = ChestHandler.getChainChest(plugin, player, prioListF, endListF, server);
+						int i = 0;
+						@Override
+						public void run()
+						{
+							if(i >= chain.size())
+							{
+								cancel();
+								return;
+							}
+							DistributionChest dcc = chain.get(i);
+							debug(player, "Button ChainDc: "+dcc.getChestName());
+							ArrayList<StorageChest> prioListc = new ArrayList<>();
+							try
+							{
+								prioListc = ConvertHandler.convertListIII(
+										plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`priority`", dcc.isNormalPriority(),
+												"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dcc.getId(), false, server));
+							} catch (IOException e)
+							{
+								e.printStackTrace();
+							}
+							ArrayList<StorageChest> endListc = new ArrayList<>();
+							try
+							{
+								endListc = ConvertHandler.convertListIII(
+										plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`priority`", dcc.isNormalPriority(),
+												"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dcc.getId(), true, server));
+							} catch (IOException e)
+							{
+								e.printStackTrace();
+							}
+							World world = Bukkit.getWorld(dcc.getWorld());
+							if(world == null)
+							{
+								debug(player, "Button ChainDc world == null");
+								i++;
+								return;
+							}
+							Block dcblock = new Location(world, dcc.getBlockX(), dcc.getBlockY(), dcc.getBlockZ()).getBlock();
+							if(dcblock == null)
+							{
+								debug(player, "Button ChainDc block == null");
+								i++;
+								return;
+							}
+							if(dcblock.getState() == null)
+							{
+								debug(player, "Button ChainDc block.getstate == null");
+								i++;
+								return;
+							}
+							if(!(dcblock.getState() instanceof Container))
+							{
+								debug(player, "Button ChainDc block.getstate not a container");
+								i++;
+								return;
+							}
+							Inventory inventoryc = ((Container)dcblock.getState()).getInventory();
+							if(inventoryc == null)
+							{
+								debug(player, "Button ChainDc container inv == null");
+								i++;
+								return;
+							}
+							int storagechestamountc = prioListc.size()+endListc.size();
+							ChestHandler.setDistributionChestOnCooldown(plugin, dcc, storagechestamountc);
+							ItemStack[] cloneInvLc = null;
+							ItemStack[] cloneInvRc = null;
+							if(inventoryc instanceof DoubleChestInventory)
+							{
+								debug(player, "Button Chaindistribution dci == true");
+								DoubleChestInventory dcinv = (DoubleChestInventory) inventoryc;
+								cloneInvLc = dcinv.getLeftSide().getContents();
+								cloneInvRc = dcinv.getRightSide().getContents();
+							} else
+							{
+								debug(player, "Button Chaindistribution dci == false");
+								cloneInvLc = inventoryc.getContents();
+								cloneInvRc = cloneInvLc;
+								int j = 0;
+								for(int i = 0; i < cloneInvLc.length; i++)
+								{
+									cloneInvRc[i] = null;
+									j = i;
+								}
+								debug(player, "Button Chaindistribution Right side set all null | i = "+j);
+							}
+							
+							ItemDistributeObject idoc = new ItemDistributeObject(null, null);
+							idoc.chestDistribute(plugin, player, inventoryc, prioListc, endListc, cloneInvLc, cloneInvRc);
+							i++;
+						}
+					}.runTaskTimer(plugin, 20L*plugin.getYamlHandler().get().getInt("DelayChainChests", 10),
+							1L*plugin.getYamlHandler().get().getInt("DelayedChainTicks", 10));
+				} catch (IllegalArgumentException | IllegalStateException | IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}.runTaskTimer(plugin, 0L,
+				1L*plugin.getYamlHandler().get().getInt("DelayedChainTicks", 10));
+		
+		/*int reup = 0;
+		int reside = 0;
 		for(int deep = 0; deep <= 2; deep++)
 		{
 			for(int up = 0; up <= 2; up++)
@@ -733,7 +1044,8 @@ public class InteractHandler implements Listener
 						if(inv instanceof DoubleChestInventory)
 						{
 							dci = true;
-							l = isDoubleChest(player, server, l);
+							DoubleChestInventory dcInv = (DoubleChestInventory) inv;
+							l = ChestHandler.isDoubleChest(plugin, player, server, l, dcInv);
 							if(l == null)
 							{
 								debug(event.getPlayer(), "Loop DoubleChest Loc == null");
@@ -922,7 +1234,8 @@ public class InteractHandler implements Listener
 							}
 							if(inventoryc instanceof DoubleChestInventory)
 							{
-								lo = isDoubleChest(player, server, lo);
+								DoubleChestInventory dcInv = (DoubleChestInventory) inventoryc;
+								lo = ChestHandler.isDoubleChest(plugin, player, server, lo, dcInv);
 								if(lo == null)
 								{
 									debug(event.getPlayer(), "Loop DoubleChest Loc == null");
@@ -981,7 +1294,8 @@ public class InteractHandler implements Listener
 							}
 							if(inventoryc instanceof DoubleChestInventory)
 							{
-								lo = isDoubleChest(player, server, lo);
+								DoubleChestInventory dcInv = (DoubleChestInventory) inventoryc;
+								lo = ChestHandler.isDoubleChest(plugin, player, server, lo, dcInv);
 								if(lo == null)
 								{
 									debug(event.getPlayer(), "Loop DoubleChest Loc == null");
@@ -1147,7 +1461,7 @@ public class InteractHandler implements Listener
 			}
 			loc.add(reup, 1, 0);
 			reup = 0;
-		}
+		}*/
 	}
 	
 	private void lever(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
@@ -1207,7 +1521,8 @@ public class InteractHandler implements Listener
 					{
 						if(inv instanceof DoubleChestInventory)
 						{
-							l = isDoubleChest(player, server, l);
+							DoubleChestInventory dcInv = (DoubleChestInventory) inv;
+							l = ChestHandler.isDoubleChest(plugin, player, server, l, dcInv);
 							if(l == null)
 							{
 								debug(event.getPlayer(), "Loop DoubleChest Loc == null");
@@ -1246,93 +1561,7 @@ public class InteractHandler implements Listener
 			loc.add(reup, 1, 0);
 			reup = 0;
 		}
-	}
-	
-	private Location isDoubleChest(Player player, String server, final Location loc)
-	{
-		Location l1 = loc;
-		l1.add(1, 0, 0);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Distributionchest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(-1, 0, 1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Distributionchest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(-1, 0, -1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Distributionchest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(1, 0, -1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Distributionchest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		return null;
-	}
-	
-	private Location isDoubleChestII(Player player, String server, final Location loc)
-	{
-		debug(player, "Storagechest dont find, search: "
-				+server+" "+loc.getWorld().getName()+" "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ());
-		Location l1 = loc;
-		l1.add(1, 0, 0);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Storagechest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(-1, 0, 1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Storagechest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(-1, 0, -1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Storagechest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(1, 0, -1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Storagechest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		return null;
-	}
+	}	
 	
 	private void blockInfo(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
 	{
@@ -1419,5 +1648,65 @@ public class InteractHandler implements Listener
 		player.spigot().sendMessage(tcI);
 		player.spigot().sendMessage(tcII);
 		return;
+	}
+	
+	public void checkIfDistributionChest(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
+	{
+		Block block = event.getClickedBlock();
+		if(block.getState() == null)
+		{
+			debug(event.getPlayer(), "Block.State == null");
+		}
+		if(!(block.getState() instanceof Container))
+		{
+			debug(event.getPlayer(), "Block != Container | Type: "+block.getType().toString());
+		}
+		String server = plugin.getYamlHandler().get().getString("Servername");
+		Location loc = event.getClickedBlock().getLocation();
+		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+		if(dc == null)
+		{
+			debug(event.getPlayer(), "Block == Container | Type: "+block.getType().toString());
+			debug(player, "Distributionchest dont find, search: "
+					+server+" "+block.getLocation().getWorld().getName()+" "+block.getLocation().getBlockX()+" "+
+					block.getLocation().getBlockY()+" "+block.getLocation().getBlockZ());
+			Container c = (Container) block.getState();
+			Inventory inv = c.getInventory();
+			if(inv instanceof DoubleChestInventory)
+			{
+				DoubleChestInventory dcInv = (DoubleChestInventory) inv;
+				debug(player, "distribution == DoubleChestInv");
+				loc = ChestHandler.isDoubleChest(plugin, player, server, loc, dcInv);
+				if(loc == null)
+				{
+					debug(player, "Distributionchest dont exist: ");
+					return;
+				}
+				dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+						server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+			} else
+			{
+				debug(player, "Distributionchest dont exist: "
+						+server+" "+loc.getWorld().getName()+" "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ());
+				return;
+			}
+		}
+		if(dc != null)
+		{
+			if(distributionCooldown.containsKey(dc.getId()))
+			{
+				long dcc = distributionCooldown.get(dc.getId());
+				debug(player, "Cooldown: "+dcc+" | Milli: "+System.currentTimeMillis());
+				if(dcc > System.currentTimeMillis())
+				{
+					event.setCancelled(true);
+					player.sendMessage(plugin.getYamlHandler().get().getString("DistributionIsRunning")
+							.replace("%time%", TimeHandler.getTime(dcc)));
+				}
+			}
+		}
 	}
 }

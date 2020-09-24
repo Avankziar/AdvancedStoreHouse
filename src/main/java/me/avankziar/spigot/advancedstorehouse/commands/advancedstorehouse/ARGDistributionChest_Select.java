@@ -6,8 +6,8 @@ import java.util.UUID;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
-import main.java.me.avankziar.general.objects.ChestHandler;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.PluginUserHandler;
@@ -45,11 +45,6 @@ public class ARGDistributionChest_Select extends ArgumentModule
 		{
 			if(!otherplayer.equals(args[3]))
 			{
-				if(!player.hasPermission(Utility.PERMBYPASSLIST))
-				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NoPermission")));
-					return;
-				}
 				otherplayer = args[3];
 				UUID uuid = Utility.convertNameToUUID(otherplayer);
 				if(uuid == null)
@@ -67,9 +62,17 @@ public class ARGDistributionChest_Select extends ArgumentModule
 			return;
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
-				MysqlHandler.Type.DISTRIBUTIONCHEST, "`chestname` = ? AND `owner_uuid` = ?", name, user.getUUID());
-		if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
-				&& !player.hasPermission(Utility.PERMBYPASSSELECT))
+				MysqlHandler.Type.DISTRIBUTIONCHEST, "`chestname` = ? AND `owner_uuid` = ?", name, otheruuid);
+		if(!ChestHandler.isMember(
+				player,
+				dc) && 
+				!dc
+				.getOwneruuid()
+				.equals(player
+						.getUniqueId()
+						.toString())
+				&& !player
+				.hasPermission(Utility.PERMBYPASSSELECT))
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwnerOrMember")));
 			return;

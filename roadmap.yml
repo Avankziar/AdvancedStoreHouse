@@ -1,9 +1,26 @@
-Build 2 =============================================================================================================================
+Future =============================================================================================================================
 - Befehle einbauen um per Gui die Einstellungen der verteilerkisten und Lagerkisten aufzurufen und zu ändern.
 - Cmd um alle Lagerkisten abzusuchen, welche das Item als Filter haben als liste
 - Ein Vererbungsbefehl.
 - Ein Toggelbefehl um Verteilerkisten abschlag zu können.
 - Lagerkiste nur mit leeren hand einstellen.
+- Die Option "Void" zu den Lagerkisten hinzufügen. Void sorgt dafür, dass alle Item, welche in diese kommen sollten, ins void wanderen.
+- Die Option "MoneyPrinter" zu den Lagerkisten hinzufügen. Der MoneyPrinter sorgt dafür, dass alle Item, welche in diese kommen sollten, in Geld (per yaml) umgewandelt werden.
+- Die Option "Haltbarkeit" zu den Lagerkisten hinzufügen. Welche einen größer, kleiner oder zwischen Betrag angeben lässt, um Items, welche eine Haltbarkeit haben, dahingehend sortiert werden kann.
+- Die Option "Reparatur" zu den Lagerkisten hinzugefügt. Welche einen größer, kleiner oder zwischen Betrag angeben lässt, um Items, welche eine Reparaturkosten haben dahingehend sortieren zu können.
+
+Build 2 =============================================================================================================================
+- +config.yml delay etc. neu
+- +german.yml ab zeile 15 is neues
+- +Scheduler führt zu einer Entzerrung des Verteilungsprozesses. Dabei wird pro Tick eine Lagerkiste angespochen.
+- +Während des Entzerrten Verteilungsprozesses kann die Verteilerkiste nicht geöffnet werden. Ist aber einstellbar per config.
+- +Bugfix, Haltbarkeit wird nun auch bei unverzauberten Items berücksichtig.
+- +Bugfix, VZ Bücher mit unterschiedlichen Vz. und Vz.stufen werden nun korrekt unterschieden
+- +Cooldown eingefügt, dass wenn eine DKiste im Verteilung ist, die Kiste nicht mehr öffnen können.
+- +Platten und Knöpfe haben nun einen einstellbaren Radius in der config.
+- +Per befehl kann man nun Lagersysteme auf andere Spieler übertragen.
+- +Togglebefehl um einzustellen ob man wirklich verteilerkisten abbauen will.
+- Bugfix, Verteilerkisten können sich nicht mehr selbst als Lagerkiste haben.
 
 Base & Build 1=======================================================================================================================
 - +mysql TableI

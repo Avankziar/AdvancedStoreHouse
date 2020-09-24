@@ -1,11 +1,12 @@
 package main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse;
 
 import java.io.IOException;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.PluginUser;
@@ -16,11 +17,11 @@ import main.java.me.avankziar.spigot.advancedstorehouse.commands.tree.ArgumentCo
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.tree.ArgumentModule;
 import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlHandler;
 
-public class ARGDistributionChest_Chestname extends ArgumentModule
+public class ARGDistributionChest_Transfer extends ArgumentModule
 {
 	private AdvancedStoreHouse plugin;
 	
-	public ARGDistributionChest_Chestname(AdvancedStoreHouse plugin, ArgumentConstructor argumentConstructor)
+	public ARGDistributionChest_Transfer(AdvancedStoreHouse plugin, ArgumentConstructor argumentConstructor)
 	{
 		super(plugin, argumentConstructor);
 		this.plugin = plugin;
@@ -34,7 +35,7 @@ public class ARGDistributionChest_Chestname extends ArgumentModule
 		if(user == null)
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
-				.replace("%cmd%", "/ash distributionchest chestname")));
+				.replace("%cmd%", "/ash distributionchest transfer")));
 			return;
 		}
 		int id = user.getDistributionChestID();
@@ -45,19 +46,33 @@ public class ARGDistributionChest_Chestname extends ArgumentModule
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
 				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id);
-		if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
-				&& !player.hasPermission(Utility.PERMBYPASSSELECT))
+		if(!dc.getOwneruuid().equals(player.getUniqueId().toString())
+				&& !player.hasPermission(Utility.PERMBYPASSTRANSFER))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwnerOrMember")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwner")));
 			return;
 		}
-		String name = args[2];
-		final String oldname = dc.getChestName();
-		dc.setChestName(name);
-		plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestName.SetName")
-				.replace("%oldname%", oldname)
-				.replace("%newname%", name)));
+		String othername = args[2];
+		String otheruuid = Utility.convertNameToUUID(othername).toString();
+		if(otheruuid == null)
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("PlayerNotExist")));
+			return;
+		}
+		dc.setOwneruuid(otheruuid);
+		plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", id);
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Transfer.TransferDc")
+				.replace("%id%", String.valueOf(id))
+				.replace("%name%", dc.getChestName())
+				.replace("%player%", othername)));
+		Player other = Bukkit.getPlayer(UUID.fromString(otheruuid));
+		if(other != null)
+		{
+			other.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Transfer.TransferDcToYou")
+					.replace("%id%", String.valueOf(id))
+					.replace("%name%", dc.getChestName())
+					.replace("%player%", player.getName())));
+		}
 		return;
 	}
 }

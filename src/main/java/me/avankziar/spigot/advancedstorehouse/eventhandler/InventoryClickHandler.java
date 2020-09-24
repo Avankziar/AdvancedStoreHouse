@@ -1,10 +1,10 @@
-package main.java.me.avankziar.spigot.advancedstorehouse.handler;
+package main.java.me.avankziar.spigot.advancedstorehouse.eventhandler;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -12,8 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
-import main.java.me.avankziar.general.objects.ChestHandler;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.PluginUserHandler;
 import main.java.me.avankziar.spigot.advancedstorehouse.AdvancedStoreHouse;
@@ -97,6 +97,13 @@ public class InventoryClickHandler implements Listener
 	
 	private void updateGui(InventoryClickEvent event, Player player, PluginUser user, boolean isTopInventory)
 	{
+		if(event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD
+				|| event.getAction() == InventoryAction.HOTBAR_SWAP)
+		{
+			event.setCancelled(true);
+			event.setResult(Result.DENY);
+			return;
+		}
 		ItemStack clicked = event.getCurrentItem().clone();
 		clicked.setAmount(1);
 		if(clicked.getItemMeta() instanceof Damageable)
@@ -123,32 +130,12 @@ public class InventoryClickHandler implements Listener
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.InventoyClick.ItemExist")));
 				return;
 			}
-			if(isFull(inv))
+			if(ChestHandler.isFull(inv))
 			{
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.InventoyClick.InventoryFull")));
 				return;
 			}
 			inv.addItem(clicked);
 		}
-	}
-	
-	private boolean isFull(Inventory inv)
-	{
-		int i = 0;
-		for(ItemStack is : inv.getContents())
-		{
-			if(is != null)
-			{
-				if(is.getType() != Material.AIR)
-				{
-					i++;
-				}
-			}
-		}
-		if(i<54)
-		{
-			return false;
-		}
-		return true;
 	}
 }

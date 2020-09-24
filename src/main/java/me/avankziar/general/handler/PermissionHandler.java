@@ -1,4 +1,4 @@
-package main.java.me.avankziar.general.objects;
+package main.java.me.avankziar.general.handler;
 
 import org.bukkit.entity.Player;
 

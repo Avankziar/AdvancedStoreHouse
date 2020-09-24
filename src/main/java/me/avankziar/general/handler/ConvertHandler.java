@@ -1,4 +1,4 @@
-package main.java.me.avankziar.general.objects;
+package main.java.me.avankziar.general.handler;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,6 +9,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+
+import main.java.me.avankziar.general.objects.DistributionChest;
+import main.java.me.avankziar.general.objects.ItemFilterSet;
+import main.java.me.avankziar.general.objects.PluginUser;
+import main.java.me.avankziar.general.objects.StorageChest;
 
 public class ConvertHandler
 {

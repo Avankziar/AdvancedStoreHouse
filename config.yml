@@ -17,8 +17,25 @@ Mysql:
   TableNameIV: 'ashItemFilterSet'
   TableNameV: 'ashTransferLog'
   TableNameVI: 'ashCrossServerTransfer'
-runTransferSchedularTimer: true
-TransferSchedularTimer: 15 #In Minuten when the Schedular run and distributed the items to the storagechests.
+#Scheduler to automatic distribute. If false nothing running.
+RunTransferSchedularTimer: true
+#In Minuten when the Schedular run and distributed the items to the storagechests.
+TransferSchedularTimer: 15
+
+#When your Server estimated to Restart. In order to be able to estimate when the last cycle must end in the Dynamic Format.
+ServerRestartTimes:
+- ~06:00
+- ~12:00
+#Use the Dynamic Format. This means, per storagechest on the server the task take 1 Tick.
+#And with or without the pause the task calculate the period to run the cyclus of the task.
+#Also is the dynamic format performace friendlyish. Also the Pause is only important in the dynamic format.
+UseDynamicFormat: true
+#The DirectPausevalue is a timevalue in ticks. A tick is 50 ms. Default is 10 min. In this Pause nothing will be distributed
+DirectPauseValue: 12000
+#The IndirectPausevalue is a timevalue in ticks. Default is 10 min. This value will be added on the TotalTicks from the amount on storagechest.
+IndirectPauseValue: 12000
+#The min value for a distributionchest. Aka a basevalue added to the dynamic value.
+MinimumTickPerDistributionChest: 10
 
 maximumDistributionChest: 500
 maximumStorageChestPerDistributionChest: 500
@@ -26,3 +43,16 @@ maximumItemFilterSet: 500
 
 IsAutomaticDistribution: false
 BlockBreakDistributionChestDeleteLinkedStorageChest: true
+
+#The sphere radius to interact and trigger Distributionchests. Attention! To high number cann occur lags.
+ButtonPlateInteractRadius: 5 
+
+#If UseDelayedDistribution is false can lags occur!
+#If true, per Tick it works off a storagechest. And in the next tick, the next storagechest is processed etc.
+UseDelayedDistribution: true
+#A Tick is 50 ms. Between 1 and 2 Ticks may should be enough for ~50 - 100 StorageChests per DistributionChest.
+DelayedTicks: 1
+#Seconds, when the chain will be activated
+DelayChainChests: 10
+#Ticks, how fast per Distributionchest looping.
+DelayedChainTicks: 10

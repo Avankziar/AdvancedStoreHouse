@@ -5,8 +5,8 @@ import java.io.IOException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
-import main.java.me.avankziar.general.objects.ChestHandler;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.MatchApi;
 import main.java.me.avankziar.general.objects.PluginUser;

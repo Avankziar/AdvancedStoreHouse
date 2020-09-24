@@ -38,6 +38,7 @@ public class PluginUser
 	private boolean override;
 	private ItemFilterSet itemFilterSet;
 	private Location compassLocation;
+	private Boolean canDistributionChestBreak;
 	
 	public PluginUser(String uuid, String name, SearchType searchType)
 	{
@@ -53,6 +54,7 @@ public class PluginUser
 		setOverride(false);
 		setItemFilterSet(new ItemFilterSet(0, "0", uuid, Bukkit.createInventory(null, 9*6).getContents()));
 		setCompassLocation(null);
+		setCanDistributionChestBreak(false);
 	}
 
 	public String getUUID()
@@ -173,6 +175,16 @@ public class PluginUser
 	public void setCompassLocation(Location compassLocation)
 	{
 		this.compassLocation = compassLocation;
+	}
+
+	public Boolean canDistributionChestBreak()
+	{
+		return canDistributionChestBreak;
+	}
+
+	public void setCanDistributionChestBreak(Boolean canDistributionChestBreak)
+	{
+		this.canDistributionChestBreak = canDistributionChestBreak;
 	}
 
 }

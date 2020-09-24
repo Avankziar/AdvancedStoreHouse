@@ -3,8 +3,8 @@ package main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstoreh
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import main.java.me.avankziar.general.handler.PermissionHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
-import main.java.me.avankziar.general.objects.PermissionHandler;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.PluginUserHandler;
 import main.java.me.avankziar.spigot.advancedstorehouse.AdvancedStoreHouse;

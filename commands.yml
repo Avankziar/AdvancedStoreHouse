@@ -9,6 +9,7 @@ Bypass:
   PlayerInfo: 'ash.bypass.playerinfo'
   List: 'ash.bypass.list'
   Search: 'ash.bypass.search'
+  Transfer: 'ash.bypass.transfer'
 Custom:
   DistributionChest: 'ash.count.distributionchest.' #For your PermSystem, take the perm and placed in the permsystem. Than write at the End a number or *. * mean the players can create unlimited. A number means the player can create only so many. And by a number pay attention to rise or lower the numbers in the configs.
   ItemFilterSet: 'ash.count.itemfilterset.'
@@ -18,6 +19,11 @@ ash:
   Permission: 'ash.cmd.ash'
   Suggestion: '/ash'
   #Base and Info Command
+ash_automaticdistributioninfo:
+  Argument: 'automaticdistributioninfo'
+  Permission: 'ash.cmd.automaticdistributioninfo'
+  Suggestion: '/ash automaticdistributioninfo'
+  #Show all infos from the auto distribution scheduler.
 ash_blockinfo:
   Argument: 'blockinfo'
   Permission: 'ash.cmd.blockinfo'
@@ -28,6 +34,16 @@ ash_cancel:
   Permission: 'ash.cmd.cancel'
   Suggestion: '/ash cancel'
   #Cancel all Actions from the player
+ash_debug:
+  Argument: 'debug'
+  Permission: 'ash.cmd.debug'
+  Suggestion: '/ash debug'
+  #Debug Cmd
+ash_debug_itemmeta:
+  Argument: 'itemmeta'
+  Permission: 'ash.cmd.debug.itemmeta'
+  Suggestion: '/ash debug itemmeta'
+  #debug ItemMeta
 ash_dc:
   Argument: 'distributionchest'
   Permission: 'ash.cmd.distributionchest'
@@ -38,6 +54,11 @@ ash_dc_autodistr:
   Permission: 'ash.cmd.distributionchest.automaticdistribution'
   Suggestion: '/ash distributionchest automaticdistribution'
   #Toggle automaticdistribution per schedular loop
+ash_dc_breaking:
+  Argument: 'breaking'
+  Permission: 'ash.cmd.distributionchest.breaking'
+  Suggestion: '/ash distributionchest breaking'
+  #Toggles, whether you may breaking block which are distributionchests
 ash_dc_chestname:
   Argument: 'chestname'
   Permission: 'ash.cmd.distributionchest.chestname'
@@ -88,6 +109,11 @@ ash_dc_switch:
   Permission: 'ash.cmd.distributionchest.switch'
   Suggestion: '/ash distributionchest switch'
   #Switch between desc and asc by distribution from the Prioritys
+ash_dc_transfer:
+  Argument: 'transfer'
+  Permission: 'ash.cmd.distributionchest.transfer'
+  Suggestion: '/ash distributionchest transfer <playername>'
+  #Transfer the ownerstatus to a other player
 ash_endstorage:
   Argument: 'endstorage'
   Permission: 'ash.cmd.endstorage'

@@ -12,6 +12,10 @@ NotSameServer: '&cYou are not on the same server. Specified server: &f%server%&c
 BeforeSelect: '&cAttention!~!~&eBefore you can execute this command, first click on the name or ID in front of it'
 CancelAction: '&cAction Cancelled! &eIf this is undesired, set or trigger the supposed action again by command.'
 Cooldown: '&You click too fast.'
+DoubleChestAlreadyAsDistributionChestExist: '&cThis part of the box cannot be registered, because the other part of the box is already registered!'
+ChestAlreadyAsDistributionChestExist: '&cThis block is already registered as distribution box!'
+DistributionIsRunning: '&cAchtung! &7Der Verteilungsprozess ist schon aktiv für diesen Block, deshalb kann er nicht geöffnet werden. Wieder offen ab: %time%'
+SafetyBreak: '&cAchtung! Du bist dabei eine Verteilerkiste abzubauen! Falls das gewollt ist, stelle per Befehl zuerst dies ein!'
 
 NoNumber: '&cThe argument &f%args% &cis no number!'
 NumberIsNegative: '&cThe number &f%args% &cis negative! Use only positive numbers!'
@@ -19,17 +23,20 @@ NoPlayerAccount: '&cPlayer accounts are not active!'
 GeneralHover: '&eClick me!'
 GeneralError: '&cThere is a general error in the command right now: &f%cmd% %message%'
 GUI: 'StorageChest GUI ID: &c%id% | %dcid% %name%'
-
 CmdAsh:
   BaseInfo:
     Headline: '&e===&7[&2Storage system &bInfo&7]&e==='
     Next: '&e&next page &e==>'
     Past: '&e<== &previous page'
     ash: '&c/ash &f| Base and InfoCommand'
+    ash_automaticdistributioninfo: '&c/ash automaticdistributioninfo &f| Zeigt alle Info zum Automatischen Verteilen an.'
     ash_blockinfo: '&c/ash blockinfo &f| Show all block info from the storage system with shift+right click'
     ash_cancel: '&c/ash cancel &f| Cancels all actions'
+    ash_debug: '&c/ash debug &f| Zwischenbefehl'
+    ash_debug_itemmeta: '&c/ash debug itemmeta &f| Zeigt einen String der Itemmeta des Items in der Haupthand an.'
     ash_dc: '&c/ash distributionchest &f| Intermediate command.'
     ash_dc_autodistr: '&c/ash distributionchest automaticdistribution &f| Toggles whether the scheduler can suck the crate and distribute the items'
+    ash_dc_breaking: '&c/ash distributionchest breaking &f| Toggles, whether you may break a block which is a distributionchest.'
     ash_dc_chestname: '&c/ash distributionchest chestname <Name> &f| Sets a new name for the distribution box'
     ash_dc_create: '&c/ash distributionchest create <Name> &f| Starts the creation of a distribution box'
     ash_dc_delete: '&c/ash distributionchest delete &f| Deletes the previously selected distribution box'
@@ -40,6 +47,7 @@ CmdAsh:
     ash_dc_search: '&c/ash distributionchest search &f| Searches the selected distribution box'
     ash_dc_select: '&c/ash distributionchest select <ID> &f| Selects a distribution box'
     ash_dc_switch: '&c/ash distributionchest switch &f| Toggles whether the priorities should be considered in ascending or descending order.'
+    ash_dc_transfer: '&c/ash distributionchest transfer <Spielername> &f| Überträgt den Eigentümerstatus auf den angegebenen Spieler.'
     ash_endstorage: '&c/ash endstorage &f| Toggles the storage crate to a final storage crate'
     ash_gui: '&c/ash gui &f| Toggles between build mode and gui open mode.'
     ash_itemfilterset: '&c/ash itemfilterset &f| Intermediate Command.'
@@ -63,6 +71,11 @@ CmdAsh:
     ash_sc_select: '&c/ash storagechest select <ID> &f| Selects a storage crate'
     ash_sc_search: '&c/ash storagechest search &f| Searches for the selected storage crate'
     ash_sc_update: '&c/ash storagechest update &f| Toggles the update mode for the storage crates'
+  AutoDistribution:
+    Headline: '&e===&7[&6Infos zur Automatischen Verteilung&7]&e==='
+    TotalTick: '&cVerteilungszyklus: &f%time%'
+    TicksPerDc: '&cZeit pro Verteilerkiste: &f%time%'
+    NextDc: '&cNächste VerteilerkistenID: &f%id%'
   BlockBreak:
     DeleteDC: '&cDistribution box &f%id% &c| &f%name% &cdeleted!'
     DeleteSC: '&cDistribution box &f%id% &deleted!'
@@ -75,6 +88,9 @@ CmdAsh:
   Cancel:
     SetCancel: '&eTo+Cancel+click+here+or+give+&f/ash+cancel+&on!~click@RUN_COMMAND@/ash+cancel'
     IsCancel: '&cProcess aborted!'
+  CanBreakDChest:
+    Active: '&eDu kannst nun Verteilerkisten abbauen. &cSei also vorsichtig!'
+    Deactive: '&eDu kannst nun keine Verteilerkisten mehr abbauen!'
   Create:
     Init: '&You are creating a distribution box! Please click with &cShift+Right &nun on the new distribution box!'
     NameExist: '&cThe name already exists!'
@@ -87,6 +103,7 @@ CmdAsh:
     DistributionChestDontExistNone: '&cThe distribution box this storage box belongs to no longer exists!'
     SetupSChest: '&aStoragebox+&f%sc%+&created!+&eFor+more+information+click+here~click@RUN_COMMAND@/ash+storagechest+info'
     UpdateStorageChest: '&eStorageBox+Update!+click+here+for+more+information~click@RUN_COMMAND@/ash+storagechest+info'
+    SChestDontBeSameAsDChest: '&cDie Lagerkiste kann nicht gleichzeitig die Verteilerkiste, des gleichen Lagersystems sein!'
   Delete:
     DistributionChestDontExist: '&cThe distribution box &f%id% &does not exist!'
     DChestDeleted: '&eDistributionChest &f%id% &e| &f%name% &most &cdeleted!'
@@ -160,7 +177,7 @@ CmdAsh:
     Selected: '&eItemFilterSet &f%name% &e| &f%id% &eselected!'
   ItemFilterSetUpdate:
     NewOne: '&cAttention! &eYou do not own the original ItemFilterSet! Therefore a copy has been made in your name!'
-  Fashion:
+  Mode
     SetMode: '&eMode &f%mode% &eset!'
   OpenItemFilter:
     DontExist: '&cStorage box with the ID &f%id% &cdoes not &cexist!'
@@ -229,6 +246,9 @@ CmdAsh:
     SelectDChest: '&eDistribution box &f%iddc% &e| &f%name% &elect!'
     SelectSChest: '&eStorage crate &f%idsc% &the distribution crate &f%iddc% &e| &f%name% &e| &f%name% &elect!'
     SelectSChestWithOutD: '&eStorage crate &f%id% &elect! Note that this box is not linked to any distribution box!'
+  Transfer:
+    TransferDc: '&eDu hast die Verteilerkiste &f%id% | %name% &ean &c%player% &eübertragen!'
+    TransferDcToYou: '&eDer Spieler &c%player% &ehat dir den Eigentümerstatus der Verteilerkiste &f%id% | %name% &eübertragen!'
   Update:
     StorageChestDontExist: '&cThe storage box with the selected distribution box does not exist!'
     MayDelete: '&cThe selected distribution box no longer exists. If+storage box+delete+should+click+here! ~click@SUGGEST_COMMAND@/ash+delete+s+%sc% Or+select+an+other+distribution+box+off+and+click+here+for+the+change-mode~click@RUN_COMMAND@/ash+override~hover@SHOW_TEXT@&change-mode+means,+that+the+storage+box+will+not+only+normally+be+updated,~!~&special+also,+that+the+distribution+box+is+overridden+overridden!~!~&cSofar+it+is+no+longer+needed+to+deactivate!'

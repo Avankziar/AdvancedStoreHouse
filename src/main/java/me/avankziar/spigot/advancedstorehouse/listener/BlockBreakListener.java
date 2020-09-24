@@ -21,6 +21,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
+import main.java.me.avankziar.general.objects.PluginUser;
+import main.java.me.avankziar.general.objects.PluginUserHandler;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.advancedstorehouse.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.advancedstorehouse.assistance.Utility;
@@ -97,6 +99,16 @@ public class BlockBreakListener implements Listener
 				event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwner")));
 				event.setCancelled(true);
 				return;
+			}
+			PluginUser user = PluginUserHandler.getUser(event.getPlayer().getUniqueId());
+			if(user != null)
+			{
+				if(!user.canDistributionChestBreak())
+				{
+					event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("SafetyBreak")));
+					event.setCancelled(true);
+					return;
+				}
 			}
 			final int id = dc.getId();
 			event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.BlockBreak.DeleteDC")
