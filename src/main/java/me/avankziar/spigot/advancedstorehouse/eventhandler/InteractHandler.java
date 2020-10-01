@@ -53,17 +53,19 @@ public class InteractHandler implements Listener
 	private AdvancedStoreHouse plugin;
 	private static HashMap<String, Long> cooldown;
 	public static HashMap<Integer, Long> distributionCooldown;
+	public static HashMap<Integer, Long> distributionCooldownStartTime;
 	
 	public InteractHandler(AdvancedStoreHouse plugin)
 	{
 		this.plugin = plugin;
 		cooldown = new HashMap<>();
 		distributionCooldown = new HashMap<>();
+		distributionCooldownStartTime = new HashMap<>();
 	}
 	
 	private void debug(Player player, String s)
 	{
-		boolean bo = false;
+		boolean bo = true;
 		if(bo)
 		{
 			player.spigot().sendMessage(ChatApi.tctl(s));
@@ -127,9 +129,10 @@ public class InteractHandler implements Listener
 		}
 		if(event.getAction() == Action.PHYSICAL)
 		{	
-			debug(event.getPlayer(), "Action == Physical");
+			debug(event.getPlayer(), "Action == Physical || ClickedBlock isNull == "+event.getClickedBlock());
 			if(event.getClickedBlock() != null)
 			{
+				debug(event.getPlayer(), "Plate Start");
 				buttonAndPlate(event, player, user);
 			}
 			return;
@@ -855,40 +858,52 @@ public class InteractHandler implements Listener
 					i++;
 					return;
 				}
-				Inventory inventoryc = ((Container)dcblock.getState()).getInventory();
-				if(inventoryc == null)
+				Inventory inventory = ((Container)dcblock.getState()).getInventory();
+				if(inventory == null)
 				{
 					debug(player, "ButtonDc container inv == null");
 					i++;
 					return;
 				}
 				int storagechestamount = prioList.size()+endList.size();
-				ChestHandler.setDistributionChestOnCooldown(plugin, dc, storagechestamount);
-				ItemStack[] cloneInvLc = null;
-				ItemStack[] cloneInvRc = null;
-				if(inventoryc instanceof DoubleChestInventory)
+				ChestHandler.setDistributionChestOnCooldown(plugin, dc, storagechestamount, true);
+				ItemStack[] cloneInvL = null;
+				ItemStack[] cloneInvR = null;
+				if(inventory instanceof DoubleChestInventory)
 				{
 					debug(player, "Button distribution dci == true");
-					DoubleChestInventory dcinv = (DoubleChestInventory) inventoryc;
-					cloneInvLc = dcinv.getLeftSide().getContents();
-					cloneInvRc = dcinv.getRightSide().getContents();
+					DoubleChestInventory dcinv = (DoubleChestInventory) inventory;
+					cloneInvL = dcinv.getLeftSide().getContents();
+					cloneInvR = dcinv.getRightSide().getContents();
+					if(ChestHandler.isContentEmpty(cloneInvL) && ChestHandler.isContentEmpty(cloneInvR))
+					{
+						debug(player, "Button Both ContentSides are empty");
+						return;
+					}
 				} else
 				{
 					debug(player, "Button distribution dci == false");
-					cloneInvLc = inventoryc.getContents();
-					cloneInvRc = cloneInvLc;
+					cloneInvL = inventory.getContents();
+					cloneInvR = inventory.getContents();
 					int j = 0;
-					for(int i = 0; i < cloneInvLc.length; i++)
+					for(int i = 0; i < cloneInvL.length; i++)
 					{
-						cloneInvRc[i] = null;
+						cloneInvR[i] = null;
 						j = i;
+					}
+					if(ChestHandler.isContentEmpty(cloneInvL) && ChestHandler.isContentEmpty(cloneInvR))
+					{
+						debug(player, "Button Both ContentSide are empty");
+						return;
 					}
 					debug(player, "Button distribution Right side set all null | i = "+j);
 				}
 				
 				ItemDistributeObject idoc = new ItemDistributeObject(null, null);
-				idoc.chestDistribute(plugin, player, inventoryc, prioList, endList, cloneInvLc, cloneInvRc);
+				idoc.chestDistribute(plugin, player, inventory, prioList, endList, cloneInvL, cloneInvR);
 				i++;
+				
+				long supposeCooldown = storagechestamount/plugin.getYamlHandler().get().getInt("DelayedTicks", 1);
 				
 				ArrayList<StorageChest> prioListF = prioList;
 				ArrayList<StorageChest> endListF = endList;
@@ -912,6 +927,12 @@ public class InteractHandler implements Listener
 							}
 							DistributionChest dcc = chain.get(i);
 							debug(player, "Button ChainDc: "+dcc.getChestName());
+							if(ChestHandler.isDistributionChestOnCooldown(plugin, dcc))
+							{
+								i++;
+								debug(player, "ButtonDc: "+dcc.getChestName()+" is on cooldown!");
+								return;
+							}
 							ArrayList<StorageChest> prioListc = new ArrayList<>();
 							try
 							{
@@ -966,15 +987,15 @@ public class InteractHandler implements Listener
 								return;
 							}
 							int storagechestamountc = prioListc.size()+endListc.size();
-							ChestHandler.setDistributionChestOnCooldown(plugin, dcc, storagechestamountc);
+							ChestHandler.setDistributionChestOnCooldown(plugin, dcc, storagechestamountc, true);
 							ItemStack[] cloneInvLc = null;
 							ItemStack[] cloneInvRc = null;
 							if(inventoryc instanceof DoubleChestInventory)
 							{
 								debug(player, "Button Chaindistribution dci == true");
-								DoubleChestInventory dcinv = (DoubleChestInventory) inventoryc;
-								cloneInvLc = dcinv.getLeftSide().getContents();
-								cloneInvRc = dcinv.getRightSide().getContents();
+								DoubleChestInventory dcinvc = (DoubleChestInventory) inventoryc;
+								cloneInvLc = dcinvc.getLeftSide().getContents();
+								cloneInvRc = dcinvc.getRightSide().getContents();
 							} else
 							{
 								debug(player, "Button Chaindistribution dci == false");
@@ -993,7 +1014,7 @@ public class InteractHandler implements Listener
 							idoc.chestDistribute(plugin, player, inventoryc, prioListc, endListc, cloneInvLc, cloneInvRc);
 							i++;
 						}
-					}.runTaskTimer(plugin, 20L*plugin.getYamlHandler().get().getInt("DelayChainChests", 10),
+					}.runTaskTimer(plugin, supposeCooldown,
 							1L*plugin.getYamlHandler().get().getInt("DelayedChainTicks", 10));
 				} catch (IllegalArgumentException | IllegalStateException | IOException e)
 				{
@@ -1612,10 +1633,6 @@ public class InteractHandler implements Listener
 					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
 		}
-		if(dc.isEmpty() && sc.isEmpty())
-		{
-			return;
-		}
 		event.setCancelled(true);
 		ArrayList<BaseComponent> bcI = new ArrayList<>();
 		bcI.add(ChatApi.tctl(plugin.getYamlHandler().getL().getString("CmdAsh.BlockInfo.Dc")));
@@ -1656,10 +1673,12 @@ public class InteractHandler implements Listener
 		if(block.getState() == null)
 		{
 			debug(event.getPlayer(), "Block.State == null");
+			return;
 		}
 		if(!(block.getState() instanceof Container))
 		{
 			debug(event.getPlayer(), "Block != Container | Type: "+block.getType().toString());
+			return;
 		}
 		String server = plugin.getYamlHandler().get().getString("Servername");
 		Location loc = event.getClickedBlock().getLocation();
@@ -1699,12 +1718,14 @@ public class InteractHandler implements Listener
 			if(distributionCooldown.containsKey(dc.getId()))
 			{
 				long dcc = distributionCooldown.get(dc.getId());
+				long start = distributionCooldownStartTime.get(dc.getId());
 				debug(player, "Cooldown: "+dcc+" | Milli: "+System.currentTimeMillis());
 				if(dcc > System.currentTimeMillis())
 				{
 					event.setCancelled(true);
-					player.sendMessage(plugin.getYamlHandler().get().getString("DistributionIsRunning")
-							.replace("%time%", TimeHandler.getTime(dcc)));
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DistributionIsRunning")
+							.replace("%start%", TimeHandler.getTime(start))
+							.replace("%time%", TimeHandler.getTime(dcc))));
 				}
 			}
 		}

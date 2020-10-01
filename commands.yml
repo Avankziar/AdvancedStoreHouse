@@ -44,6 +44,11 @@ ash_debug_itemmeta:
   Permission: 'ash.cmd.debug.itemmeta'
   Suggestion: '/ash debug itemmeta'
   #debug ItemMeta
+ash_delete:
+  Argument: 'delete'
+  Permission: 'ash.cmd.delete'
+  Suggestion: '/ash delete <server> <world>'
+  #Delete all Dc and Sc in the server an from the world.
 ash_dc:
   Argument: 'distributionchest'
   Permission: 'ash.cmd.distributionchest'

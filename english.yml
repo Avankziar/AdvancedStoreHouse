@@ -14,7 +14,7 @@ CancelAction: '&cAction Cancelled! &eIf this is undesired, set or trigger the su
 Cooldown: '&You click too fast.'
 DoubleChestAlreadyAsDistributionChestExist: '&cThis part of the box cannot be registered, because the other part of the box is already registered!'
 ChestAlreadyAsDistributionChestExist: '&cThis block is already registered as distribution box!'
-DistributionIsRunning: '&cAchtung! &7Der Verteilungsprozess ist schon aktiv für diesen Block, deshalb kann er nicht geöffnet werden. Wieder offen ab: %time%'
+DistributionIsRunning: '&cAchtung! &7Der Verteilungsprozess ist schon aktiv für diesen Block, deshalb kann er nicht geöffnet werden. Startzeit: &f%start% &7| &eZu Ende: &f%time%'
 SafetyBreak: '&cAchtung! Du bist dabei eine Verteilerkiste abzubauen! Falls das gewollt ist, stelle per Befehl zuerst dies ein!'
 
 NoNumber: '&cThe argument &f%args% &cis no number!'
@@ -34,6 +34,7 @@ CmdAsh:
     ash_cancel: '&c/ash cancel &f| Cancels all actions'
     ash_debug: '&c/ash debug &f| Zwischenbefehl'
     ash_debug_itemmeta: '&c/ash debug itemmeta &f| Zeigt einen String der Itemmeta des Items in der Haupthand an.'
+    ash_delete: '&c/ash delete <server> <welt> &f| Löscht alle Verteiler- und Lagerkisten die sich auf diesem Server und in dieser Welt befinden.'
     ash_dc: '&c/ash distributionchest &f| Intermediate command.'
     ash_dc_autodistr: '&c/ash distributionchest automaticdistribution &f| Toggles whether the scheduler can suck the crate and distribute the items'
     ash_dc_breaking: '&c/ash distributionchest breaking &f| Toggles, whether you may break a block which is a distributionchest.'
@@ -105,6 +106,7 @@ CmdAsh:
     UpdateStorageChest: '&eStorageBox+Update!+click+here+for+more+information~click@RUN_COMMAND@/ash+storagechest+info'
     SChestDontBeSameAsDChest: '&cDie Lagerkiste kann nicht gleichzeitig die Verteilerkiste, des gleichen Lagersystems sein!'
   Delete:
+    IsDeleted: '&eVerteiler- und Lagerkisten welche sich auf dem Server &f%server% &eund in der Welt &f%world% &esich befanden, wurden gelöscht!'
     DistributionChestDontExist: '&cThe distribution box &f%id% &does not exist!'
     DChestDeleted: '&eDistributionChest &f%id% &e| &f%name% &most &cdeleted!'
     LinkedSChestDeleted: '&eDistribution box &f%id% &e| &f%name% &have been &deleted&e! quantity: &f%count%'

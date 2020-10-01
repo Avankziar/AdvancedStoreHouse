@@ -35,6 +35,7 @@ import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstoreho
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGCancel;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDebug;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDebug_ItemMeta;
+import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDelete;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_AutomaticDistribution;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Breaking;
@@ -244,6 +245,8 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor debug_im = new ArgumentConstructor(yamlHandler, baseCommandI+"_debug_itemmeta", 1, 1, 1, null);
 		ArgumentConstructor debug = new ArgumentConstructor(yamlHandler, baseCommandI+"_debug", 0, 0, 0, null, debug_im);
 		
+		ArgumentConstructor delete = new ArgumentConstructor(yamlHandler, baseCommandI+"_delete", 0, 2, 2, null);
+		
 		ArgumentConstructor dc_autodistr = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_autodistr", 1, 1, 1, null);
 		ArgumentConstructor dc_breaking = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_breaking", 1, 1, 1, null);
 		ArgumentConstructor dc_chestname = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_chestname", 1, 2, 2, null);
@@ -291,7 +294,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 				sc_create, sc_delete, sc_info, sc_list, sc_openitemfilter, sc_position, sc_select, sc_search, sc_update);
 		
 		CommandConstructor ash = new CommandConstructor(plugin, baseCommandI,
-				autodistributioninfo, blockinfo, cancel, debug, dc, endstorage, gui, itemfilterset, mode, override, playerinfo, priority, sc);
+				autodistributioninfo, blockinfo, cancel, debug, delete, dc, endstorage, gui, itemfilterset, mode, override, playerinfo, priority, sc);
 		
 		registerCommand(ash.getPath(), ash.getName());
 		getCommand(ash.getName()).setExecutor(new AshCommandExecutor(plugin, ash));
@@ -300,6 +303,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		addingHelps(ash,
 				autodistributioninfo, blockinfo, cancel,
 				debug, debug_im,
+				delete,
 				dc, dc_autodistr, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member,
 				dc_position, dc_select, dc_search, dc_switch, dc_transfer,
 				endstorage, gui,
@@ -313,6 +317,8 @@ public class AdvancedStoreHouse extends JavaPlugin
 		
 		new ARGDebug(plugin, debug);
 		new ARGDebug_ItemMeta(plugin, debug_im);
+		
+		new ARGDelete(plugin, delete); 
 		
 		new ARGDistributionChest(plugin, dc);
 		new ARGDistributionChest_AutomaticDistribution(plugin, dc_autodistr);

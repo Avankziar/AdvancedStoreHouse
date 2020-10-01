@@ -199,6 +199,15 @@ public class BackgroundTask
 					return;
 				}
 				DistributionChest dc = dcList.get(i);
+				if(dc == null)
+				{
+					i++;
+					if(i < dcList.size())
+					{
+						BackgroundTask.nextDcId = dcList.get(i).getId();
+					}
+					return;
+				}
 				debug("=> Verteilung der Kiste %id% beginnt!"
 						.replace("%id%", ""+dc.getId()));
 				debug("AutoDistribution Dc: "+dc.getChestName());
@@ -285,7 +294,7 @@ public class BackgroundTask
 					return;
 				}
 				int storagechestamount = prioList.size()+endList.size();
-				ChestHandler.setDistributionChestOnCooldown(plugin, dc, storagechestamount);
+				ChestHandler.setDistributionChestOnCooldown(plugin, dc, storagechestamount, false);
 				ItemStack[] cloneInvLc = null;
 				ItemStack[] cloneInvRc = null;
 				if(inventoryc instanceof DoubleChestInventory)

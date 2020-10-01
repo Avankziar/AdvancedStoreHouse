@@ -718,8 +718,7 @@ public class ChestHandler
 	{
 		if(InteractHandler.distributionCooldown.containsKey(dc.getId()))
 		{
-			long now = System.currentTimeMillis();
-			if(InteractHandler.distributionCooldown.get(dc.getId()) > now)
+			if(InteractHandler.distributionCooldown.get(dc.getId()) > System.currentTimeMillis())
 			{
 				return true;
 			}
@@ -727,16 +726,29 @@ public class ChestHandler
 		return false;
 	}
 	
-	public static void setDistributionChestOnCooldown(AdvancedStoreHouse plugin, DistributionChest dc, int storagechestamount)
+	public static void setDistributionChestOnCooldown(AdvancedStoreHouse plugin,
+			DistributionChest dc, int storagechestamount,
+			boolean useFastDelay)
 	{
 		//int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, "`distributionchestid` = ?", dc.getId());
-		long cooldown = System.currentTimeMillis()+storagechestamount/(20/plugin.getYamlHandler().get().getInt("DelayedTicks", 1))*20;
+		long storage = storagechestamount;
+		long dif = plugin.getYamlHandler().get().getInt("DelayedTicks", 1);
+		if(useFastDelay && plugin.getYamlHandler().get().getBoolean("UseFastDelayedDistribution", true))
+		{
+			storage = storagechestamount / plugin.getYamlHandler().get().getInt("ChestsPerTick", 10);
+		}
+		long start = System.currentTimeMillis();
+		long cooldown = start
+				+ 1000 //+ Eine Sekunde cooldown
+				+ (storage*(dif*25)/10)*20; //+ Anzahl an Lagerkisten(* ChestsPerTick) * DelayedTicks * Mulitplikator von 2,5 * Ticks zu MilliSekunde
 		if(InteractHandler.distributionCooldown.containsKey(dc.getId()))
 		{
 			InteractHandler.distributionCooldown.replace(dc.getId(), cooldown);
+			InteractHandler.distributionCooldownStartTime.replace(dc.getId(), start);
 		} else
 		{
 			InteractHandler.distributionCooldown.put(dc.getId(), cooldown);
+			InteractHandler.distributionCooldownStartTime.put(dc.getId(), start);
 		}
 	}
 	

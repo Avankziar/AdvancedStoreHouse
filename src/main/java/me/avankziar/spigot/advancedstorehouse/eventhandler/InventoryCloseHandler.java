@@ -157,10 +157,17 @@ public class InventoryCloseHandler implements Listener
 				plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`priority`", dc.isNormalPriority(),
 						"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), true, server));
 		int storagechestamount = prioList.size()+endList.size();
-		ChestHandler.setDistributionChestOnCooldown(plugin, dc, storagechestamount);
 		Inventory inventory = event.getView().getTopInventory();
 		ItemStack[] cloneInvL = null;
 		ItemStack[] cloneInvR = null;
+		
+		if(ChestHandler.isContentEmpty(inventory.getContents()))
+		{
+			return;
+		}
+		
+		ChestHandler.setDistributionChestOnCooldown(plugin, dc, storagechestamount, true);
+		
 		if(dci)
 		{
 			debug(player, "distribution dci == true");
@@ -185,15 +192,11 @@ public class InventoryCloseHandler implements Listener
 			debug(player, "distribution Right side set all null | i = "+j);
 		}
 		
-		if(ChestHandler.isContentEmpty(inventory.getContents()))
-		{
-			return;
-		}
-		
 		//Normal Lager
 		//PrioList und EndList
 		ItemDistributeObject ido = new ItemDistributeObject(null, null);
 		ido.chestDistribute(plugin, player, inventory, prioList, endList, cloneInvL, cloneInvR);
+		long supposeCooldown = storagechestamount*plugin.getYamlHandler().get().getInt("DelayedTicks", 1)*20;
 		
 		//Kettenverteilung
 		debug(player, "ChainDc distribution starts");
@@ -212,6 +215,12 @@ public class InventoryCloseHandler implements Listener
 				}
 				DistributionChest dcc = chain.get(i);
 				debug(player, "ChainDc: "+dcc.getChestName());
+				if(ChestHandler.isDistributionChestOnCooldown(plugin, dcc))
+				{
+					debug(player, "Dcc is already in distribution");
+					i++;
+					return;
+				}
 				ArrayList<StorageChest> prioListc = new ArrayList<>();
 				try
 				{
@@ -266,7 +275,7 @@ public class InventoryCloseHandler implements Listener
 					return;
 				}
 				int storagechestamountc = prioListc.size()+endListc.size();
-				ChestHandler.setDistributionChestOnCooldown(plugin, dcc, storagechestamountc);
+				ChestHandler.setDistributionChestOnCooldown(plugin, dcc, storagechestamountc, true);
 				ItemStack[] cloneInvLc = null;
 				ItemStack[] cloneInvRc = null;
 				if(inventoryc instanceof DoubleChestInventory)
@@ -293,7 +302,7 @@ public class InventoryCloseHandler implements Listener
 				idoc.chestDistribute(plugin, player, inventoryc, prioListc, endListc, cloneInvLc, cloneInvRc);
 				i++;
 			}
-		}.runTaskTimer(plugin, 20L*plugin.getYamlHandler().get().getInt("DelayChainChests", 10),
+		}.runTaskTimer(plugin, supposeCooldown,
 				1L*plugin.getYamlHandler().get().getInt("DelayedChainTicks", 10));
 	}
 	

@@ -37,6 +37,11 @@ IndirectPauseValue: 12000
 #The min value for a distributionchest. Aka a basevalue added to the dynamic value.
 MinimumTickPerDistributionChest: 10
 
+#Use this in the dynamic Format to upspeed the distribution with the next value
+UseFastDelayedDistribution: true
+#The value set, how many storagechest per tick in a loop is processed
+ChestsPerTick: 10
+
 maximumDistributionChest: 500
 maximumStorageChestPerDistributionChest: 500
 maximumItemFilterSet: 500
@@ -45,7 +50,7 @@ IsAutomaticDistribution: false
 BlockBreakDistributionChestDeleteLinkedStorageChest: true
 
 #The sphere radius to interact and trigger Distributionchests. Attention! To high number cann occur lags.
-ButtonPlateInteractRadius: 5 
+ButtonPlateInteractRadius: 3
 
 #If UseDelayedDistribution is false can lags occur!
 #If true, per Tick it works off a storagechest. And in the next tick, the next storagechest is processed etc.
