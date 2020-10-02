@@ -196,7 +196,7 @@ public class InventoryCloseHandler implements Listener
 		//PrioList und EndList
 		ItemDistributeObject ido = new ItemDistributeObject(null, null);
 		ido.chestDistribute(plugin, player, inventory, prioList, endList, cloneInvL, cloneInvR);
-		long supposeCooldown = storagechestamount*plugin.getYamlHandler().get().getInt("DelayedTicks", 1)*20;
+		long supposeCooldown = storagechestamount*plugin.getYamlHandler().get().getInt("DelayedTicks", 1)*20+10;
 		
 		//Kettenverteilung
 		debug(player, "ChainDc distribution starts");

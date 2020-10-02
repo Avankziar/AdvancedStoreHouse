@@ -1,5 +1,6 @@
 package main.java.me.avankziar.general.objects;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
@@ -14,6 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.spigot.advancedstorehouse.AdvancedStoreHouse;
+import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlHandler;
 
 public class ItemDistributeObject
 {
@@ -59,7 +61,7 @@ public class ItemDistributeObject
 	
 	private void debug(Player player, String s)
 	{
-		boolean bo = true;
+		boolean bo = false;
 		if(bo)
 		{
 			if(player != null)
@@ -123,6 +125,23 @@ public class ItemDistributeObject
 									i++;
 									continue;
 								}
+								String server = plugin.getYamlHandler().get().getString("Servername");
+								DistributionChest chaindc = null;
+								try
+								{
+									chaindc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+											"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+											server, sc.getWorld(), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ());
+								} catch (IOException e) {}
+								if(chaindc != null)
+								{
+									if(ChestHandler.isDistributionChestOnCooldown(plugin, chaindc))
+									{
+										debug(player, "StorageChest is Distributionchest and on cooldown!");
+										i++;
+										continue;
+									}
+								}
 								Container container = (Container) block.getState();
 								Inventory cinv = container.getInventory();
 								if(cinv == null)
@@ -167,6 +186,23 @@ public class ItemDistributeObject
 									debug(player, "distribution not Container");
 									j++;
 									continue;
+								}
+								String server = plugin.getYamlHandler().get().getString("Servername");
+								DistributionChest chaindc = null;
+								try
+								{
+									chaindc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+											"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+											server, sc.getWorld(), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ());
+								} catch (IOException e) {}
+								if(chaindc != null)
+								{
+									if(ChestHandler.isDistributionChestOnCooldown(plugin, chaindc))
+									{
+										debug(player, "StorageChest is Distributionchest and on cooldown!");
+										i++;
+										continue;
+									}
 								}
 								Container container = (Container) block.getState();
 								Inventory cinv = container.getInventory();
@@ -248,6 +284,22 @@ public class ItemDistributeObject
 								i++;
 								return;
 							}
+							String server = plugin.getYamlHandler().get().getString("Servername");
+							DistributionChest chaindc = null;
+							try
+							{
+								chaindc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+										"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+										server, sc.getWorld(), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ());
+							} catch (IOException e) {}
+							if(chaindc != null)
+							{
+								if(ChestHandler.isDistributionChestOnCooldown(plugin, chaindc))
+								{
+									debug(player, "StorageChest is Distributionchest and on cooldown!");
+									i++;
+								}
+							}
 							Container container = (Container) block.getState();
 							Inventory cinv = container.getInventory();
 							if(cinv == null)
@@ -291,6 +343,22 @@ public class ItemDistributeObject
 								debug(player, "distribution not Container");
 								j++;
 								return;
+							}
+							String server = plugin.getYamlHandler().get().getString("Servername");
+							DistributionChest chaindc = null;
+							try
+							{
+								chaindc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+										"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+										server, sc.getWorld(), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ());
+							} catch (IOException e) {}
+							if(chaindc != null)
+							{
+								if(ChestHandler.isDistributionChestOnCooldown(plugin, chaindc))
+								{
+									debug(player, "StorageChest is Distributionchest and on cooldown!");
+									i++;
+								}
 							}
 							Container container = (Container) block.getState();
 							Inventory cinv = container.getInventory();

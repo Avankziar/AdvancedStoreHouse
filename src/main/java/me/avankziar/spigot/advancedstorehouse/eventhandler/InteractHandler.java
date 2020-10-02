@@ -65,7 +65,7 @@ public class InteractHandler implements Listener
 	
 	private void debug(Player player, String s)
 	{
-		boolean bo = true;
+		boolean bo = false;
 		if(bo)
 		{
 			player.spigot().sendMessage(ChatApi.tctl(s));
