@@ -2,16 +2,24 @@ package main.java.me.avankziar.spigot.advancedstorehouse.listener;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.PluginUserHandler;
+import main.java.me.avankziar.spigot.advancedstorehouse.commands.tree.CommandConstructor;
 
 public class PlayerCommandPreprocessListener implements Listener
 {
+	private CommandConstructor cc;
 	
-	@EventHandler
+	public PlayerCommandPreprocessListener(CommandConstructor cc)
+	{
+		this.cc = cc;
+	}
+	
+	@EventHandler (priority = EventPriority.LOWEST)
 	public void onPrepareCommand(PlayerCommandPreprocessEvent event)
 	{
 		Player player = event.getPlayer();
@@ -21,12 +29,17 @@ public class PlayerCommandPreprocessListener implements Listener
 			return;
 		}
 		if(user.getMode() == PluginUser.Mode.NONE
+				|| user.getMode() == PluginUser.Mode.CREATEDISTRIBUTIONCHEST
+				|| user.getMode() == PluginUser.Mode.CREATESTORAGE
 				|| user.getMode() == PluginUser.Mode.CREATEITEMFILTERSET
 				|| user.getMode() == PluginUser.Mode.CHANGEITEMFILTERSET
 				|| user.getMode() == PluginUser.Mode.CHANGEITEMFILTERSET)
 		{
-			user.setMode(PluginUser.Mode.CONSTRUCT);
-			PluginUserHandler.addUser(user);
+			if(!event.getMessage().startsWith(cc.getSuggestion()))
+			{
+				user.setMode(PluginUser.Mode.CONSTRUCT);
+				PluginUserHandler.addUser(user);
+			}
 		}
 		return;
 	}

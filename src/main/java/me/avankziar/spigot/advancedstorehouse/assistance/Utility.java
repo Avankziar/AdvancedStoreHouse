@@ -43,7 +43,8 @@ public class Utility
 	PERMBYPASSPLAYERINFO = "",
 	PERMBYPASSLIST = "",
 	PERMBYPASSSEARCH = "",
-	PERMBYPASSTRANSFER = "";
+	PERMBYPASSTRANSFER = "",
+	PERMBYPASSRANDOM = "";
 	
 	public Utility(AdvancedStoreHouse plugin)
 	{
@@ -76,6 +77,7 @@ public class Utility
 		PERMBYPASSLIST = plugin.getYamlHandler().getCom().getString("Bypass.List", "ash.bypass.list");
 		PERMBYPASSSEARCH = plugin.getYamlHandler().getCom().getString("Bypass.Search", "ash.bypass.search");
 		PERMBYPASSTRANSFER = plugin.getYamlHandler().getCom().getString("Bypass.Transfer", "ash.bypass.transfer");
+		PERMBYPASSRANDOM = plugin.getYamlHandler().getCom().getString("Bypass.Random", "ash.bypass.random");
 	}
 	
 	public String getPrefix()
@@ -91,6 +93,7 @@ public class Utility
 	/*
 	 * itemStringFromReflection see {@link RefectionUtil}
 	 */
+	@SuppressWarnings("deprecation")
 	public TextComponent apiChatItem(@Nonnull String text, @Nullable ClickEvent.Action caction, @Nullable String cmd,
 			@Nonnull String itemStringFromReflection)
 	{

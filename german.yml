@@ -45,6 +45,7 @@ CmdAsh:
     ash_dc_list: '&c/ash distributionchest list &f| Listet alle IDs und Namen deiner Verteilerkistena auf.'
     ash_dc_member: '&c/ash distributionchest member <Spielername> &f| Fügt einen Spieler der Mitgliedsliste hinzu oder entfernt ihn.'
     ash_dc_position: '&c/ash distributionchest position &f| Setzt den Spieler in den Positionswechselmodus für Verteilerkisten.'
+    ash_dc_random: '&c/ash distributionchest random &f| Aktiviert oder deaktiviert den Randommodus.' 
     ash_dc_search: '&c/ash distributionchest search &f| Sucht die ausgewählte Verteilerkiste.'
     ash_dc_select: '&c/ash distributionchest select <ID> &f| Wählt eine Verteilerkiste aus.'
     ash_dc_switch: '&c/ash distributionchest switch &f| Toggelt ob die Prioriäten aufsteigend oder absteigend berücksichtig werden sollen.'
@@ -106,7 +107,7 @@ CmdAsh:
     UpdateStorageChest: '&eLagerkiste+Update!+Klicke+hier+für+weitere+Informationen~click@RUN_COMMAND@/ash+storagechest+info'
     SChestDontBeSameAsDChest: '&cDie Lagerkiste kann nicht gleichzeitig die Verteilerkiste, des gleichen Lagersystems sein!'
   Delete:
-  	IsDeleted: '&eVerteiler- und Lagerkisten welche sich auf dem Server &f%server% &eund in der Welt &f%world% &esich befanden, wurden gelöscht!'
+    IsDeleted: '&eVerteiler- und Lagerkisten welche sich auf dem Server &f%server% &eund in der Welt &f%world% &esich befanden, wurden gelöscht!'
     DistributionChestDontExist: '&cDie Verteilerkiste &f%id% &cexistiert nicht!'
     DChestDeleted: '&eVerteilerkiste &f%id% &e| &f%name% &eist &cgelöscht!'
     LinkedSChestDeleted: '&eLagerkisten der Verteilerkiste &f%id% &e| &f%name% &ewurden &cgelöscht&e! Anzahl: &f%count%'
@@ -219,6 +220,9 @@ CmdAsh:
     MayChange: '&eBitte denkt daran die Aktion nun abzubrechen oder eine andere Verteiler-/Lagerkiste auszuwählen.'
   Priority:
     Set: '&ePriorität auf &f%priority% &egesetzt!'
+  Random:
+    Deactive: '&eDer Randommodus ist nun deaktiviert.'
+    Active: '&eDer Randommodus ist nun aktiv!'
   Search:
     SelectDc: '&cBitte wähle zuvor erstmal eine Verteilerkiste aus!'
     SelectSc: '&cBitte wähle zuvor erstmal eine Lagerkiste aus!'

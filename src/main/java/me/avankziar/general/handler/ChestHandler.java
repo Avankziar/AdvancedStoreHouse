@@ -2,7 +2,9 @@ package main.java.me.avankziar.general.handler;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -243,7 +245,7 @@ public class ChestHandler
 		return chain;
 	}
 	
-	public static ItemStack[] distribute(Inventory inventory, ItemStack[] filter, ItemStack[] itemStacks, Inventory toRemoveInv,
+	public static ItemStack[] distribute(Inventory toAddInv, ItemStack[] filter, ItemStack[] itemStacks, Inventory toRemoveInv,
 			boolean endstorage//, double durabiltyPercent, 
 			)
 	{
@@ -276,7 +278,100 @@ public class ChestHandler
 			if(is != null)
 			{
 				debug("add Item");
-				HashMap<Integer, ItemStack> hm = inventory.addItem(is);
+				HashMap<Integer, ItemStack> hm = toAddInv.addItem(is);
+				if(!hm.isEmpty())
+				{
+					debug("!hm.isEmpty");
+					notDistributetItems.add(hm);
+					for(ItemStack nDItems : hm.values())
+					{
+						//Hier eigentliches Löschen der Items aus der Verteilerkiste
+						ItemStack toRemove = getNotDistributed(is, nDItems);
+						debug("toRemove Amount: "+toRemove.getAmount());
+						if(toRemove.getAmount() == 0)
+						{
+							debug("isAmount == toRemove.Amount");
+							continue; //Es konnte nichts verteilt werden.
+						} else if(toRemove.getAmount() == toRemove.getMaxStackSize())
+						{
+							debug("Amount == maxStackSize:"+toRemove.getMaxStackSize());
+							toRemoveInv.remove(is);
+						} else
+						{
+							debug("setToRemove.getAmount");
+							is.setAmount(toRemove.getAmount());
+						}
+					}
+				} else
+				{
+					debug("hm.isEmpty, Remove complet");
+					toRemoveInv.remove(is);
+				}
+			}
+		}
+		
+		ArrayList<ItemStack> re = new ArrayList<>();
+		for(ItemStack is : filteredItems)
+		{
+			re.add(is);
+		}
+		for(HashMap<Integer, ItemStack> map : notDistributetItems)
+		{
+			for(ItemStack is : map.values())
+			{
+				if(is != null)
+				{
+					if(is.getType() != Material.AIR)
+					{
+						re.add(is);
+						debug("EndLoop ++");
+					}
+				}
+			}
+		}
+		debug("re size "+re.size());
+		ItemStack[] r = new ItemStack[re.size()];
+		re.toArray(r);
+		return r;
+	}
+	
+	public static ItemStack[] distributeRandom(Inventory toAddInv, ItemStack[] filter, ItemStack[] itemStacks, Inventory toRemoveInv,
+			boolean endstorage//, double durabiltyPercent, 
+			)
+	{
+		ArrayList<HashMap<Integer, ItemStack>> notDistributetItems = new ArrayList<>();
+		ArrayList<ItemStack> similarItems = new ArrayList<>();
+		ArrayList<ItemStack> filteredItems = new ArrayList<>();
+		
+		for(ItemStack is : itemStacks)
+		{
+			ItemStack[] arr = new ItemStack[similarItems.size()];
+			if(endstorage && !isSimilar(is, toAddInv.getContents()) 
+					&& !isSimilar(is, similarItems.toArray(arr)))
+			{
+				similarItems.add(is);
+			} else
+			{
+				if(isSimilar(is, filter) && !isSimilar(is, toAddInv.getContents())
+						&& !isSimilar(is, similarItems.toArray(arr)))
+				{
+					similarItems.add(is);
+				} else if(is != null)
+				{
+					if(is.getType() != Material.AIR)
+					{
+						filteredItems.add(is);
+					}
+				}
+			}
+		}
+		debug("similar Items:"+similarItems.size() + " | filtered Items:"+filteredItems.size());
+		for(ItemStack is : similarItems)
+		{
+			if(is != null)
+			{
+				debug("add Item");
+				HashMap<Integer, ItemStack> hm = toAddInv.addItem(is);
 				if(!hm.isEmpty())
 				{
 					debug("!hm.isEmpty");
@@ -770,5 +865,26 @@ public class ChestHandler
 			return true;
 		}
 		return false;
+	}
+	
+	public static int getRandomWithExclusion(Random rnd, int start, int end, int... exclude)
+	{
+	    int random = start + rnd.nextInt(end - start + 1 - exclude.length);
+	    for (int ex : exclude) 
+	    {
+	        if (random < ex) 
+	        {
+	            break;
+	        }
+	        random++;
+	    }
+	    return random;
+	}
+	
+	public static int[] addElement(int[] a, int e) 
+	{
+	    a  = Arrays.copyOf(a, a.length + 1);
+	    a[a.length - 1] = e;
+	    return a;
 	}
 }

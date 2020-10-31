@@ -3,6 +3,7 @@ package main.java.me.avankziar.spigot.advancedstorehouse.eventhandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -76,19 +77,20 @@ public class InteractHandler implements Listener
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onInteract(PlayerInteractEvent event) throws IOException
 	{
+		if(event.getClickedBlock() != null)
+		{
+			if(event.getClickedBlock().getType() == Material.LEVER)
+			{
+				return;
+			}
+		}
 		debug(event.getPlayer(), "=> Interact Beginn <= Action: "+event.getAction().toString());
 		if(cooldown.containsKey(event.getPlayer().getName()))
 		{
 			if(cooldown.get(event.getPlayer().getName()) > System.currentTimeMillis())
 			{
 				debug(event.getPlayer(), "Cooldown");
-				if(event.getClickedBlock() != null)
-				{
-					if(event.getClickedBlock().getType() == Material.LEVER)
-					{
-						event.setCancelled(true);
-					}
-				}
+				
 				/*Player player = event.getPlayer();
 				PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 				if(user == null)
@@ -374,6 +376,16 @@ public class InteractHandler implements Listener
 				return;
 			}
 		}
+		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, 
+				"`owner_uuid` = ?", user.getUUID());
+		if(!PermissionHandler.canCreate(player, Utility.PERMCOUNTDISTRIBUTIONCHEST+"*", Utility.PERMCOUNTDISTRIBUTIONCHEST,
+				amount , plugin.getYamlHandler().get().getInt("maximumDistributionChest"), false))
+		{
+			debug(event.getPlayer(), "TooMany DistributionChest");
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Create.TooMany")));
+			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getL().getString("CancelAction"));
+			return;
+		}
 		int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.DISTRIBUTIONCHEST)+1;
 		String name = String.valueOf(last);
 		if(user.getDistributionChestName() != null)
@@ -382,7 +394,7 @@ public class InteractHandler implements Listener
 		}
 		DistributionChest dc = new DistributionChest(
 				last, user.getUUID(), new ArrayList<String>(), System.currentTimeMillis(),
-				name, true, plugin.getYamlHandler().get().getBoolean("IsAutomaticDistribution", false),
+				name, true, plugin.getYamlHandler().get().getBoolean("IsAutomaticDistribution", false), false, 
 				server,
 				loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 		plugin.getMysqlHandler().create(MysqlHandler.Type.DISTRIBUTIONCHEST, dc);
@@ -426,7 +438,7 @@ public class InteractHandler implements Listener
 		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST, 
 				"`distributionchestid` = ? AND `owner_uuid` = ?", user.getDistributionChestID(), user.getUUID());
 		if(!PermissionHandler.canCreate(player, Utility.PERMCOUNTSTORAGECHEST+"*", Utility.PERMCOUNTSTORAGECHEST,
-				amount , plugin.getYamlHandler().get().getInt("maximumStorageChest"), false))
+				amount , plugin.getYamlHandler().get().getInt("maximumStorageChestPerDistributionChest"), false))
 		{
 			debug(event.getPlayer(), "TooMany StorageChest");
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Create.TooManyS")));
@@ -453,13 +465,20 @@ public class InteractHandler implements Listener
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getL().getString("CancelAction"));
 			return;
 		}
+		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+				"`id` = ?", user.getDistributionChestID());
+		if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
+				&& !player.hasPermission(Utility.PERMBYPASSSELECT))
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwnerOrMember")));
+			return;
+		}
 		event.setCancelled(true);
 		StorageChest sc = new StorageChest(0, user.getDistributionChestID(), user.getUUID(),
 				user.getPriority(),
 				System.currentTimeMillis(), user.getItemFilterSet().getContents(), user.isEndStorage(),
 				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`id` = ?", user.getDistributionChestID());
+		
 		Location dcloc = new Location(Bukkit.getWorld(dc.getWorld()), dc.getBlockX(), dc.getBlockY(), dc.getBlockZ());
 		Block block = event.getClickedBlock();
 		Location sclocr = null;
@@ -900,7 +919,26 @@ public class InteractHandler implements Listener
 				}
 				
 				ItemDistributeObject idoc = new ItemDistributeObject(null, null);
-				idoc.chestDistribute(plugin, player, inventory, prioList, endList, cloneInvL, cloneInvR);
+				if(dc.isDistributeRandom())
+				{
+					int[] excludes = new int[0];
+					ArrayList<StorageChest> clonePrioList = new ArrayList<>();
+					for(int i = 0; i < prioList.size(); i++)
+					{
+						int n = ChestHandler.getRandomWithExclusion(new Random(), 0, prioList.size()-1, excludes);
+						clonePrioList.add(prioList.get(n));
+					}
+					prioList = clonePrioList;
+					int[] excludesEnd = new int[0];
+					ArrayList<StorageChest> cloneEndList = new ArrayList<>();
+					for(int i = 0; i < endList.size(); i++)
+					{
+						int n = ChestHandler.getRandomWithExclusion(new Random(), 0, endList.size()-1, excludesEnd);
+						cloneEndList.add(endList.get(n));
+					}
+					endList = cloneEndList;
+				}
+				idoc.chestDistribute(plugin, player, inventory, prioList, endList, cloneInvL, cloneInvR, dc.isDistributeRandom());
 				i++;
 				
 				long supposeCooldown = storagechestamount/plugin.getYamlHandler().get().getInt("DelayedTicks", 1);
@@ -1011,7 +1049,27 @@ public class InteractHandler implements Listener
 							}
 							
 							ItemDistributeObject idoc = new ItemDistributeObject(null, null);
-							idoc.chestDistribute(plugin, player, inventoryc, prioListc, endListc, cloneInvLc, cloneInvRc);
+							if(dcc.isDistributeRandom())
+							{
+								int[] excludes = new int[0];
+								ArrayList<StorageChest> clonePrioListc = new ArrayList<>();
+								for(int i = 0; i < prioListc.size(); i++)
+								{
+									int n = ChestHandler.getRandomWithExclusion(new Random(), 0, prioListc.size()-1, excludes);
+									clonePrioListc.add(prioListc.get(n));
+								}
+								prioListc = clonePrioListc;
+								int[] excludesEnd = new int[0];
+								ArrayList<StorageChest> cloneEndListc = new ArrayList<>();
+								for(int i = 0; i < endListc.size(); i++)
+								{
+									int n = ChestHandler.getRandomWithExclusion(new Random(), 0, endListc.size()-1, excludesEnd);
+									cloneEndListc.add(endListc.get(n));
+								}
+								endListc = cloneEndListc;
+							}
+							idoc.chestDistribute(plugin, player, inventoryc, prioListc, endListc, cloneInvLc, cloneInvRc,
+									dcc.isDistributeRandom());
 							i++;
 						}
 					}.runTaskTimer(plugin, supposeCooldown,

@@ -9,6 +9,9 @@ Future =========================================================================
 - Die Option "Haltbarkeit" zu den Lagerkisten hinzufügen. Welche einen größer, kleiner oder zwischen Betrag angeben lässt, um Items, welche eine Haltbarkeit haben, dahingehend sortiert werden kann.
 - Die Option "Reparatur" zu den Lagerkisten hinzugefügt. Welche einen größer, kleiner oder zwischen Betrag angeben lässt, um Items, welche eine Reparaturkosten haben dahingehend sortieren zu können.
 
+Build 3 =============================================================================================================================
+- /ash distributionchest random, hinzugefügt. Setzt die Verteilerkiste in den Randommodus.
+- Randommodus hinzugefügt. In der mysql Tabelle der Verteilerkisten die Spalte "random" (boolean) hinzufügen. Default false.
 Build 2 =============================================================================================================================
 - +config.yml delay etc. neu
 - +german.yml ab zeile 15 is neues

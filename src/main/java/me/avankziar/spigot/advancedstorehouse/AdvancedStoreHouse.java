@@ -46,6 +46,7 @@ import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstoreho
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_List;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Member;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Position;
+import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Random;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Search;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Select;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.advancedstorehouse.ARGDistributionChest_Switch;
@@ -112,6 +113,8 @@ public class AdvancedStoreHouse extends JavaPlugin
 	
 	public static String infoCommandPath = "CmdAsh";
 	public static String infoCommand = "/"; //InfoComamnd
+	
+	public static CommandConstructor cc = null; 
 	
 	public void onEnable()
 	{
@@ -256,13 +259,14 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor dc_list = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_list", 1, 1, 3, null);
 		ArgumentConstructor dc_member = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_member", 1, 2, 2, null);
 		ArgumentConstructor dc_position = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_position", 1, 1, 1, null);
+		ArgumentConstructor dc_random = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_random", 1, 1, 1, null);
 		ArgumentConstructor dc_select = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_select", 1, 2, 3, null);
 		ArgumentConstructor dc_search = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_search", 1, 1, 1, null);
 		ArgumentConstructor dc_switch = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_switch", 1, 1, 1, null);
 		ArgumentConstructor dc_transfer = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_transfer", 1, 2, 2, playerMapII);
 		ArgumentConstructor dc = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc", 0, 0, 0, null,
-				dc_autodistr, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member, dc_position, dc_select, dc_search,
-				dc_switch, dc_transfer);
+				dc_autodistr, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member, dc_position, 
+				dc_random, dc_select, dc_search, dc_switch, dc_transfer);
 		
 		ArgumentConstructor endstorage = new ArgumentConstructor(yamlHandler, baseCommandI+"_endstorage", 0, 0, 0, null);
 		ArgumentConstructor gui = new ArgumentConstructor(yamlHandler, baseCommandI+"_gui", 0, 0, 0, null);
@@ -296,6 +300,8 @@ public class AdvancedStoreHouse extends JavaPlugin
 		CommandConstructor ash = new CommandConstructor(plugin, baseCommandI,
 				autodistributioninfo, blockinfo, cancel, debug, delete, dc, endstorage, gui, itemfilterset, mode, override, playerinfo, priority, sc);
 		
+		cc = ash;
+		
 		registerCommand(ash.getPath(), ash.getName());
 		getCommand(ash.getName()).setExecutor(new AshCommandExecutor(plugin, ash));
 		getCommand(ash.getName()).setTabCompleter(new TabCompletion(plugin));
@@ -305,7 +311,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 				debug, debug_im,
 				delete,
 				dc, dc_autodistr, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member,
-				dc_position, dc_select, dc_search, dc_switch, dc_transfer,
+				dc_position, dc_random, dc_select, dc_search, dc_switch, dc_transfer,
 				endstorage, gui,
 				itemfilterset, ifs_create, ifs_delete, ifs_list, ifs_name, ifs_select, ifs_update,
 				mode, override, playerinfo, priority,
@@ -330,6 +336,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		new ARGDistributionChest_List(plugin, dc_list);
 		new ARGDistributionChest_Member(plugin, dc_member);
 		new ARGDistributionChest_Position(plugin, dc_position);
+		new ARGDistributionChest_Random(plugin, dc_random);
 		new ARGDistributionChest_Select(plugin, dc_select);
 		new ARGDistributionChest_Search(plugin, dc_search);
 		new ARGDistributionChest_Switch(plugin, dc_switch);
@@ -398,7 +405,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "AdvancedStoreHouse:sccbungee");*/
 		pm.registerEvents(new JoinQuitListener(plugin), plugin);
 		pm.registerEvents(new BlockBreakListener(plugin), plugin);
-		pm.registerEvents(new PlayerCommandPreprocessListener(), plugin);
+		pm.registerEvents(new PlayerCommandPreprocessListener(cc), plugin);
 		pm.registerEvents(new InteractHandler(plugin), plugin);
 		pm.registerEvents(new InventoryClickHandler(plugin), plugin);
 		pm.registerEvents(new InventoryCloseHandler(plugin), plugin);

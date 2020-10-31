@@ -10,6 +10,7 @@ Bypass:
   List: 'ash.bypass.list'
   Search: 'ash.bypass.search'
   Transfer: 'ash.bypass.transfer'
+  Random: 'ash.bypass.random'
 Custom:
   DistributionChest: 'ash.count.distributionchest.' #For your PermSystem, take the perm and placed in the permsystem. Than write at the End a number or *. * mean the players can create unlimited. A number means the player can create only so many. And by a number pay attention to rise or lower the numbers in the configs.
   ItemFilterSet: 'ash.count.itemfilterset.'
@@ -99,6 +100,11 @@ ash_dc_position:
   Permission: 'ash.cmd.distributionchest.position'
   Suggestion: '/ash distributionchest position'
   #Toggle the PositionUpdate Mode for DistributionChests. !Select a Distributionchest with a another command to!
+ash_dc_random:
+  Argument: 'random'
+  Permission: 'ash.cmd.distributionchest.random'
+  Suggestion: '/ash distributionchest random'
+  #Toggle the random mode!
 ash_dc_select:
   Argument: 'select'
   Permission: 'ash.cmd.distributionchest.select'

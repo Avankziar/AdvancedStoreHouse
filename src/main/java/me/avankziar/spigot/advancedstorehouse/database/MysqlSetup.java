@@ -140,6 +140,7 @@ public class MysqlSetup
 		        		+ " chestname text,"
 		        		+ " normalpriority boolean,"
 		        		+ " automaticdistribution boolean,"
+		        		+ " random boolean, "
 		        		+ " server text,"
 		        		+ " world text,"
 		        		+ " blockx int,"

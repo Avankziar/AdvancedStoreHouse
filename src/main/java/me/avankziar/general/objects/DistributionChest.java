@@ -11,6 +11,7 @@ public class DistributionChest
 	private String chestName;
 	private boolean normalPriority;
 	private boolean automaticDistribution;
+	private boolean distributeRandom;
 	private String server;
 	private String world;
 	private int blockX;
@@ -18,7 +19,7 @@ public class DistributionChest
 	private int blockZ;
 	
 	public DistributionChest(int id, String owneruuid, List<String> memberlist, long creationDate,
-			String chestName, boolean normalPriority, boolean automaticDistribution, 
+			String chestName, boolean normalPriority, boolean automaticDistribution, boolean distributeRandom,
 			String server, String world, int blockX, int blockY, int blockZ)
 	{
 		setId(id);
@@ -28,6 +29,7 @@ public class DistributionChest
 		setChestName(chestName);
 		setNormalPriority(normalPriority);
 		setAutomaticDistribution(automaticDistribution);
+		setDistributeRandom(distributeRandom);
 		setServer(server);
 		setWorld(world);
 		setBlockX(blockX);
@@ -153,5 +155,15 @@ public class DistributionChest
 	public void setAutomaticDistribution(boolean automaticDistribution)
 	{
 		this.automaticDistribution = automaticDistribution;
+	}
+
+	public boolean isDistributeRandom()
+	{
+		return distributeRandom;
+	}
+
+	public void setDistributeRandom(boolean distributeRandom)
+	{
+		this.distributeRandom = distributeRandom;
 	}
 }

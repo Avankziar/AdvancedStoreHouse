@@ -73,7 +73,7 @@ public class ItemDistributeObject
 	
 	public void chestDistribute(AdvancedStoreHouse plugin, Player player, Inventory inventory, 
 			ArrayList<StorageChest> prioList, ArrayList<StorageChest> endList,
-			ItemStack[] cloneInvyL, ItemStack[] cloneInvyR)
+			ItemStack[] cloneInvyL, ItemStack[] cloneInvyR, boolean isRandom)
 	{
 		if(plugin.getYamlHandler().get().getBoolean("UseDelayedDistribution", true))
 		{
@@ -151,8 +151,15 @@ public class ItemDistributeObject
 									continue;
 								}
 								debug(player, "distribution Normal Storage start i = "+i); //0
-								cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, false);
-								cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, false);
+								if(!isRandom)
+								{
+									cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, false);
+									cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, false);
+								} else
+								{
+									cloneInvL = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvL, inventory, false);
+									cloneInvR = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvR, inventory, false);
+								}
 								i++;
 							} else if(i >= prioList.size() && j < endList.size())
 							{
@@ -213,8 +220,15 @@ public class ItemDistributeObject
 									continue;
 								}
 								debug(player, "distribution EndStorage start j = "+j);
-								cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, true);
-								cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, true);
+								if(!isRandom)
+								{
+									cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, true);
+									cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, true);
+								} else
+								{
+									cloneInvL = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvL, inventory, true);
+									cloneInvR = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvR, inventory, true);
+								}
 								j++;
 							} else
 							{
@@ -309,8 +323,15 @@ public class ItemDistributeObject
 								return;
 							}
 							debug(player, "distribution Normal Storage start i = "+i); //0
-							cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, false);
-							cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, false);
+							if(!isRandom)
+							{
+								cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, false);
+								cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, false);
+							} else
+							{
+								cloneInvL = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvL, inventory, false);
+								cloneInvR = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvR, inventory, false);
+							}
 							i++;
 						} else if(i >= prioList.size() && j < endList.size())
 						{
@@ -369,8 +390,15 @@ public class ItemDistributeObject
 								return;
 							}
 							debug(player, "distribution EndStorage start j = "+j);
-							cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, true);
-							cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, true);
+							if(!isRandom)
+							{
+								cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, true);
+								cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, true);
+							} else
+							{
+								cloneInvL = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvL, inventory, true);
+								cloneInvR = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvR, inventory, true);
+							}
 							j++;
 						} else
 						{
@@ -428,8 +456,15 @@ public class ItemDistributeObject
 					continue;
 				}
 				debug(player, "distribution Normal Storage start");
-				cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, false);
-				cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, false);
+				if(!isRandom)
+				{
+					cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, false);
+					cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, false);
+				} else
+				{
+					cloneInvL = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvL, inventory, false);
+					cloneInvR = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvR, inventory, false);
+				}
 			}
 			
 			//Endlager
@@ -468,8 +503,15 @@ public class ItemDistributeObject
 						debug(player, "distribution cinv == null");
 						continue;
 					}
-					cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, true);
-					cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, true);
+					if(!isRandom)
+					{
+						cloneInvL = ChestHandler.distribute(cinv, sc.getContents(), cloneInvL, inventory, true);
+						cloneInvR = ChestHandler.distribute(cinv, sc.getContents(), cloneInvR, inventory, true);
+					} else
+					{
+						cloneInvL = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvL, inventory, true);
+						cloneInvR = ChestHandler.distributeRandom(cinv, sc.getContents(), cloneInvR, inventory, true);
+					}
 				}
 			}
 		}

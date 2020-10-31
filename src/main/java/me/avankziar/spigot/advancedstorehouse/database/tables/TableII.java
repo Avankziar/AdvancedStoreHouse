@@ -74,8 +74,8 @@ public interface TableII
 			{
 				String sql = "INSERT INTO `" + plugin.getMysqlHandler().tableNameII 
 						+ "`(`owner_uuid`, `memberlist`, `creationdate`, `chestname`, `normalpriority`,"
-						+ " `automaticdistribution`, `server`, `world`, `blockx`, `blocky`, `blockz`) " 
-						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+						+ " `automaticdistribution`, `random`, `server`, `world`, `blockx`, `blocky`, `blockz`) " 
+						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 				preparedStatement = conn.prepareStatement(sql);
 		        preparedStatement.setString(1, cu.getOwneruuid());
 		        preparedStatement.setString(2, String.join(";", cu.getMemberList()));
@@ -83,11 +83,12 @@ public interface TableII
 		        preparedStatement.setString(4, cu.getChestName());
 		        preparedStatement.setBoolean(5, cu.isNormalPriority());
 		        preparedStatement.setBoolean(6, cu.isAutomaticDistribution());
-		        preparedStatement.setString(7, cu.getServer());
-		        preparedStatement.setString(8, cu.getWorld());
-		        preparedStatement.setInt(9, cu.getBlockX());
-		        preparedStatement.setInt(10, cu.getBlockY());
-		        preparedStatement.setInt(11, cu.getBlockZ());
+		        preparedStatement.setBoolean(7, cu.isDistributeRandom());
+		        preparedStatement.setString(8, cu.getServer());
+		        preparedStatement.setString(9, cu.getWorld());
+		        preparedStatement.setInt(10, cu.getBlockX());
+		        preparedStatement.setInt(11, cu.getBlockY());
+		        preparedStatement.setInt(12, cu.getBlockZ());
 		        
 		        preparedStatement.executeUpdate();
 		        return true;
@@ -131,7 +132,7 @@ public interface TableII
 			{
 				String data = "UPDATE `" + plugin.getMysqlHandler().tableNameII
 						+ "` SET `owner_uuid` = ?, `memberlist` = ?, `creationdate` = ?, `chestname` = ?, `normalpriority` = ?," 
-						+ " `automaticdistribution` = ?, `server` = ?, `world` = ?, `blockx` = ?, `blocky` = ?, `blockz` = ?" 
+						+ " `automaticdistribution` = ?, `random` = ?,  `server` = ?, `world` = ?, `blockx` = ?, `blocky` = ?, `blockz` = ?" 
 						+ " WHERE "+whereColumn;
 				preparedStatement = conn.prepareStatement(data);
 				preparedStatement.setString(1, cu.getOwneruuid());
@@ -140,13 +141,14 @@ public interface TableII
 		        preparedStatement.setString(4, cu.getChestName());
 		        preparedStatement.setBoolean(5, cu.isNormalPriority());
 		        preparedStatement.setBoolean(6, cu.isAutomaticDistribution());
-		        preparedStatement.setString(7, cu.getServer());
-		        preparedStatement.setString(8, cu.getWorld());
-		        preparedStatement.setInt(9, cu.getBlockX());
-		        preparedStatement.setInt(10, cu.getBlockY());
-		        preparedStatement.setInt(11, cu.getBlockZ());
+		        preparedStatement.setBoolean(7, cu.isDistributeRandom());
+		        preparedStatement.setString(8, cu.getServer());
+		        preparedStatement.setString(9, cu.getWorld());
+		        preparedStatement.setInt(10, cu.getBlockX());
+		        preparedStatement.setInt(11, cu.getBlockY());
+		        preparedStatement.setInt(12, cu.getBlockZ());
 		        
-		        int i = 12;
+		        int i = 13;
 		        for(Object o : whereObject)
 		        {
 		        	preparedStatement.setObject(i, o);
@@ -202,6 +204,7 @@ public interface TableII
 		        			result.getString("chestname"),
 		        			result.getBoolean("normalpriority"),
 		        			result.getBoolean("automaticdistribution"),
+		        			result.getBoolean("random"),
 		        			result.getString("server"),
 		        			result.getString("world"),
 		        			result.getInt("blockx"),
@@ -397,6 +400,7 @@ public interface TableII
 		        			result.getString("chestname"),
 		        			result.getBoolean("normalpriority"),
 		        			result.getBoolean("automaticdistribution"),
+		        			result.getBoolean("random"),
 		        			result.getString("server"),
 		        			result.getString("world"),
 		        			result.getInt("blockx"),
@@ -454,6 +458,7 @@ public interface TableII
 		        			result.getString("chestname"),
 		        			result.getBoolean("normalpriority"),
 		        			result.getBoolean("automaticdistribution"),
+		        			result.getBoolean("random"),
 		        			result.getString("server"),
 		        			result.getString("world"),
 		        			result.getInt("blockx"),
@@ -525,6 +530,7 @@ public interface TableII
 		        			result.getString("chestname"),
 		        			result.getBoolean("normalpriority"),
 		        			result.getBoolean("automaticdistribution"),
+		        			result.getBoolean("random"),
 		        			result.getString("server"),
 		        			result.getString("world"),
 		        			result.getInt("blockx"),

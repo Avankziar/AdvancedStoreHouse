@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -318,7 +319,26 @@ public class BackgroundTask
 				}
 				
 				ItemDistributeObject idoc = new ItemDistributeObject(null, null);
-				idoc.chestDistribute(plugin, null, inventoryc, prioList, endList, cloneInvLc, cloneInvRc);
+				if(dc.isDistributeRandom())
+				{
+					int[] excludes = new int[0];
+					ArrayList<StorageChest> clonePrioList = new ArrayList<>();
+					for(int i = 0; i < prioList.size(); i++)
+					{
+						int n = ChestHandler.getRandomWithExclusion(new Random(), 0, prioList.size()-1, excludes);
+						clonePrioList.add(prioList.get(n));
+					}
+					prioList = clonePrioList;
+					int[] excludesEnd = new int[0];
+					ArrayList<StorageChest> cloneEndList = new ArrayList<>();
+					for(int i = 0; i < endList.size(); i++)
+					{
+						int n = ChestHandler.getRandomWithExclusion(new Random(), 0, endList.size()-1, excludesEnd);
+						cloneEndList.add(endList.get(n));
+					}
+					endList = cloneEndList;
+				}
+				idoc.chestDistribute(plugin, null, inventoryc, prioList, endList, cloneInvLc, cloneInvRc, dc.isDistributeRandom());
 				i++;
 				if(i < dcList.size())
 				{

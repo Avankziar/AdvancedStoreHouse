@@ -109,7 +109,7 @@ public class ARGDistributionChest_List extends ArgumentModule
 			TextComponent x = ChatApi.clickEvent("&6"+dc.getChestName()+"&f:",
 					ClickEvent.Action.RUN_COMMAND,
 					plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.CommandRun")
-					.replace("%name%", String.valueOf(dc.getChestName())));
+					.replace("%name%", String.valueOf(dc.getChestName()) +" "+ otherplayer));
 			bclist.add(x);
 			TextComponent y = ChatApi.apiChat("&eⓘ",
 					ClickEvent.Action.RUN_COMMAND,

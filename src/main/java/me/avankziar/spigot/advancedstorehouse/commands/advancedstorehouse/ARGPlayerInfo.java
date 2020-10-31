@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import main.java.me.avankziar.general.objects.ChatApi;
+import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.PluginUser.Mode;
 import main.java.me.avankziar.general.objects.PluginUserHandler;
@@ -14,6 +15,7 @@ import main.java.me.avankziar.spigot.advancedstorehouse.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.advancedstorehouse.assistance.Utility;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.tree.ArgumentConstructor;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.tree.ArgumentModule;
+import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlHandler;
 
 public class ARGPlayerInfo extends ArgumentModule
 {
@@ -58,8 +60,16 @@ public class ARGPlayerInfo extends ArgumentModule
 				.replace("%name%", user.getName())));
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.Mode")
 				.replace("%mode%", returnMode(user.getMode()))));
+		int id = user.getDistributionChestID();
+		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.DChestDontExist")));
+			return;
+		}
+		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
+				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id);
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.DC")
-				+user.getDistributionChestID()));
+				+user.getDistributionChestID() + " &r| "+dc.getChestName()));
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.SC")
 				+user.getStorageChestID()));
 		if(user.getItemFilterSet() != null)

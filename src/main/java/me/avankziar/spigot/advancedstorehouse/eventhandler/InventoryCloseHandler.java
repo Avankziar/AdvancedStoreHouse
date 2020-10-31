@@ -2,6 +2,7 @@ package main.java.me.avankziar.spigot.advancedstorehouse.eventhandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -195,15 +196,35 @@ public class InventoryCloseHandler implements Listener
 		//Normal Lager
 		//PrioList und EndList
 		ItemDistributeObject ido = new ItemDistributeObject(null, null);
-		ido.chestDistribute(plugin, player, inventory, prioList, endList, cloneInvL, cloneInvR);
+		if(dc.isDistributeRandom())
+		{
+			int[] excludes = new int[0];
+			ArrayList<StorageChest> clonePrioList = new ArrayList<>();
+			for(int i = 0; i < prioList.size(); i++)
+			{
+				int n = ChestHandler.getRandomWithExclusion(new Random(), 0, prioList.size()-1, excludes);
+				clonePrioList.add(prioList.get(n));
+			}
+			prioList = clonePrioList;
+			int[] excludesEnd = new int[0];
+			ArrayList<StorageChest> cloneEndList = new ArrayList<>();
+			for(int i = 0; i < endList.size(); i++)
+			{
+				int n = ChestHandler.getRandomWithExclusion(new Random(), 0, endList.size()-1, excludesEnd);
+				cloneEndList.add(endList.get(n));
+			}
+			endList = cloneEndList;
+		}
+		ido.chestDistribute(plugin, player, inventory, prioList, endList, cloneInvL, cloneInvR, dc.isDistributeRandom());
 		long supposeCooldown = storagechestamount*plugin.getYamlHandler().get().getInt("DelayedTicks", 1)*20+10;
 		
 		//Kettenverteilung
 		debug(player, "ChainDc distribution starts");
+		//Kettekisten bestimmung
+		final ArrayList<DistributionChest> chain = ChestHandler.getChainChest(plugin, player, prioList, endList, server);
 		new BukkitRunnable()
 		{
-			//Kettekisten bestimmung
-			ArrayList<DistributionChest> chain = ChestHandler.getChainChest(plugin, player, prioList, endList, server);
+			
 			int i = 0;
 			@Override
 			public void run()
@@ -299,7 +320,26 @@ public class InventoryCloseHandler implements Listener
 				}
 				
 				ItemDistributeObject idoc = new ItemDistributeObject(null, null);
-				idoc.chestDistribute(plugin, player, inventoryc, prioListc, endListc, cloneInvLc, cloneInvRc);
+				if(dcc.isDistributeRandom())
+				{
+					int[] excludes = new int[0];
+					ArrayList<StorageChest> clonePrioListc = new ArrayList<>();
+					for(int i = 0; i < prioListc.size(); i++)
+					{
+						int n = ChestHandler.getRandomWithExclusion(new Random(), 0, prioListc.size()-1, excludes);
+						clonePrioListc.add(prioListc.get(n));
+					}
+					prioListc = clonePrioListc;
+					int[] excludesEnd = new int[0];
+					ArrayList<StorageChest> cloneEndListc = new ArrayList<>();
+					for(int i = 0; i < endListc.size(); i++)
+					{
+						int n = ChestHandler.getRandomWithExclusion(new Random(), 0, endListc.size()-1, excludesEnd);
+						cloneEndListc.add(endListc.get(n));
+					}
+					endListc = cloneEndListc;
+				}
+				idoc.chestDistribute(plugin, player, inventoryc, prioListc, endListc, cloneInvLc, cloneInvRc, dcc.isDistributeRandom());
 				i++;
 			}
 		}.runTaskTimer(plugin, supposeCooldown,

@@ -37,11 +37,6 @@ IndirectPauseValue: 12000
 #The min value for a distributionchest. Aka a basevalue added to the dynamic value.
 MinimumTickPerDistributionChest: 10
 
-#Use this in the dynamic Format to upspeed the distribution with the next value
-UseFastDelayedDistribution: true
-#The value set, how many storagechest per tick in a loop is processed
-ChestsPerTick: 10
-
 maximumDistributionChest: 500
 maximumStorageChestPerDistributionChest: 500
 maximumItemFilterSet: 500
@@ -61,3 +56,8 @@ DelayedTicks: 1
 DelayChainChests: 10
 #Ticks, how fast per Distributionchest looping.
 DelayedChainTicks: 10
+
+#Use this in the dynamic Format to upspeed the distribution with the next value
+UseFastDelayedDistribution: true
+#The value set, how many storagechest per tick in a loop is processed
+ChestsPerTick: 10

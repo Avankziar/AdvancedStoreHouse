@@ -45,6 +45,7 @@ CmdAsh:
     ash_dc_list: '&c/ash distributionchest list &f| Lists all IDs and names of your distribution boxes.'
     ash_dc_member: '&c/ash distributionchest member <playername> &f| Add or remove a player from the member list.'
     ash_dc_position: '&c/ash distributionchest position &f| Put the player in distributionchest position change mode'
+    ash_dc_random: '&c/ash distributionchest random &f| Activated or deactivated the random mode.' 
     ash_dc_search: '&c/ash distributionchest search &f| Searches the selected distribution box'
     ash_dc_select: '&c/ash distributionchest select <ID> &f| Selects a distribution box'
     ash_dc_switch: '&c/ash distributionchest switch &f| Toggles whether the priorities should be considered in ascending or descending order.'
@@ -179,7 +180,7 @@ CmdAsh:
     Selected: '&eItemFilterSet &f%name% &e| &f%id% &eselected!'
   ItemFilterSetUpdate:
     NewOne: '&cAttention! &eYou do not own the original ItemFilterSet! Therefore a copy has been made in your name!'
-  Mode
+  Mode:
     SetMode: '&eMode &f%mode% &eset!'
   OpenItemFilter:
     DontExist: '&cStorage box with the ID &f%id% &cdoes not &cexist!'
@@ -219,6 +220,9 @@ CmdAsh:
     MayChange: '&ePlease remember to cancel the action now or select another distribution/storage box'
   Priority:
     Set: '&ePriority set to &f%priority% &set!'
+  Random:
+    Deactive: '&eThe random mode is nun deactive.'
+    Active: '&eThe random mode is nun active!'
   Search:
     SelectDc: '&cPlease select a distribution box first!'
     SelectSc: '&cPlease select a storage box first!'
