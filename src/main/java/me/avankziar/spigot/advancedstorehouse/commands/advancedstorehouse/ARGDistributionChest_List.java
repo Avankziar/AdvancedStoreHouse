@@ -80,8 +80,8 @@ public class ARGDistributionChest_List extends ArgumentModule
 				.replace("%cmd%", "/ash distributionchest list")));
 			return;
 		}
-		int start = page*25;
-		int quantity = 25;
+		int quantity = plugin.getYamlHandler().get().getInt("AmountToDisplayDistributuionChestInListCommand", 25);
+		int start = page*quantity;		
 		ArrayList<DistributionChest> dcList = ConvertHandler.convertListII(
 				plugin.getMysqlHandler().getList(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id`",
 						true, start, quantity, "`owner_uuid` = ?", otheruuid));

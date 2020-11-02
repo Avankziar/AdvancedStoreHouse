@@ -8,10 +8,13 @@ Future =========================================================================
 - Die Option "MoneyPrinter" zu den Lagerkisten hinzufügen. Der MoneyPrinter sorgt dafür, dass alle Item, welche in diese kommen sollten, in Geld (per yaml) umgewandelt werden.
 - Die Option "Haltbarkeit" zu den Lagerkisten hinzufügen. Welche einen größer, kleiner oder zwischen Betrag angeben lässt, um Items, welche eine Haltbarkeit haben, dahingehend sortiert werden kann.
 - Die Option "Reparatur" zu den Lagerkisten hinzugefügt. Welche einen größer, kleiner oder zwischen Betrag angeben lässt, um Items, welche eine Reparaturkosten haben dahingehend sortieren zu können.
+- Wenn man die kisten vorherbefüllt und dann diese als Lagerkiste registriert, dann verschwinden die Items, die vorher drin waren.
 
 Build 3 =============================================================================================================================
-- /ash distributionchest random, hinzugefügt. Setzt die Verteilerkiste in den Randommodus.
-- Randommodus hinzugefügt. In der mysql Tabelle der Verteilerkisten die Spalte "random" (boolean) hinzufügen. Default false.
+- +/ash distributionchest random, hinzugefügt. Setzt die Verteilerkiste in den Randommodus.
+- +Randommodus hinzugefügt. In der mysql Tabelle der Verteilerkisten die Spalte "random" (boolean) hinzufügen. Default false.
+- +Config Value, zum setzten der anzahl von KistenObject, in den listen befehl eingepfegt. Bei einer zu hohen zahl, führte das zum Kick des spielers
+
 Build 2 =============================================================================================================================
 - +config.yml delay etc. neu
 - +german.yml ab zeile 15 is neues
@@ -27,7 +30,6 @@ Build 2 ========================================================================
 - +Verteilungsvorgang unterbinden, mehrfach anzulaufen
 - +Items werden in Kettekiste verteilt, aber von da nicht, da die 10 sekunden zu kurz sind bspw.
 - +Befehl zum löschen von Verteilerkiste & Lagerkiste pro Server, pro Welt löschen kann
-
 Base & Build 1=======================================================================================================================
 - +mysql TableI
 - +Erstellung von Verteilerkisten

@@ -124,7 +124,7 @@ CmdAsh:
     CommandRun: '/ash distributionchest select %name%'
     CommandRunInfo: '/ash distributionchest info'
     CommandRunDelete: '/ash distributionchest delete'
-    CommandString: '/ash distributionchest list '
+    CommandString: '/ash distributionchest list'
   DistributionChestName:
     SetName: '&eVerteilerkiste &f%oldname% &ewurde in &f%newname% &eumbenannt.'
   DistributionChestMember:
@@ -239,7 +239,7 @@ CmdAsh:
     Empty: '&cDu hast keine Lagerkisten!'
     Headline: '&e=====&7[&6Lagerkiste Liste von &f%player%&7]&e====='
     CommandRun: '/ash storagechest select %id%'
-    CommandString: '/ash storagechest list '
+    CommandString: '/ash storagechest list'
     CommandRunInfo: '/ash storagechest info'
     CommandRunOpen: '/ash storagechest openitemfilter'
     CommandRunDelete: '/ash storagechest delete'

@@ -61,3 +61,8 @@ DelayedChainTicks: 10
 UseFastDelayedDistribution: true
 #The value set, how many storagechest per tick in a loop is processed
 ChestsPerTick: 10
+
+#Set the diplayed Amount Chest in the "list" command (/ash distributionchest|storagechest list)
+#This is maded, because it happend by some server, that the player, which perform the command was kicked without errors
+AmountToDisplayDistributuionChestInListCommand: 25
+AmountToDisplayStorageChestInListCommand: 25
