@@ -42,7 +42,7 @@ public class ARGDistributionChest_Position extends ArgumentModule
 			user.setMode(Mode.POSITIONUPDATEDISTRIBUTION);
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Position.DChest")));
 		}
-		plugin.getMysqlHandler().updateData(MysqlHandler.Type.PLUGINUSER, user, "`player_uuid` = ?", user);
+		plugin.getMysqlHandler().updateData(MysqlHandler.Type.PLUGINUSER, user, "`player_uuid` = ?", user.getUUID());
 		PluginUserHandler.addUser(user);
 		return;
 	}

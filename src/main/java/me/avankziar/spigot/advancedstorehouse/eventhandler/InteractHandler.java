@@ -77,6 +77,7 @@ public class InteractHandler implements Listener
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onInteract(PlayerInteractEvent event) throws IOException
 	{
+		//TODO bis das per Spieler einstellbar ist
 		if(event.getClickedBlock() != null)
 		{
 			if(event.getClickedBlock().getType() == Material.LEVER)
@@ -169,6 +170,10 @@ public class InteractHandler implements Listener
 			debug(event.getPlayer(), "!player.isSneacking");
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getL().getString("CancelAction"));
 			checkIfDistributionChest(event, player, user);
+			return;
+		}
+		if(event.isCancelled())
+		{
 			return;
 		}
 		switch(user.getMode())
@@ -756,6 +761,7 @@ public class InteractHandler implements Listener
 		return;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void buttonAndPlate(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
 	{
 		debug(event.getPlayer(), "=> Begin ButtonAndPlate");
@@ -787,6 +793,10 @@ public class InteractHandler implements Listener
 				&& blocks.getType() != Material.WARPED_PRESSURE_PLATE)
 		{
 			debug(event.getPlayer(), "Not a Button or Plate");
+			return;
+		}
+		if(event.isCancelled())
+		{
 			return;
 		}
 		//Location loc = blocks.getLocation().add(-1, -1, -1);
@@ -1543,6 +1553,7 @@ public class InteractHandler implements Listener
 		}*/
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void lever(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
 	{
 		debug(event.getPlayer(), "=> Begin Lever");
@@ -1555,6 +1566,10 @@ public class InteractHandler implements Listener
 		if(blocks.getType() != Material.LEVER)
 		{
 			debug(event.getPlayer(), "Not a Lever");
+			return;
+		}
+		if(event.isCancelled())
+		{
 			return;
 		}
 		Location loc = blocks.getLocation().add(-1, -1, -1);
@@ -1740,6 +1755,11 @@ public class InteractHandler implements Listener
 		}
 		String server = plugin.getYamlHandler().get().getString("Servername");
 		Location loc = event.getClickedBlock().getLocation();
+		if(loc == null)
+		{
+			debug(event.getPlayer(), "Location == null");
+			return;
+		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
 				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());

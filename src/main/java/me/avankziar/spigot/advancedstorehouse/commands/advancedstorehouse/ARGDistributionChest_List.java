@@ -19,6 +19,7 @@ import main.java.me.avankziar.spigot.advancedstorehouse.assistance.Utility;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.tree.ArgumentConstructor;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.tree.ArgumentModule;
 import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlHandler;
+import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlHandler.Type;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -95,8 +96,7 @@ public class ARGDistributionChest_List extends ArgumentModule
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.Empty")));
 			return;
 		}
-		int last = ((DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST, "`owner_uuid` = ?",
-				otheruuid)).getId();
+		int last = plugin.getMysqlHandler().lastID(Type.DISTRIBUTIONCHEST);
 		int secondLast = dcList.get(dcList.size()-1).getId();
 		boolean lastpage = false;
 		if(secondLast >= last)

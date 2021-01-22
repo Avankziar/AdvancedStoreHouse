@@ -20,28 +20,9 @@ public class CommandHelper
 		this.plugin = plugin;
 	}
 	
-	private void debug(String s)
-	{
-		boolean boo = true;
-		if(boo)
-		{
-			System.out.println(s);
-		}
-	}
-	
 	public void pastNextPage(Player player, String path,
 			int page, boolean lastpage, String cmdstring, String...objects)
 	{
-		debug("player != null:"+(player != null));
-		debug("player:"+player.getName());
-		debug("path:"+path);
-		debug("page:"+page);
-		debug("lastpage:"+lastpage);
-		debug("cmdString:"+cmdstring);
-		for(Object o : objects)
-		{
-			debug("oject:"+o.toString());
-		}
 		if(page == 0 && lastpage)
 		{
 			return;
@@ -52,7 +33,6 @@ public class CommandHelper
 		List<BaseComponent> pages = new ArrayList<BaseComponent>();
 		if(page!=0)
 		{
-			debug("page != 0");
 			TextComponent msg2 = ChatApi.tctl(
 					plugin.getYamlHandler().getL().getString(path+".Past"));
 			String cmd = cmdstring+" "+String.valueOf(j);
@@ -62,11 +42,9 @@ public class CommandHelper
 			}
 			msg2.setClickEvent( new ClickEvent(ClickEvent.Action.RUN_COMMAND, cmd));
 			pages.add(msg2);
-			debug("Exist page != 0");
 		}
 		if(!lastpage)
 		{
-			debug("!lastpage");
 			TextComponent msg1 = ChatApi.tctl(
 					plugin.getYamlHandler().getL().getString(path+".Next"));
 			String cmd = cmdstring+" "+String.valueOf(i);
@@ -80,11 +58,8 @@ public class CommandHelper
 				pages.add(ChatApi.tc(" | "));
 			}
 			pages.add(msg1);
-			debug("exist lastpage");
 		}
-		debug("Send player message");
 		MSG.setExtra(pages);	
 		player.spigot().sendMessage(MSG);
-		debug("Exist Methode");
 	}
 }

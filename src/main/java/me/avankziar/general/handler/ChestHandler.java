@@ -849,6 +849,14 @@ public class ChestHandler
 	
 	public static boolean isLocationsEquals(Location one, Location two)
 	{
+		if(one == null && two != null)
+		{
+			return false;
+		}
+		if(one != null && two == null)
+		{
+			return false;
+		}
 		if(one.getWorld().getName().equals(two.getWorld().getName())
 				&& one.getX() == two.getX()
 				&& one.getY() == two.getY()

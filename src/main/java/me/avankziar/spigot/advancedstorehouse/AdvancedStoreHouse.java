@@ -81,6 +81,7 @@ import main.java.me.avankziar.spigot.advancedstorehouse.commands.tree.CommandCon
 import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlHandler;
 import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlSetup;
 import main.java.me.avankziar.spigot.advancedstorehouse.database.YamlHandler;
+import main.java.me.avankziar.spigot.advancedstorehouse.database.YamlManager;
 import main.java.me.avankziar.spigot.advancedstorehouse.eventhandler.InteractHandler;
 import main.java.me.avankziar.spigot.advancedstorehouse.eventhandler.InventoryClickHandler;
 import main.java.me.avankziar.spigot.advancedstorehouse.eventhandler.InventoryCloseHandler;
@@ -95,6 +96,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 	public static Logger log;
 	public static String pluginName = "AdvancedStoreHouse";
 	private static YamlHandler yamlHandler;
+	private static YamlManager yamlManager;
 	private static MysqlSetup mysqlSetup;
 	private static MysqlHandler mysqlHandler;
 	private static BackgroundTask backgroundtask;
@@ -174,6 +176,16 @@ public class AdvancedStoreHouse extends JavaPlugin
 	public YamlHandler getYamlHandler() 
 	{
 		return yamlHandler;
+	}
+	
+	public YamlManager getYamlManager()
+	{
+		return yamlManager;
+	}
+
+	public void setYamlManager(YamlManager yamlManager)
+	{
+		AdvancedStoreHouse.yamlManager = yamlManager;
 	}
 	
 	public MysqlSetup getMysqlSetup() 

@@ -1,6 +1,6 @@
 main: main.java.me.avankziar.spigot.advancedstorehouse.AdvancedStoreHouse
 name: AdvancedStoreHouse
-version: 3
+version: 4
 load: STARTUP
 api-version: 1.16
 description: a Storage System Plugin

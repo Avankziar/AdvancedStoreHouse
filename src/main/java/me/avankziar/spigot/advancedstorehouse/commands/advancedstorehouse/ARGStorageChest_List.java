@@ -21,6 +21,7 @@ import main.java.me.avankziar.spigot.advancedstorehouse.assistance.Utility;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.tree.ArgumentConstructor;
 import main.java.me.avankziar.spigot.advancedstorehouse.commands.tree.ArgumentModule;
 import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlHandler;
+import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlHandler.Type;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -29,15 +30,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class ARGStorageChest_List extends ArgumentModule
 {
 	private AdvancedStoreHouse plugin;
-	
-	private void debug(String s)
-	{
-		boolean boo = true;
-		if(boo)
-		{
-			System.out.println(s);
-		}
-	}
 	
 	public ARGStorageChest_List(AdvancedStoreHouse plugin, ArgumentConstructor argumentConstructor)
 	{
@@ -49,21 +41,16 @@ public class ARGStorageChest_List extends ArgumentModule
 	public void run(CommandSender sender, String[] args) throws IOException
 	{
 		Player player = (Player) sender;
-		debug("is Player != null:"+(player!=null));
 		String pageString = "";
 		int page = 0;
 		String otherplayer = player.getName();
-		debug("is playerName != null:"+(otherplayer!=null));
 		String otheruuid = player.getUniqueId().toString();
-		debug("is playerUUID != null:"+(otheruuid!=null));
 		if(args.length >= 3)
 		{
 			pageString = args[2];
-			debug("is pageString != null:"+(pageString!=null));
 			if(MatchApi.isInteger(pageString))
 			{
 				page = Integer.parseInt(pageString);
-				debug("is pageString:"+page);
 			} else
 			{
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("IllegalArgument")));
@@ -111,8 +98,7 @@ public class ARGStorageChest_List extends ArgumentModule
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.Empty")));
 			return;
 		}
-		int last = ((StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST, "`owner_uuid` = ?",
-				otheruuid)).getId();
+		int last = plugin.getMysqlHandler().lastID(Type.STORAGECHEST);
 		int secondLast = dcList.get(dcList.size()-1).getId();
 		boolean lastpage = false;
 		if(secondLast >= last)
@@ -126,20 +112,16 @@ public class ARGStorageChest_List extends ArgumentModule
 			String name = "=)(?%!-_null_-!%?)(=";
 			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", dcid))
 			{
-				debug("dcId:"+dcid+" exist");
 				name = ((DistributionChest) 
 						plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", dcid)).getChestName();
-				debug("dcId:"+dcid+" Name:"+name+" exist");
 			}
 			if(map.containsKey(name))
 			{
-				debug("dcId:"+dcid+" map contains Name, replace");
 				ArrayList<StorageChest> scarray = map.get(name);
 				scarray.add(sc);
 				map.replace(name, scarray);
 			} else
 			{
-				debug("dcId:"+dcid+" map didnt contains Name, put");
 				ArrayList<StorageChest> scarray = new ArrayList<>();
 				scarray.add(sc);
 				map.put(name, scarray);
@@ -153,7 +135,6 @@ public class ARGStorageChest_List extends ArgumentModule
 			List<BaseComponent> bclist = new ArrayList<>();
 			if(!name.equals("=)(?%!-_null_-!%?)(="))
 			{
-				debug("Output OuterLoop: "+name);
 				player.spigot().sendMessage(ChatApi.clickEvent("&c"+name+"&f:",
 						ClickEvent.Action.RUN_COMMAND, 
 						plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.CommandRun")
@@ -161,7 +142,6 @@ public class ARGStorageChest_List extends ArgumentModule
 				bclist.add(ChatApi.tc("  "));
 				for(StorageChest sc : scarray)
 				{
-					debug("Output InnerLoop: "+name+" scid: "+sc.getId());
 					TextComponent x = ChatApi.clickEvent("&6"+sc.getId()+"&f:",
 							ClickEvent.Action.RUN_COMMAND, 
 							plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandRun")
@@ -208,7 +188,6 @@ public class ARGStorageChest_List extends ArgumentModule
 		{
 			for(StorageChest sc : scarray)
 			{
-				debug("Output Loop: LostChests");
 				TextComponent x = ChatApi.clickEvent("  &6"+sc.getId()+"&f:",
 						ClickEvent.Action.RUN_COMMAND, plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandRun")
 						.replace("%id%", String.valueOf(sc.getId())));
@@ -238,7 +217,6 @@ public class ARGStorageChest_List extends ArgumentModule
 			tc.setExtra(bclist);
 			player.spigot().sendMessage(tc);
 		}
-		debug("Next and Past Pages");
 		plugin.getCommandHelper().pastNextPage(player, "CmdAsh.BaseInfo", page, lastpage,
 				plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandString"), otherplayer);
 		return;

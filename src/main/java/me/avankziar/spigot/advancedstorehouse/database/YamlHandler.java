@@ -2,72 +2,35 @@ package main.java.me.avankziar.spigot.advancedstorehouse.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 
 import main.java.me.avankziar.spigot.advancedstorehouse.AdvancedStoreHouse;
+import main.java.me.avankziar.spigot.advancedstorehouse.database.Language.ISO639_2B;
 
-public class YamlHandler 
+public class YamlHandler
 {
 	private AdvancedStoreHouse plugin;
 	private File config = null;
 	private YamlConfiguration cfg = new YamlConfiguration();
+	
 	private File commands = null;
 	private YamlConfiguration com = new YamlConfiguration();
-	private File arabic = null;
-	private YamlConfiguration ara = new YamlConfiguration();
-	private File dutch = null;
-	private YamlConfiguration dut = new YamlConfiguration();
-	private File english = null;
-	private YamlConfiguration eng = new YamlConfiguration();
-	private File french = null;
-	private YamlConfiguration fre = new YamlConfiguration();
-	private File german = null;
-	private YamlConfiguration ger = new YamlConfiguration();
-	private File hindi = null;
-	private YamlConfiguration hin = new YamlConfiguration();
-	private File italian = null;
-	private YamlConfiguration ita = new YamlConfiguration();
-	private File japanese = null;
-	private YamlConfiguration jap = new YamlConfiguration();
-	private File mandarin = null;
-	private YamlConfiguration mad = new YamlConfiguration();
-	private File russian = null;
-	private YamlConfiguration rus = new YamlConfiguration();
-	private File spanish = null;
-	private YamlConfiguration spa = new YamlConfiguration();
-	private YamlConfiguration lang = null;
-	private String languages;
 	
-	public YamlHandler(AdvancedStoreHouse plugin) 
+	private String languages;
+	private File language = null;
+	private YamlConfiguration lang = new YamlConfiguration();
+
+	public YamlHandler(AdvancedStoreHouse plugin)
 	{
 		this.plugin = plugin;
 		loadYamlHandler();
-	}
-	
-	public boolean loadYamlHandler()
-	{
-		if(!mkdirGeneralFiles())
-		{
-			return false;
-		}
-		if(!loadGeneralFiles())
-		{
-			return false;
-		}
-		languages = cfg.getString("Language", "English");
-		if(!mkdir())
-		{
-			return false;
-		}
-		if(!loadYamls())
-		{
-			return false;
-		}
-		initGetL();
-		return true;
 	}
 	
 	public YamlConfiguration get()
@@ -85,266 +48,132 @@ public class YamlHandler
 		return lang;
 	}
 	
-	public void initGetL()
+	public boolean loadYamlHandler()
 	{
-		if(languages.equalsIgnoreCase("Arabic"))
+		if(!mkdirStaticFiles())
 		{
-			lang = ara;
-		} else if(languages.equalsIgnoreCase("Dutch"))
-		{
-			lang = dut;
-		} else if(languages.equalsIgnoreCase("French"))
-		{
-			lang = fre;
-		} else if(languages.equalsIgnoreCase("German"))
-		{
-			lang = ger;
-		} else if(languages.equalsIgnoreCase("Hindi"))
-		{
-			lang = hin;
-		} else if(languages.equalsIgnoreCase("Italian"))
-		{
-			lang = ita;
-		} else if(languages.equalsIgnoreCase("Japanese"))
-		{
-			lang = jap;
-		} else if(languages.equalsIgnoreCase("Mandarin"))
-		{
-			lang = mad;
-		} else if(languages.equalsIgnoreCase("Russian"))
-		{
-			lang = rus;
-		} else if(languages.equalsIgnoreCase("Spanish"))
-		{
-			lang = spa;
-		} else
-		{
-			lang = eng;
+			return false;
 		}
+		
+		if(!mkdirDynamicFiles()) //Per language one file
+		{
+			return false;
+		}
+		return true;
 	}
 	
-	public boolean mkdirGeneralFiles()
+	public boolean mkdirStaticFiles()
 	{
-		config = new File(plugin.getDataFolder(), "config.yml");
+		//Erstellen aller Werte FÜR die Config.yml
+		plugin.setYamlManager(new YamlManager());
+		
+		File directory = new File(plugin.getDataFolder()+"");
+		if(!directory.exists())
+		{
+			directory.mkdir();
+		}
+		
+		//Initialisierung der config.yml
+		config = new File(plugin.getDataFolder(), "default.yml");
 		if(!config.exists()) 
 		{
 			AdvancedStoreHouse.log.info("Create config.yml...");
-			plugin.saveResource("config.yml", false);
+			try
+			{
+				//Erstellung einer "leere" config.yml
+				FileUtils.copyToFile(plugin.getResource("default.yml"), config);
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
+		//Laden der config.yml
+		if(!loadYamlTask(config, cfg))
+		{
+			return false;
+		}
+		
+		//Niederschreiben aller Werte für die Datei
+		writeFile(config, cfg, plugin.getYamlManager().getConfigKey());
+		
+		languages = cfg.getString("Language", "ENG").toUpperCase();
+		
 		commands = new File(plugin.getDataFolder(), "commands.yml");
 		if(!commands.exists()) 
 		{
 			AdvancedStoreHouse.log.info("Create commands.yml...");
-			plugin.saveResource("commands.yml", false);
+			try
+			{
+				//Erstellung einer "leere" config.yml
+				FileUtils.copyToFile(plugin.getResource("default.yml"), commands);
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		if(!loadYamlTask(commands, com))
+		{
+			return false;
+		}
+		writeFile(commands, com, plugin.getYamlManager().getCommandsKey());
+		return true;
+	}
+	
+	private boolean mkdirDynamicFiles()
+	{
+		//Vergleich der Sprachen
+		List<Language.ISO639_2B> types = new ArrayList<Language.ISO639_2B>(EnumSet.allOf(Language.ISO639_2B.class));
+		ISO639_2B languageType = ISO639_2B.ENG;
+		for(ISO639_2B type : types)
+		{
+			if(type.toString().equals(languages))
+			{
+				languageType = type;
+				break;
+			}
+		}
+		//Setzen der Sprache
+		plugin.getYamlManager().setLanguageType(languageType);
+		
+		if(!mkdirLanguage())
+		{
+			return false;
 		}
 		return true;
 	}
 	
-	private boolean loadGeneralFiles()
+	private boolean mkdirLanguage()
 	{
-		if(!loadYamlTask(config, cfg, "config.yml"))
-		{
-			return false;
-		}
-		if(!loadYamlTask(commands, com, "commands.yml"))
-		{
-			return false;
-		}
-		return true;
-	}
-	
-	private boolean mkdir()
-	{
+		String languageString = plugin.getYamlManager().getLanguageType().toString().toLowerCase();
 		File directory = new File(plugin.getDataFolder()+"/Languages/");
 		if(!directory.exists())
 		{
 			directory.mkdir();
 		}
-		arabic = new File(directory.getPath(), "arabic.yml");
-		if(!arabic.exists()) 
+		language = new File(directory.getPath(), languageString+".yml");
+		if(!language.exists()) 
 		{
-			AdvancedStoreHouse.log.info("Create arabic.yml...");
+			AdvancedStoreHouse.log.info("Create %lang%.yml...".replace("%lang%", languageString));
 			try
 			{
-				FileUtils.copyToFile(plugin.getResource("arabic.yml"), arabic);
+				FileUtils.copyToFile(plugin.getResource("default.yml"), language);
 			} catch (IOException e)
 			{
 				e.printStackTrace();
 			}
 		}
-		dutch = new File(directory.getPath(), "dutch.yml");
-		if(!dutch.exists()) 
+		//Laden der Datei
+		if(!loadYamlTask(language, lang))
 		{
-			AdvancedStoreHouse.log.info("Create dutch.yml...");
-			try
-			{
-				FileUtils.copyToFile(plugin.getResource("dutch.yml"), dutch);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+			return false;
 		}
-		english = new File(directory.getPath(), "english.yml");
-		if(!english.exists()) 
-		{
-			AdvancedStoreHouse.log.info("Create english.yml...");
-			try
-			{
-				FileUtils.copyToFile(plugin.getResource("english.yml"), english);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		french = new File(directory.getPath(), "french.yml");
-		if(!french.exists())
-		{
-			AdvancedStoreHouse.log.info("Create french.yml...");
-			try
-			{
-				FileUtils.copyToFile(plugin.getResource("french.yml"), french);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		german = new File(directory.getPath(), "german.yml");
-		if(!german.exists()) 
-		{
-			AdvancedStoreHouse.log.info("Create german.yml...");
-			try
-			{
-				FileUtils.copyToFile(plugin.getResource("german.yml"), german);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		hindi = new File(directory.getPath(), "hindi.yml");
-		if(!hindi.exists()) 
-		{
-			AdvancedStoreHouse.log.info("Create hindi.yml...");
-			try
-			{
-				FileUtils.copyToFile(plugin.getResource("hindi.yml"), hindi);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		italian = new File(directory.getPath(), "italian.yml");
-		if(!italian.exists()) 
-		{
-			AdvancedStoreHouse.log.info("Create italian.yml...");
-			try
-			{
-				FileUtils.copyToFile(plugin.getResource("italian.yml"), italian);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		japanese = new File(directory.getPath(), "japanese.yml");
-		if(!japanese.exists()) 
-		{
-			AdvancedStoreHouse.log.info("Create japanese.yml...");
-			try
-			{
-				FileUtils.copyToFile(plugin.getResource("japanese.yml"), japanese);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		mandarin = new File(directory.getPath(), "mandarin.yml");
-		if(!mandarin.exists()) 
-		{
-			AdvancedStoreHouse.log.info("Create mandarin.yml...");
-			try
-			{
-				FileUtils.copyToFile(plugin.getResource("mandarin.yml"), mandarin);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		russian = new File(directory.getPath(), "russian.yml");
-		if(!russian.exists()) 
-		{
-			AdvancedStoreHouse.log.info("Create russian.yml...");
-			try
-			{
-				FileUtils.copyToFile(plugin.getResource("russian.yml"), russian);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		spanish = new File(directory.getPath(), "spanish.yml");
-		if(!spanish.exists()) 
-		{
-			AdvancedStoreHouse.log.info("Create spanish.yml...");
-			try
-			{
-				FileUtils.copyToFile(plugin.getResource("spanish.yml"), spanish);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
+		//Niederschreiben aller Werte in die Datei
+		writeFile(language, lang, plugin.getYamlManager().getLanguageKey());
 		return true;
 	}
 	
-	public boolean loadYamls()
-	{
-		if(!loadYamlTask(arabic, ara, "arabic.yml"))
-		{
-			return false;
-		}
-		if(!loadYamlTask(dutch, dut, "dutch.yml"))
-		{
-			return false;
-		}
-		if(!loadYamlTask(english, eng, "english.yml"))
-		{
-			return false;
-		}
-		if(!loadYamlTask(french, fre, "french.yml"))
-		{
-			return false;
-		}
-		if(!loadYamlTask(german, ger, "german.yml"))
-		{
-			return false;
-		}
-		if(!loadYamlTask(hindi, hin, "hindi.yml"))
-		{
-			return false;
-		}
-		if(!loadYamlTask(italian, ita, "italian.yml"))
-		{
-			return false;
-		}
-		if(!loadYamlTask(japanese, jap, "japanese.yml"))
-		{
-			return false;
-		}
-		if(!loadYamlTask(mandarin, mad, "mandarin.yml"))
-		{
-			return false;
-		}
-		if(!loadYamlTask(russian, rus, "russian.yml"))
-		{
-			return false;
-		}
-		if(!loadYamlTask(spanish, spa, "spanish.yml"))
-		{
-			return false;
-		}
-		return true;
-	}
-	
-	private boolean loadYamlTask(File file, YamlConfiguration yaml, String filename)
+	private boolean loadYamlTask(File file, YamlConfiguration yaml)
 	{
 		try 
 		{
@@ -352,10 +181,34 @@ public class YamlHandler
 		} catch (IOException | InvalidConfigurationException e) 
 		{
 			AdvancedStoreHouse.log.severe(
-					"Could not load the %file% file! You need to regenerate the %file%! Error: ".replace("%file%", filename)
+					"Could not load the %file% file! You need to regenerate the %file%! Error: ".replace("%file%", file.getName())
 					+ e.getMessage());
 			e.printStackTrace();
 			return false;
+		}
+		return true;
+	}
+	
+	private boolean writeFile(File file, YamlConfiguration yml, LinkedHashMap<String, Language> keyMap)
+	{
+		yml.options().header("For more explanation see \n https://www.spigotmc.org/resources/AdvancedStoreHouse.80677/");
+		for(String key : keyMap.keySet())
+		{
+			Language languageObject = keyMap.get(key);
+			if(languageObject.languageValues.containsKey(plugin.getYamlManager().getLanguageType()) == true)
+			{
+				plugin.getYamlManager().setFileInput(yml, keyMap, key, plugin.getYamlManager().getLanguageType());
+			} else if(languageObject.languageValues.containsKey(plugin.getYamlManager().getDefaultLanguageType()) == true)
+			{
+				plugin.getYamlManager().setFileInput(yml, keyMap, key, plugin.getYamlManager().getDefaultLanguageType());
+			}
+		}
+		try
+		{
+			yml.save(file);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 		return true;
 	}
