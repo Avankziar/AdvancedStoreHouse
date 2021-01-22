@@ -9,13 +9,16 @@ public class CommandConstructor extends BaseConstructor
     public ArrayList<ArgumentConstructor> subcommands;
     public ArrayList<String> tablist;
 
-	public CommandConstructor(AdvancedStoreHouse plugin, String path,
+	public CommandConstructor(String path, boolean canConsoleAccess,
     		ArgumentConstructor...argumentConstructors)
     {
-		super(plugin.getYamlHandler().getCom().getString(path+".Name"),
+		super(AdvancedStoreHouse.getPlugin().getYamlHandler().getCom().getString(path+".Name"),
 				path,
-				plugin.getYamlHandler().getCom().getString(path+".Permission"),
-				plugin.getYamlHandler().getCom().getString(path+".Suggestion"));
+				AdvancedStoreHouse.getPlugin().getYamlHandler().getCom().getString(path+".Permission"),
+				AdvancedStoreHouse.getPlugin().getYamlHandler().getCom().getString(path+".Suggestion"),
+				AdvancedStoreHouse.getPlugin().getYamlHandler().getCom().getString(path+".CommandString"),
+				AdvancedStoreHouse.getPlugin().getYamlHandler().getCom().getString(path+".HelpInfo"),
+				canConsoleAccess);
         this.subcommands = new ArrayList<>();
         this.tablist = new ArrayList<>();
         for(ArgumentConstructor ac : argumentConstructors)
@@ -23,6 +26,6 @@ public class CommandConstructor extends BaseConstructor
         	this.subcommands.add(ac);
         	this.tablist.add(ac.getName());
         }
-        plugin.getCommandTree().add(this);
+        AdvancedStoreHouse.getPlugin().getCommandTree().add(this);
     }
 }

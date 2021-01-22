@@ -338,7 +338,7 @@ public class BackgroundTask
 					}
 					endList = cloneEndList;
 				}
-				idoc.chestDistribute(plugin, null, inventoryc, prioList, endList, cloneInvLc, cloneInvRc, dc.isDistributeRandom());
+				idoc._chestDistribute(plugin, null, inventoryc, prioList, endList, cloneInvLc, cloneInvRc, dc.isDistributeRandom());
 				i++;
 				if(i < dcList.size())
 				{

@@ -9,13 +9,13 @@ import main.java.me.avankziar.spigot.ash.database.tables.TableII;
 import main.java.me.avankziar.spigot.ash.database.tables.TableIII;
 import main.java.me.avankziar.spigot.ash.database.tables.TableIV;
 import main.java.me.avankziar.spigot.ash.database.tables.TableV;
-import main.java.me.avankziar.spigot.ash.database.tables.TableVI;
 
-public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV, TableVI
+public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV//, TableVI
 {
 	public enum Type
 	{
-		PLUGINUSER, DISTRIBUTIONCHEST, STORAGECHEST, ITEMFILTERSET, TRANSFERLOG, CROSSSERVERTRANSFER;
+		PLUGINUSER, DISTRIBUTIONCHEST, STORAGECHEST, ITEMFILTERSET, TRANSFERLOG, //CROSSSERVERTRANSFER
+		;
 	}
 	
 	private AdvancedStoreHouse plugin;
@@ -81,8 +81,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV,
 			return TableIV.super.existIV(plugin, whereColumn, whereObject);
 		case TRANSFERLOG:
 			return TableV.super.existV(plugin, whereColumn, whereObject);
-		case CROSSSERVERTRANSFER:
-			return TableVI.super.existVI(plugin, whereColumn, whereObject);
+		//case CROSSSERVERTRANSFER:
+			//return TableVI.super.existVI(plugin, whereColumn, whereObject);
 		}
 		return false;
 	}
@@ -101,8 +101,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV,
 			return TableIV.super.createIV(plugin, object);
 		case TRANSFERLOG:
 			return TableV.super.createV(plugin, object);
-		case CROSSSERVERTRANSFER:
-			return TableVI.super.createVI(plugin, object);
+		//case CROSSSERVERTRANSFER:
+			//return TableVI.super.createVI(plugin, object);
 		}
 		return false;
 	}
@@ -121,8 +121,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV,
 			return TableIV.super.updateDataIV(plugin, object, whereColumn, whereObject);
 		case TRANSFERLOG:
 			return TableV.super.updateDataV(plugin, object, whereColumn, whereObject);
-		case CROSSSERVERTRANSFER:
-			return TableVI.super.updateDataVI(plugin, object, whereColumn, whereObject);
+		//case CROSSSERVERTRANSFER:
+			//return TableVI.super.updateDataVI(plugin, object, whereColumn, whereObject);
 		}
 		return false;
 	}
@@ -141,8 +141,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV,
 			return TableIV.super.getDataIV(plugin, whereColumn, whereObject);
 		case TRANSFERLOG:
 			return TableV.super.getDataV(plugin, whereColumn, whereObject);
-		case CROSSSERVERTRANSFER:
-			return TableVI.super.getDataVI(plugin, whereColumn, whereObject);
+		//case CROSSSERVERTRANSFER:
+			//return TableVI.super.getDataVI(plugin, whereColumn, whereObject);
 		}
 		return null;
 	}
@@ -161,8 +161,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV,
 			return TableIV.super.deleteDataIV(plugin, whereColumn, whereObject);
 		case TRANSFERLOG:
 			return TableV.super.deleteDataV(plugin, whereColumn, whereObject);
-		case CROSSSERVERTRANSFER:
-			return TableVI.super.deleteDataVI(plugin, whereColumn, whereObject);
+		//case CROSSSERVERTRANSFER:
+			//return TableVI.super.deleteDataVI(plugin, whereColumn, whereObject);
 		}
 		return false;
 	}
@@ -181,8 +181,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV,
 			return TableIV.super.lastIDIV(plugin);
 		case TRANSFERLOG:
 			return TableV.super.lastIDV(plugin);
-		case CROSSSERVERTRANSFER:
-			return TableVI.super.lastIDVI(plugin);
+		//case CROSSSERVERTRANSFER:
+			//return TableVI.super.lastIDVI(plugin);
 		}
 		return 0;
 	}
@@ -201,8 +201,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV,
 			return TableIV.super.countWhereIDIV(plugin, whereColumn, whereObject);
 		case TRANSFERLOG:
 			return TableV.super.countWhereIDV(plugin, whereColumn, whereObject);
-		case CROSSSERVERTRANSFER:
-			return TableVI.super.countWhereIDVI(plugin, whereColumn, whereObject);
+		//case CROSSSERVERTRANSFER:
+			//return TableVI.super.countWhereIDVI(plugin, whereColumn, whereObject);
 		}
 		return 0;
 	}
@@ -222,8 +222,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV,
 			return TableIV.super.getListIV(plugin, orderByColumn, start, quantity, whereColumn, whereObject);
 		case TRANSFERLOG:
 			return TableV.super.getListV(plugin, orderByColumn, start, quantity, whereColumn, whereObject);
-		case CROSSSERVERTRANSFER:
-			return TableVI.super.getListVI(plugin, orderByColumn, start, quantity, whereColumn, whereObject);
+		//case CROSSSERVERTRANSFER:
+			//return TableVI.super.getListVI(plugin, orderByColumn, start, quantity, whereColumn, whereObject);
 		}
 		return null;
 	}
@@ -242,8 +242,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV,
 			return TableIV.super.getTopIV(plugin, orderByColumn, start, end);
 		case TRANSFERLOG:
 			return TableV.super.getTopV(plugin, orderByColumn, start, end);
-		case CROSSSERVERTRANSFER:
-			return TableVI.super.getTopVI(plugin, orderByColumn, start, end);
+		//case CROSSSERVERTRANSFER:
+			//return TableVI.super.getTopVI(plugin, orderByColumn, start, end);
 		}
 		return null;
 	}
@@ -263,8 +263,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV,
 			return TableIV.super.getAllListAtIV(plugin, orderByColumn, whereColumn, whereObject);
 		case TRANSFERLOG:
 			return TableV.super.getAllListAtV(plugin, orderByColumn, whereColumn, whereObject);
-		case CROSSSERVERTRANSFER:
-			return TableVI.super.getAllListAtVI(plugin, orderByColumn, whereColumn, whereObject);
+		//case CROSSSERVERTRANSFER:
+			//return TableVI.super.getAllListAtVI(plugin, orderByColumn, whereColumn, whereObject);
 		}
 		return null;
 	}

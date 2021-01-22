@@ -102,7 +102,7 @@ public class ChestHandler
 	}
 	
 	public static ArrayList<DistributionChest> getChainChest(
-			AdvancedStoreHouse plugin, Player player,
+			AdvancedStoreHouse plugin,
 			ArrayList<StorageChest> prioList, ArrayList<StorageChest> endList,
 			String server) throws IOException
 	{
@@ -119,45 +119,45 @@ public class ChestHandler
 						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 						sc.getServer(), sc.getWorld(), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ()));
 				chain.addAll(allAt);
-				debug(player, "Chain - I Adding: "+allAt.size());
+				debug("Chain - I Adding: "+allAt.size());
 			} else
 			{
 				World world = Bukkit.getWorld(sc.getWorld());
 				if(world == null)
 				{
-					debug(player, "Chain Prio: World == null");
+					debug("Chain Prio: World == null");
 					continue;
 				}
 				Location lo = new Location(world, sc.getBlockX(), sc.getBlockY(), sc.getBlockZ());
 				Block dcblock = lo.getBlock();
 				if(dcblock == null)
 				{
-					debug(player, "Chain Prio: dcblock == null");
+					debug("Chain Prio: dcblock == null");
 					continue;
 				}
 				if(dcblock.getState() == null)
 				{
-					debug(player, "Chain Prio: dcblock.State == null");
+					debug("Chain Prio: dcblock.State == null");
 					continue;
 				}
 				if(!(dcblock.getState() instanceof Container))
 				{
-					debug(player, "Chain Prio: !instanceof Container");
+					debug("Chain Prio: !instanceof Container");
 					continue;
 				}
 				Inventory inventoryc = ((Container)dcblock.getState()).getInventory();
 				if(inventoryc == null)
 				{
-					debug(player, "Chain Prio: inventoryc == null");
+					debug("Chain Prio: inventoryc == null");
 					continue;
 				}
 				if(inventoryc instanceof DoubleChestInventory)
 				{
 					DoubleChestInventory dcInv = (DoubleChestInventory) inventoryc;
-					lo = isDoubleChest(plugin, player, server, lo, dcInv);
+					lo = isDoubleChest(plugin, server, lo, dcInv);
 					if(lo == null)
 					{
-						debug(player, "Loop DoubleChest Loc == null");
+						debug("Loop DoubleChest Loc == null");
 						continue;
 					}
 					ArrayList<DistributionChest> allAt = ConvertHandler.convertListII(
@@ -166,10 +166,10 @@ public class ChestHandler
 							"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 							sc.getServer(), lo.getWorld().getName(), lo.getBlockX(), lo.getBlockY(), lo.getBlockZ()));
 					chain.addAll(allAt);
-					debug(player, "Chain - II Adding: "+allAt.size());
+					debug("Chain - II Adding: "+allAt.size());
 				} else
 				{
-					debug(player, "ChainDc dont exist here");
+					debug("ChainDc dont exist here");
 					continue;
 				}
 			}
@@ -187,45 +187,45 @@ public class ChestHandler
 						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 						sc.getServer(), sc.getWorld(), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ()));
 				chain.addAll(allAt);
-				debug(player, "Chain - I Adding: "+allAt.size());
+				debug("Chain - I Adding: "+allAt.size());
 			} else
 			{
 				World world = Bukkit.getWorld(sc.getWorld());
 				if(world == null)
 				{
-					debug(player, "Chain Prio: World == null");
+					debug("Chain Prio: World == null");
 					continue;
 				}
 				Location lo = new Location(world, sc.getBlockX(), sc.getBlockY(), sc.getBlockZ());
 				Block dcblock = lo.getBlock();
 				if(dcblock == null)
 				{
-					debug(player, "Chain Prio: dcblock == null");
+					debug("Chain Prio: dcblock == null");
 					continue;
 				}
 				if(dcblock.getState() == null)
 				{
-					debug(player, "Chain Prio: dcblock.State == null");
+					debug("Chain Prio: dcblock.State == null");
 					continue;
 				}
 				if(!(dcblock.getState() instanceof Container))
 				{
-					debug(player, "Chain Prio: !instanceof Container");
+					debug("Chain Prio: !instanceof Container");
 					continue;
 				}
 				Inventory inventoryc = ((Container)dcblock.getState()).getInventory();
 				if(inventoryc == null)
 				{
-					debug(player, "Chain Prio: inventoryc == null");
+					debug("Chain Prio: inventoryc == null");
 					continue;
 				}
 				if(inventoryc instanceof DoubleChestInventory)
 				{
 					DoubleChestInventory dcInv = (DoubleChestInventory) inventoryc;
-					lo = isDoubleChest(plugin, player, server, lo, dcInv);
+					lo = isDoubleChest(plugin, server, lo, dcInv);
 					if(lo == null)
 					{
-						debug(player, "Loop DoubleChest Loc == null");
+						debug("Loop DoubleChest Loc == null");
 						continue;
 					}
 					ArrayList<DistributionChest> allAt = ConvertHandler.convertListII(
@@ -234,10 +234,10 @@ public class ChestHandler
 							"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 							sc.getServer(), lo.getWorld().getName(), lo.getBlockX(), lo.getBlockY(), lo.getBlockZ()));
 					chain.addAll(allAt);
-					debug(player, "Chain - II Adding: "+allAt.size());
+					debug("Chain - II Adding: "+allAt.size());
 				} else
 				{
-					debug(player, "ChainDC dont exist here");
+					debug("ChainDC dont exist here");
 					continue;
 				}
 			}
@@ -633,24 +633,24 @@ public class ChestHandler
 		return s;
 	}
 	
-	public static Location isDoubleChest(AdvancedStoreHouse plugin, Player player, String server, final Location loc,
+	public static Location isDoubleChest(AdvancedStoreHouse plugin, String server, final Location loc,
 			DoubleChestInventory dchestInv)
 	{
-		debug(player, "Loc == "+loc.getWorld()
+		debug("Loc == "+loc.getWorld()
 				+" | "+loc.getBlockX()
 				+" | "+loc.getBlockY()
 				+" | "+loc.getBlockZ());
-		debug(player, "RightSide == "+dchestInv.getRightSide().getLocation().getWorld()
+		debug("RightSide == "+dchestInv.getRightSide().getLocation().getWorld()
 				+" | "+dchestInv.getRightSide().getLocation().getBlockX()
 				+" | "+dchestInv.getRightSide().getLocation().getBlockY()
 				+" | "+dchestInv.getRightSide().getLocation().getBlockZ());
-		debug(player, "LeftSide == "+dchestInv.getLeftSide().getLocation().getWorld()
+		debug("LeftSide == "+dchestInv.getLeftSide().getLocation().getWorld()
 				+" | "+dchestInv.getLeftSide().getLocation().getBlockX()
 				+" | "+dchestInv.getLeftSide().getLocation().getBlockY()
 				+" | "+dchestInv.getLeftSide().getLocation().getBlockZ());
 		if(isLocationsEquals(loc, dchestInv.getLeftSide().getLocation()))
 		{
-			debug(player, "Loc maybe LeftSide");
+			debug("Loc maybe LeftSide");
 			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
 					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 					server, dchestInv.getRightSide().getLocation().getWorld().getName(),
@@ -658,12 +658,12 @@ public class ChestHandler
 					dchestInv.getRightSide().getLocation().getBlockY(),
 					dchestInv.getRightSide().getLocation().getBlockZ()))
 			{
-				debug(player, "Loc == RightSide");
+				debug("Loc == RightSide");
 				return dchestInv.getRightSide().getLocation();
 			}
 		} else if(isLocationsEquals(loc, dchestInv.getRightSide().getLocation()))
 		{
-			debug(player, "Loc maybe LeftSide");
+			debug("Loc maybe LeftSide");
 			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
 					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 					server, dchestInv.getLeftSide().getLocation().getWorld().getName(),
@@ -671,54 +671,15 @@ public class ChestHandler
 					dchestInv.getLeftSide().getLocation().getBlockY(),
 					dchestInv.getLeftSide().getLocation().getBlockZ()))
 			{
-				debug(player, "Loc == LeftSide");
+				debug("Loc == LeftSide");
 				return dchestInv.getLeftSide().getLocation();
 			}
 		}
-		debug(player, "Loc == null");
+		debug("Loc == null");
 		return null;
-		/*Location l1 = loc;
-		l1.add(1, 0, 0);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			
-			return l1;
-		}
-		debug(player, "Distributionchest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(-1, 0, 1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Distributionchest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(-1, 0, -1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Distributionchest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(1, 0, -1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Distributionchest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		return null;*/
 	}
 	
-	public static Location isDoubleChestII(AdvancedStoreHouse plugin, Player player, String server, final Location loc,
+	/*public static Location isDoubleChestII(AdvancedStoreHouse plugin, Player player, String server, final Location loc,
 			DoubleChestInventory dchestInv)
 	{
 		if(isLocationsEquals(loc, dchestInv.getLeftSide().getLocation()))
@@ -747,47 +708,7 @@ public class ChestHandler
 			}
 		}
 		return null;
-		/*debug(player, "Storagechest dont find, search: "
-				+server+" "+loc.getWorld().getName()+" "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ());
-		Location l1 = loc;
-		l1.add(1, 0, 0);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Storagechest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(-1, 0, 1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Storagechest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(-1, 0, -1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Storagechest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		l1.add(1, 0, -1);
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, l1.getWorld().getName(), l1.getBlockX(), l1.getBlockY(), l1.getBlockZ()))
-		{
-			return l1;
-		}
-		debug(player, "Storagechest dont find, search: "
-				+server+" "+l1.getWorld().getName()+" "+l1.getBlockX()+" "+l1.getBlockY()+" "+l1.getBlockZ());
-		return null;*/
-	}
+	}*/
 	
 	public static boolean isFull(Inventory inv)
 	{
@@ -894,5 +815,164 @@ public class ChestHandler
 	    a  = Arrays.copyOf(a, a.length + 1);
 	    a[a.length - 1] = e;
 	    return a;
+	}
+	
+	public static int getMaxDamage(Material material)
+	{
+		int damage = 0;
+		switch(material)
+		{
+		default:
+			damage = 0;
+			break;
+		case WOODEN_AXE: //Fallthrough
+		case WOODEN_HOE:
+		case WOODEN_PICKAXE:
+		case WOODEN_SHOVEL:
+		case WOODEN_SWORD:
+			damage = 60;
+			break;
+		case LEATHER_BOOTS:
+			damage = 65;
+			break;
+		case LEATHER_CHESTPLATE:
+			damage = 80;
+			break;
+		case LEATHER_HELMET:
+			damage = 55;
+			break;
+		case LEATHER_LEGGINGS:
+			damage = 75;
+			break;
+		case STONE_AXE:
+		case STONE_HOE:
+		case STONE_PICKAXE:
+		case STONE_SHOVEL:
+		case STONE_SWORD:
+			damage = 132;
+			break;
+		case CHAINMAIL_BOOTS:
+			damage = 196;
+			break;
+		case CHAINMAIL_CHESTPLATE:
+			damage = 241;
+			break;
+		case CHAINMAIL_HELMET:
+			damage = 166;
+			break;
+		case CHAINMAIL_LEGGINGS:
+			damage = 226;
+			break;
+		case GOLDEN_AXE:
+		case GOLDEN_HOE:
+		case GOLDEN_PICKAXE:
+		case GOLDEN_SHOVEL:
+		case GOLDEN_SWORD:
+			damage = 33;
+			break;
+		case GOLDEN_BOOTS:
+			damage = 91;
+			break;
+		case GOLDEN_CHESTPLATE:
+			damage = 112;
+			break;
+		case GOLDEN_HELMET:
+			damage = 77;
+			break;
+		case GOLDEN_LEGGINGS:
+			damage = 105;
+			break;
+		case IRON_AXE:
+		case IRON_HOE:
+		case IRON_PICKAXE:
+		case IRON_SHOVEL:
+		case IRON_SWORD:
+			damage = 251;
+			break;
+		case IRON_BOOTS:
+			damage = 195;
+			break;
+		case IRON_CHESTPLATE:
+			damage = 40;
+			break;
+		case IRON_HELMET:
+			damage = 165;
+			break;
+		case IRON_LEGGINGS:
+			damage = 225;
+			break;
+		case DIAMOND_AXE:
+		case DIAMOND_HOE:
+		case DIAMOND_PICKAXE:
+		case DIAMOND_SHOVEL:
+		case DIAMOND_SWORD:
+			damage = 1562;
+			break;
+		case DIAMOND_BOOTS:
+			damage = 429;
+			break;
+		case DIAMOND_CHESTPLATE:
+			damage = 528;
+			break;
+		case DIAMOND_HELMET:
+			damage = 363;
+			break;
+		case DIAMOND_LEGGINGS:
+			damage = 495;
+			break;
+		case NETHERITE_AXE:
+		case NETHERITE_HOE:
+		case NETHERITE_PICKAXE:
+		case NETHERITE_SHOVEL:
+		case NETHERITE_SWORD:
+			damage = 2031;
+			break;
+		case NETHERITE_BOOTS:
+			damage = 482;
+			break;
+		case NETHERITE_CHESTPLATE:
+			damage = 592;
+			break;
+		case NETHERITE_HELMET:
+			damage = 408;
+			break;
+		case NETHERITE_LEGGINGS:
+			damage = 556;
+			break;
+		case SHIELD:
+			damage = 337;
+			break;
+		case TURTLE_HELMET:
+			damage = 276;
+			break;
+		case TRIDENT:
+			damage = 251;
+			break;
+		case FISHING_ROD:
+			damage = 65;
+			break;
+		case CARROT_ON_A_STICK:
+			damage = 26;
+			break;
+		case WARPED_FUNGUS_ON_A_STICK:
+			damage = 100;
+			break;
+		case ELYTRA:
+			damage = 432;
+			break;
+		case SHEARS:
+			damage = 238;
+			break;
+		case BOW:
+			damage = 385;
+			break;
+		case CROSSBOW:
+			damage = 326;
+			break;
+		case FLINT_AND_STEEL:
+			damage = 65;
+			break;
+		}
+		return damage;
 	}
 }

@@ -1,5 +1,9 @@
 package main.java.me.avankziar.general.objects;
 
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
+
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 public class StorageChest
@@ -16,9 +20,24 @@ public class StorageChest
 	private int blockX;
 	private int blockY;
 	private int blockZ;
+	private String chestname;
+	private boolean optionVoid;
+	private boolean optionDurability;
+	private int durability;
+	private boolean optionRepair;
+	private int repairCost;
+	private boolean optionEnchantment;
+	private LinkedHashMap<Enchantment, Integer> enchantments;
 	
 	public StorageChest(int id, int distributionChestID, String owneruuid, int priority, long creationDate,
-			ItemStack[] contents, boolean endstorage, String server, String world, int blockX, int blockY, int blockZ)
+			ItemStack[] contents, boolean endstorage, String server, String world, int blockX, int blockY, int blockZ,
+			String chestname, boolean optionVoid,
+			boolean optionDurability,
+			int durability,
+			boolean optionRepair,
+			int repairCost,
+			boolean optionEnchantment,
+			LinkedHashMap<Enchantment, Integer> enchantments)
 	{
 		setId(id);
 		setOwneruuid(owneruuid);
@@ -32,6 +51,14 @@ public class StorageChest
 		setBlockX(blockX);
 		setBlockY(blockY);
 		setBlockZ(blockZ);
+		setChestname(chestname);
+		setOptionVoid(optionVoid);
+		setOptionDurability(optionDurability);
+		setDurability(durability);
+		setOptionRepair(optionRepair);
+		setRepairCost(repairCost);
+		setOptionEnchantment(optionEnchantment);
+		setEnchantments(enchantments);
 	}
 
 	public int getId()
@@ -154,4 +181,112 @@ public class StorageChest
 		this.endstorage = endstorage;
 	}
 
+	public String getChestname()
+	{
+		return chestname;
+	}
+
+	public void setChestname(String chestname)
+	{
+		this.chestname = chestname;
+	}
+
+	public boolean isOptionVoid()
+	{
+		return optionVoid;
+	}
+
+	public void setOptionVoid(boolean optionVoid)
+	{
+		this.optionVoid = optionVoid;
+	}
+
+	public boolean isOptionDurability()
+	{
+		return optionDurability;
+	}
+
+	public void setOptionDurability(boolean optionDurability)
+	{
+		this.optionDurability = optionDurability;
+	}
+
+	public int getDurability()
+	{
+		return durability;
+	}
+
+	public void setDurability(int durability)
+	{
+		this.durability = durability;
+	}
+
+	public boolean isOptionRepair()
+	{
+		return optionRepair;
+	}
+
+	public void setOptionRepair(boolean optionRepair)
+	{
+		this.optionRepair = optionRepair;
+	}
+
+	public int getRepairCost()
+	{
+		return repairCost;
+	}
+
+	public void setRepairCost(int repairCost)
+	{
+		this.repairCost = repairCost;
+	}
+
+	public boolean isOptionEnchantment()
+	{
+		return optionEnchantment;
+	}
+
+	public void setOptionEnchantment(boolean optionEnchantment)
+	{
+		this.optionEnchantment = optionEnchantment;
+	}
+
+	public LinkedHashMap<Enchantment, Integer> getEnchantments()
+	{
+		return enchantments;
+	}
+
+	public void setEnchantments(LinkedHashMap<Enchantment, Integer> enchantments)
+	{
+		this.enchantments = enchantments;
+	}
+	
+	public String encryptEnchantments()
+	{
+		String s = "";
+		for(Entry<Enchantment, Integer> entry : enchantments.entrySet())
+		{
+			s += entry.getKey().getKey().getKey()+";"+entry.getValue()+"@";
+		}
+		s.substring(0, s.length()-1);
+		return s;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static LinkedHashMap<Enchantment, Integer> decryptEnchantments(String s)
+	{
+		LinkedHashMap<Enchantment, Integer> map = new LinkedHashMap<>();
+		String[] split = s.split("@");
+		for(String ench : split)
+		{
+			String[] e = ench.split(";");
+			if(e.length == 2)
+			{
+				Enchantment ec = Enchantment.getByName(e[0]);
+				int level = Integer.parseInt(e[1]);
+				map.put(ec, level);
+			}
+		}
+		return map;
+	}
 }

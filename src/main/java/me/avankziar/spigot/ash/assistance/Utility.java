@@ -10,6 +10,11 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.bukkit.Material;
+import org.bukkit.block.Barrel;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
 
 import main.java.me.avankziar.general.objects.ChatApi;
@@ -223,5 +228,72 @@ public class Utility
 			return uuid;
 		}
 		return null;
+	}
+	
+	public boolean isNOTButtonOrPlate(Material material)
+	{
+		if(material != Material.STONE_BUTTON
+				&& material != Material.POLISHED_BLACKSTONE_BUTTON
+				&& material != Material.ACACIA_BUTTON
+				&& material != Material.BIRCH_BUTTON
+				&& material != Material.CRIMSON_BUTTON
+				&& material != Material.DARK_OAK_BUTTON
+				&& material != Material.JUNGLE_BUTTON
+				&& material != Material.OAK_BUTTON
+				&& material != Material.SPRUCE_BUTTON
+				&& material != Material.WARPED_BUTTON
+				&& material != Material.ACACIA_PRESSURE_PLATE
+				&& material != Material.BIRCH_PRESSURE_PLATE
+				&& material != Material.CRIMSON_PRESSURE_PLATE
+				&& material != Material.DARK_OAK_PRESSURE_PLATE
+				&& material != Material.JUNGLE_PRESSURE_PLATE
+				&& material != Material.OAK_PRESSURE_PLATE
+				&& material != Material.POLISHED_BLACKSTONE_PRESSURE_PLATE
+				&& material != Material.SPRUCE_PRESSURE_PLATE
+				&& material != Material.STONE_PRESSURE_PLATE
+				&& material != Material.WARPED_PRESSURE_PLATE)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isButtonOrPlate(Material material)
+	{
+		if(material == Material.STONE_BUTTON
+				|| material == Material.POLISHED_BLACKSTONE_BUTTON
+				|| material == Material.ACACIA_BUTTON
+				|| material == Material.BIRCH_BUTTON
+				|| material == Material.CRIMSON_BUTTON
+				|| material == Material.DARK_OAK_BUTTON
+				|| material == Material.JUNGLE_BUTTON
+				|| material == Material.OAK_BUTTON
+				|| material == Material.SPRUCE_BUTTON
+				|| material == Material.WARPED_BUTTON
+				|| material == Material.ACACIA_PRESSURE_PLATE
+				|| material == Material.BIRCH_PRESSURE_PLATE
+				|| material == Material.CRIMSON_PRESSURE_PLATE
+				|| material == Material.DARK_OAK_PRESSURE_PLATE
+				|| material == Material.JUNGLE_PRESSURE_PLATE
+				|| material == Material.OAK_PRESSURE_PLATE
+				|| material == Material.POLISHED_BLACKSTONE_PRESSURE_PLATE
+				|| material == Material.SPRUCE_PRESSURE_PLATE
+				|| material == Material.STONE_PRESSURE_PLATE
+				|| material == Material.WARPED_PRESSURE_PLATE)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isNOTStoragechest(BlockState state)
+	{
+		if(!(state instanceof Chest)
+				&& !(state instanceof ShulkerBox)
+				&& !(state instanceof Barrel))
+		{
+			return true;
+		}
+		return false;
 	}
 }

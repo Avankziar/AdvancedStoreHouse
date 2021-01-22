@@ -252,64 +252,64 @@ public class AdvancedStoreHouse extends JavaPlugin
 		for(PluginUser.Mode m : modes) {modeList.add(m.toString());}
 		lhmmode.put(1, modeList);
 		
-		ArgumentConstructor autodistributioninfo = new ArgumentConstructor(yamlHandler, baseCommandI+"_automaticdistributioninfo", 0, 0, 0, null);
+		ArgumentConstructor autodistributioninfo = new ArgumentConstructor(baseCommandI+"_automaticdistributioninfo", 0, 0, 0, false, null);
 		
-		ArgumentConstructor blockinfo = new ArgumentConstructor(yamlHandler, baseCommandI+"_blockinfo", 0, 0, 0, null);
-		ArgumentConstructor cancel = new ArgumentConstructor(yamlHandler, baseCommandI+"_cancel", 0, 0, 0, null);
+		ArgumentConstructor blockinfo = new ArgumentConstructor(baseCommandI+"_blockinfo", 0, 0, 0, false, null);
+		ArgumentConstructor cancel = new ArgumentConstructor(baseCommandI+"_cancel", 0, 0, 0, false, null);
 		
-		ArgumentConstructor debug_im = new ArgumentConstructor(yamlHandler, baseCommandI+"_debug_itemmeta", 1, 1, 1, null);
-		ArgumentConstructor debug = new ArgumentConstructor(yamlHandler, baseCommandI+"_debug", 0, 0, 0, null, debug_im);
+		ArgumentConstructor debug_im = new ArgumentConstructor(baseCommandI+"_debug_itemmeta", 1, 1, 1, false, null);
+		ArgumentConstructor debug = new ArgumentConstructor(baseCommandI+"_debug", 0, 0, 0, false, null, debug_im);
 		
-		ArgumentConstructor delete = new ArgumentConstructor(yamlHandler, baseCommandI+"_delete", 0, 2, 2, null);
+		ArgumentConstructor delete = new ArgumentConstructor(baseCommandI+"_delete", 0, 2, 2, false, null);
 		
-		ArgumentConstructor dc_autodistr = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_autodistr", 1, 1, 1, null);
-		ArgumentConstructor dc_breaking = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_breaking", 1, 1, 1, null);
-		ArgumentConstructor dc_chestname = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_chestname", 1, 2, 2, null);
-		ArgumentConstructor dc_create = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_create", 1, 2, 2, null);
-		ArgumentConstructor dc_delete = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_delete", 1, 1, 1, null);
-		ArgumentConstructor dc_info = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_info", 1, 1, 1, null);
-		ArgumentConstructor dc_list = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_list", 1, 1, 3, null);
-		ArgumentConstructor dc_member = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_member", 1, 2, 2, null);
-		ArgumentConstructor dc_position = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_position", 1, 1, 1, null);
-		ArgumentConstructor dc_random = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_random", 1, 1, 1, null);
-		ArgumentConstructor dc_select = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_select", 1, 2, 3, null);
-		ArgumentConstructor dc_search = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_search", 1, 1, 1, null);
-		ArgumentConstructor dc_switch = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_switch", 1, 1, 1, null);
-		ArgumentConstructor dc_transfer = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc_transfer", 1, 2, 2, playerMapII);
-		ArgumentConstructor dc = new ArgumentConstructor(yamlHandler, baseCommandI+"_dc", 0, 0, 0, null,
+		ArgumentConstructor dc_autodistr = new ArgumentConstructor(baseCommandI+"_dc_autodistr", 1, 1, 1, false, null);
+		ArgumentConstructor dc_breaking = new ArgumentConstructor(baseCommandI+"_dc_breaking", 1, 1, 1, false, null);
+		ArgumentConstructor dc_chestname = new ArgumentConstructor(baseCommandI+"_dc_chestname", 1, 2, 2, false, null);
+		ArgumentConstructor dc_create = new ArgumentConstructor(baseCommandI+"_dc_create", 1, 2, 2, false, null);
+		ArgumentConstructor dc_delete = new ArgumentConstructor(baseCommandI+"_dc_delete", 1, 1, 1, false, null);
+		ArgumentConstructor dc_info = new ArgumentConstructor(baseCommandI+"_dc_info", 1, 1, 1, false, null);
+		ArgumentConstructor dc_list = new ArgumentConstructor(baseCommandI+"_dc_list", 1, 1, 3, false, null);
+		ArgumentConstructor dc_member = new ArgumentConstructor(baseCommandI+"_dc_member", 1, 2, 2, false, null);
+		ArgumentConstructor dc_position = new ArgumentConstructor(baseCommandI+"_dc_position", 1, 1, 1, false, null);
+		ArgumentConstructor dc_random = new ArgumentConstructor(baseCommandI+"_dc_random", 1, 1, 1, false, null);
+		ArgumentConstructor dc_select = new ArgumentConstructor(baseCommandI+"_dc_select", 1, 2, 3, false, null);
+		ArgumentConstructor dc_search = new ArgumentConstructor(baseCommandI+"_dc_search", 1, 1, 1, false, null);
+		ArgumentConstructor dc_switch = new ArgumentConstructor(baseCommandI+"_dc_switch", 1, 1, 1, false, null);
+		ArgumentConstructor dc_transfer = new ArgumentConstructor(baseCommandI+"_dc_transfer", 1, 2, 2, false, playerMapII);
+		ArgumentConstructor dc = new ArgumentConstructor(baseCommandI+"_dc", 0, 0, 0, false, null,
 				dc_autodistr, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member, dc_position, 
 				dc_random, dc_select, dc_search, dc_switch, dc_transfer);
 		
-		ArgumentConstructor endstorage = new ArgumentConstructor(yamlHandler, baseCommandI+"_endstorage", 0, 0, 0, null);
-		ArgumentConstructor gui = new ArgumentConstructor(yamlHandler, baseCommandI+"_gui", 0, 0, 0, null);
+		ArgumentConstructor endstorage = new ArgumentConstructor(baseCommandI+"_endstorage", 0, 0, 0, false, null);
+		ArgumentConstructor gui = new ArgumentConstructor(baseCommandI+"_gui", 0, 0, 0, false, null);
 		
-		ArgumentConstructor ifs_create = new ArgumentConstructor(yamlHandler, baseCommandI+"_itemfilterset_create", 1, 2, 2, null);
-		ArgumentConstructor ifs_delete = new ArgumentConstructor(yamlHandler, baseCommandI+"_itemfilterset_delete", 1, 1, 1, null);
-		ArgumentConstructor ifs_list = new ArgumentConstructor(yamlHandler, baseCommandI+"_itemfilterset_list", 1, 1, 3, null);//TODO
-		ArgumentConstructor ifs_name = new ArgumentConstructor(yamlHandler, baseCommandI+"_itemfilterset_name", 1, 2, 2, null);
-		ArgumentConstructor ifs_select = new ArgumentConstructor(yamlHandler, baseCommandI+"_itemfilterset_select", 1, 2, 3, null);
-		ArgumentConstructor ifs_update = new ArgumentConstructor(yamlHandler, baseCommandI+"_itemfilterset_update", 1, 1, 2, null);
-		ArgumentConstructor itemfilterset = new ArgumentConstructor(yamlHandler, baseCommandI+"_itemfilterset", 0, 0, 0, null,
+		ArgumentConstructor ifs_create = new ArgumentConstructor(baseCommandI+"_itemfilterset_create", 1, 2, 2, false, null);
+		ArgumentConstructor ifs_delete = new ArgumentConstructor(baseCommandI+"_itemfilterset_delete", 1, 1, 1, false, null);
+		ArgumentConstructor ifs_list = new ArgumentConstructor(baseCommandI+"_itemfilterset_list", 1, 1, 3, false, null);//TODO
+		ArgumentConstructor ifs_name = new ArgumentConstructor(baseCommandI+"_itemfilterset_name", 1, 2, 2, false, null);
+		ArgumentConstructor ifs_select = new ArgumentConstructor(baseCommandI+"_itemfilterset_select", 1, 2, 3, false, null);
+		ArgumentConstructor ifs_update = new ArgumentConstructor(baseCommandI+"_itemfilterset_update", 1, 1, 2, false, null);
+		ArgumentConstructor itemfilterset = new ArgumentConstructor(baseCommandI+"_itemfilterset", 0, 0, 0, false, null,
 				ifs_create, ifs_delete, ifs_list, ifs_name, ifs_select, ifs_update);
 		
-		ArgumentConstructor mode = new ArgumentConstructor(yamlHandler, baseCommandI+"_mode", 0, 1, 1, lhmmode);
-		ArgumentConstructor override = new ArgumentConstructor(yamlHandler, baseCommandI+"_override", 0, 0, 0, null);
-		ArgumentConstructor playerinfo = new ArgumentConstructor(yamlHandler, baseCommandI+"_playerinfo", 0, 0, 1, null); //TODO
-		ArgumentConstructor priority = new ArgumentConstructor(yamlHandler, baseCommandI+"_priority", 0, 1, 1, null);
+		ArgumentConstructor mode = new ArgumentConstructor(baseCommandI+"_mode", 0, 1, 1, false, lhmmode);
+		ArgumentConstructor override = new ArgumentConstructor(baseCommandI+"_override", 0, 0, 0, false, null);
+		ArgumentConstructor playerinfo = new ArgumentConstructor(baseCommandI+"_playerinfo", 0, 0, 1, false, null); //TODO
+		ArgumentConstructor priority = new ArgumentConstructor(baseCommandI+"_priority", 0, 1, 1, false, null);
 	
-		ArgumentConstructor sc_create = new ArgumentConstructor(yamlHandler, baseCommandI+"_sc_create", 1, 1, 1, null);
-		ArgumentConstructor sc_delete = new ArgumentConstructor(yamlHandler, baseCommandI+"_sc_delete", 1, 1, 1, null);
-		ArgumentConstructor sc_info = new ArgumentConstructor(yamlHandler, baseCommandI+"_sc_info", 1, 1, 1, null);
-		ArgumentConstructor sc_list = new ArgumentConstructor(yamlHandler, baseCommandI+"_sc_list", 1, 1, 3, null);
-		ArgumentConstructor sc_openitemfilter = new ArgumentConstructor(yamlHandler, baseCommandI+"_sc_openitemfilter", 1, 1, 1, null);
-		ArgumentConstructor sc_position = new ArgumentConstructor(yamlHandler, baseCommandI+"_sc_position", 1, 1, 1, null);
-		ArgumentConstructor sc_select = new ArgumentConstructor(yamlHandler, baseCommandI+"_sc_select", 1, 2, 2, null);
-		ArgumentConstructor sc_search = new ArgumentConstructor(yamlHandler, baseCommandI+"_sc_search", 1, 1, 1, null);
-		ArgumentConstructor sc_update = new ArgumentConstructor(yamlHandler, baseCommandI+"_sc_update", 1, 1, 1, null);
-		ArgumentConstructor sc = new ArgumentConstructor(yamlHandler, baseCommandI+"_sc", 0, 0, 0, null,
+		ArgumentConstructor sc_create = new ArgumentConstructor(baseCommandI+"_sc_create", 1, 1, 1, false, null);
+		ArgumentConstructor sc_delete = new ArgumentConstructor(baseCommandI+"_sc_delete", 1, 1, 1, false, null);
+		ArgumentConstructor sc_info = new ArgumentConstructor(baseCommandI+"_sc_info", 1, 1, 1, false, null);
+		ArgumentConstructor sc_list = new ArgumentConstructor(baseCommandI+"_sc_list", 1, 1, 3, false, null);
+		ArgumentConstructor sc_openitemfilter = new ArgumentConstructor(baseCommandI+"_sc_openitemfilter", 1, 1, 1, false, null);
+		ArgumentConstructor sc_position = new ArgumentConstructor(baseCommandI+"_sc_position", 1, 1, 1, false, null);
+		ArgumentConstructor sc_select = new ArgumentConstructor(baseCommandI+"_sc_select", 1, 2, 2, false, null);
+		ArgumentConstructor sc_search = new ArgumentConstructor(baseCommandI+"_sc_search", 1, 1, 1, false, null);
+		ArgumentConstructor sc_update = new ArgumentConstructor(baseCommandI+"_sc_update", 1, 1, 1, false, null);
+		ArgumentConstructor sc = new ArgumentConstructor(baseCommandI+"_sc", 0, 0, 0, false, null,
 				sc_create, sc_delete, sc_info, sc_list, sc_openitemfilter, sc_position, sc_select, sc_search, sc_update);
 		
-		CommandConstructor ash = new CommandConstructor(plugin, baseCommandI,
+		CommandConstructor ash = new CommandConstructor(baseCommandI, false,
 				autodistributioninfo, blockinfo, cancel, debug, delete, dc, endstorage, gui, itemfilterset, mode, override, playerinfo, priority, sc);
 		
 		cc = ash;

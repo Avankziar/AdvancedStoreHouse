@@ -190,7 +190,15 @@ public class MysqlSetup
 		        		+ " world text,"
 		        		+ " blockx int,"
 		        		+ " blocky int,"
-		        		+ " blockz int);";
+		        		+ " blockz int,"
+		        		+ " chestname text,"
+		        		+ " optionvoid boolean,"
+		        		+ " optiondurability boolean,"
+		        		+ " durability int"
+		        		+ " optionrepair boolean,"
+		        		+ " repaircost int"
+		        		+ " optionenchantments boolean,"
+		        		+ " enchantments longtext);";
 		        query = conn.prepareStatement(data);
 		        query.execute();
 		      } catch (SQLException e) 

@@ -141,7 +141,7 @@ public class AshCommandExecutor implements CommandExecutor
 			{
 				if(player.hasPermission(bc.getPermission()))
 				{
-					sendInfo(player, bc.getPath(), bc.getSuggestion());
+					sendInfo(player, bc.getPath(), bc.getHelpInfo(), bc.getSuggestion());
 				}
 			}
 			count++;
@@ -155,10 +155,10 @@ public class AshCommandExecutor implements CommandExecutor
 		pastNextPage(player, AdvancedStoreHouse.infoCommandPath, page, lastpage, AdvancedStoreHouse.infoCommand);
 	}
 	
-	private void sendInfo(Player player, String path, String suggestion)
+	private void sendInfo(Player player, String path, String info, String suggestion)
 	{
 		player.spigot().sendMessage(ChatApi.apiChat(
-				plugin.getYamlHandler().getL().getString(AdvancedStoreHouse.infoCommandPath+".BaseInfo."+path),
+				info,
 				ClickEvent.Action.SUGGEST_COMMAND, suggestion,
 				HoverEvent.Action.SHOW_TEXT,plugin.getYamlHandler().getL().getString("GeneralHover")));
 	}

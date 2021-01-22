@@ -122,7 +122,7 @@ public class InventoryCloseHandler implements Listener
 				DoubleChestInventory dcInv = (DoubleChestInventory) event.getInventory();
 				debug(player, "distribution == DoubleChestInv");
 				dci = true;
-				loc = ChestHandler.isDoubleChest(plugin, player, server, loc, dcInv);
+				loc = ChestHandler.isDoubleChest(plugin, server, loc, dcInv);
 				if(loc == null)
 				{
 					debug(player, "Distributionchest dont exist: ");
@@ -215,7 +215,7 @@ public class InventoryCloseHandler implements Listener
 			}
 			endList = cloneEndList;
 		}
-		ido.chestDistribute(plugin, player, inventory, prioList, endList, cloneInvL, cloneInvR, dc.isDistributeRandom());
+		ido._chestDistribute(plugin, player, inventory, prioList, endList, cloneInvL, cloneInvR, dc.isDistributeRandom());
 		long supposeCooldown = storagechestamount*plugin.getYamlHandler().get().getInt("DelayedTicks", 1)*20+10;
 		
 		//Kettenverteilung
@@ -339,7 +339,7 @@ public class InventoryCloseHandler implements Listener
 					}
 					endListc = cloneEndListc;
 				}
-				idoc.chestDistribute(plugin, player, inventoryc, prioListc, endListc, cloneInvLc, cloneInvRc, dcc.isDistributeRandom());
+				idoc._chestDistribute(plugin, player, inventoryc, prioListc, endListc, cloneInvLc, cloneInvRc, dcc.isDistributeRandom());
 				i++;
 			}
 		}.runTaskTimer(plugin, supposeCooldown,

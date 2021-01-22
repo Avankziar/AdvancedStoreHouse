@@ -75,8 +75,14 @@ public interface TableIII
 			{
 				String sql = "INSERT INTO `" + plugin.getMysqlHandler().tableNameIII 
 						+ "`(`distributionchestid`, `owner_uuid`, `creationdate`, `priority`, `content`,"
-						+ " `endstorage`, `server`, `world`, `blockx`, `blocky`, `blockz`) " 
-						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+						+ " `endstorage`, `server`, `world`, `blockx`, `blocky`, `blockz`,"
+						+ " `chestname`, `optionvoid`, `optiondurability`, `durability`,"
+						+ " `optionrepair`, `repaircost`, `optionenchantments`, `enchantments`) " 
+						+ "VALUES("
+						+ "?, ?, ?, ?, ?, "
+						+ "?, ?, ?, ?, ?, "
+						+ "?, ?, ?, ?, ?, "
+						+ "?, ?, ?)";
 				preparedStatement = conn.prepareStatement(sql);
 				preparedStatement.setInt(1, cu.getDistributionChestID());
 		        preparedStatement.setString(2, cu.getOwneruuid());
@@ -89,6 +95,14 @@ public interface TableIII
 		        preparedStatement.setInt(9, cu.getBlockX());
 		        preparedStatement.setInt(10, cu.getBlockY());
 		        preparedStatement.setInt(11, cu.getBlockZ());
+		        preparedStatement.setString(12, cu.getChestname());
+		        preparedStatement.setBoolean(13, cu.isOptionVoid());
+		        preparedStatement.setBoolean(14, cu.isOptionDurability());
+		        preparedStatement.setInt(15, cu.getDurability());
+		        preparedStatement.setBoolean(16, cu.isOptionRepair());
+		        preparedStatement.setInt(16, cu.getRepairCost());
+		        preparedStatement.setBoolean(17, cu.isOptionEnchantment());
+		        preparedStatement.setString(18, cu.encryptEnchantments());
 		        
 		        preparedStatement.executeUpdate();
 		        return true;
@@ -132,7 +146,9 @@ public interface TableIII
 			{
 				String data = "UPDATE `" + plugin.getMysqlHandler().tableNameIII
 						+ "` SET `distributionchestid` = ?, `owner_uuid` = ?, `creationdate` = ?, `priority` = ?, `content` = ?," 
-						+ " `endstorage` = ?, `server` = ?, `world` = ?, `blockx` = ?, `blocky` = ?, `blockz` = ?" 
+						+ " `endstorage` = ?, `server` = ?, `world` = ?, `blockx` = ?, `blocky` = ?, `blockz` = ?,"
+						+ " `chestname` = ?, `optionvoid` = ?, `optiondurability` = ?, `durability` = ?," 
+						+ "	`optionrepair` = ?, `repaircost` = ?, `optionenchantments` = ?, `enchantments` = ?" 
 						+ " WHERE "+whereColumn;
 				preparedStatement = conn.prepareStatement(data);
 				preparedStatement.setInt(1, cu.getDistributionChestID());
@@ -146,8 +162,16 @@ public interface TableIII
 		        preparedStatement.setInt(9, cu.getBlockX());
 		        preparedStatement.setInt(10, cu.getBlockY());
 		        preparedStatement.setInt(11, cu.getBlockZ());
+		        preparedStatement.setString(12, cu.getChestname());
+		        preparedStatement.setBoolean(13, cu.isOptionVoid());
+		        preparedStatement.setBoolean(14, cu.isOptionDurability());
+		        preparedStatement.setInt(15, cu.getDurability());
+		        preparedStatement.setBoolean(16, cu.isOptionRepair());
+		        preparedStatement.setInt(16, cu.getRepairCost());
+		        preparedStatement.setBoolean(17, cu.isOptionEnchantment());
+		        preparedStatement.setString(18, cu.encryptEnchantments());
 		        
-		        int i = 12;
+		        int i = 19;
 		        for(Object o : whereObject)
 		        {
 		        	preparedStatement.setObject(i, o);
@@ -206,7 +230,15 @@ public interface TableIII
 		        			result.getString("world"),
 		        			result.getInt("blockx"),
 		        			result.getInt("blocky"),
-		        			result.getInt("blockz"));
+		        			result.getInt("blockz"),
+		        			result.getString("chestname"),
+		        			result.getBoolean("optionvoid"),
+		        			result.getBoolean("optiondurability"),
+		        			result.getInt("durability"),
+		        			result.getBoolean("optionrepair"),
+		        			result.getInt("repaircost"),
+		        			result.getBoolean("optionenchantments"),
+		        			StorageChest.decryptEnchantments(result.getString("enchantments")));
 		        }
 		    } catch (SQLException e) 
 			{
@@ -400,7 +432,15 @@ public interface TableIII
 		        			result.getString("world"),
 		        			result.getInt("blockx"),
 		        			result.getInt("blocky"),
-		        			result.getInt("blockz"));
+		        			result.getInt("blockz"),
+		        			result.getString("chestname"),
+		        			result.getBoolean("optionvoid"),
+		        			result.getBoolean("optiondurability"),
+		        			result.getInt("durability"),
+		        			result.getBoolean("optionrepair"),
+		        			result.getInt("repaircost"),
+		        			result.getBoolean("optionenchantments"),
+		        			StorageChest.decryptEnchantments(result.getString("enchantments")));
 		        	list.add(ep);
 		        }
 		        return list;
@@ -456,7 +496,15 @@ public interface TableIII
 		        			result.getString("world"),
 		        			result.getInt("blockx"),
 		        			result.getInt("blocky"),
-		        			result.getInt("blockz"));
+		        			result.getInt("blockz"),
+		        			result.getString("chestname"),
+		        			result.getBoolean("optionvoid"),
+		        			result.getBoolean("optiondurability"),
+		        			result.getInt("durability"),
+		        			result.getBoolean("optionrepair"),
+		        			result.getInt("repaircost"),
+		        			result.getBoolean("optionenchantments"),
+		        			StorageChest.decryptEnchantments(result.getString("enchantments")));
 		        	list.add(ep);
 		        }
 		        return list;
@@ -526,7 +574,15 @@ public interface TableIII
 		        			result.getString("world"),
 		        			result.getInt("blockx"),
 		        			result.getInt("blocky"),
-		        			result.getInt("blockz"));
+		        			result.getInt("blockz"),
+		        			result.getString("chestname"),
+		        			result.getBoolean("optionvoid"),
+		        			result.getBoolean("optiondurability"),
+		        			result.getInt("durability"),
+		        			result.getBoolean("optionrepair"),
+		        			result.getInt("repaircost"),
+		        			result.getBoolean("optionenchantments"),
+		        			StorageChest.decryptEnchantments(result.getString("enchantments")));
 		        	list.add(ep);
 		        }
 		        return list;
