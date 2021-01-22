@@ -25,9 +25,9 @@ import org.bukkit.inventory.meta.Repairable;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.StorageChest;
-import main.java.me.avankziar.spigot.advancedstorehouse.AdvancedStoreHouse;
-import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlHandler;
-import main.java.me.avankziar.spigot.advancedstorehouse.eventhandler.InteractHandler;
+import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
+import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
+import main.java.me.avankziar.spigot.ash.eventhandler.InteractHandler;
 
 public class ChestHandler
 {	

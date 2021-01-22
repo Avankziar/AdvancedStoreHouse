@@ -14,8 +14,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import main.java.me.avankziar.general.handler.ChestHandler;
-import main.java.me.avankziar.spigot.advancedstorehouse.AdvancedStoreHouse;
-import main.java.me.avankziar.spigot.advancedstorehouse.database.MysqlHandler;
+import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
+import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 
 public class ItemDistributeObject
 {
