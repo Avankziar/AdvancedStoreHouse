@@ -18,6 +18,11 @@ public class PluginUser
 		CHANGEITEMFILTERSET, //Ändern von individuellen ItemFilterSet
 		POSITIONUPDATEDISTRIBUTION, //Ändern von verteilerkisten positionen
 		POSITIONUPDATESTORAGE, //Ändern von lagerkisten positionen
+		
+		DISTRIBUTIONCHESTGUI, //Das main Gui für Verteilerkisten
+		
+		STORAGECHESTGUI, //Das main Gui für Lagerkisten
+		
 		;
 	}
 	
@@ -40,6 +45,9 @@ public class PluginUser
 	private Location compassLocation;
 	private Boolean canDistributionChestBreak;
 	
+	//The number (in a List), from where it call Particels, to show the storagechest
+	private int numberScForParticel;
+	
 	public PluginUser(String uuid, String name, SearchType searchType)
 	{
 		setUUID(uuid);
@@ -55,6 +63,7 @@ public class PluginUser
 		setItemFilterSet(new ItemFilterSet(0, "0", uuid, Bukkit.createInventory(null, 9*6).getContents()));
 		setCompassLocation(null);
 		setCanDistributionChestBreak(false);
+		setNumberScForParticel(0);
 	}
 
 	public String getUUID()
@@ -185,6 +194,16 @@ public class PluginUser
 	public void setCanDistributionChestBreak(Boolean canDistributionChestBreak)
 	{
 		this.canDistributionChestBreak = canDistributionChestBreak;
+	}
+
+	public int getNumberScForParticel()
+	{
+		return numberScForParticel;
+	}
+
+	public void setNumberScForParticel(int numberScForParticel)
+	{
+		this.numberScForParticel = numberScForParticel;
 	}
 
 }

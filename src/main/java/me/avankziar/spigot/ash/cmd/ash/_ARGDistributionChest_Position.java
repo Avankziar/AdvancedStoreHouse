@@ -3,19 +3,20 @@ package main.java.me.avankziar.spigot.ash.cmd.ash;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.PluginUser.Mode;
-import main.java.me.avankziar.general.objects.PluginUserHandler;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentConstructor;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentModule;
+import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 
-public class ARGStorageChest_Position extends ArgumentModule
+public class _ARGDistributionChest_Position extends ArgumentModule
 {
 	private AdvancedStoreHouse plugin;
 	
-	public ARGStorageChest_Position(AdvancedStoreHouse plugin, ArgumentConstructor argumentConstructor)
+	public _ARGDistributionChest_Position(AdvancedStoreHouse plugin, ArgumentConstructor argumentConstructor)
 	{
 		super(plugin, argumentConstructor);
 		this.plugin = plugin;
@@ -29,18 +30,19 @@ public class ARGStorageChest_Position extends ArgumentModule
 		if(user == null)
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
-				.replace("%cmd%", "/ash create")));
+				.replace("%cmd%", "/ash distributionchest position")));
 			return;
 		}
-		if(user.getMode() == Mode.POSITIONUPDATESTORAGE)
+		if(user.getMode() == Mode.POSITIONUPDATEDISTRIBUTION)
 		{
 			user.setMode(Mode.NONE);
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Position.Deactive")));
 		} else
 		{
-			user.setMode(Mode.POSITIONUPDATESTORAGE);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Position.SChest")));
+			user.setMode(Mode.POSITIONUPDATEDISTRIBUTION);
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Position.DChest")));
 		}
+		plugin.getMysqlHandler().updateData(MysqlHandler.Type.PLUGINUSER, user, "`player_uuid` = ?", user.getUUID());
 		PluginUserHandler.addUser(user);
 		return;
 	}

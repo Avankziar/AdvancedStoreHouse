@@ -49,7 +49,12 @@ public class Utility
 	PERMBYPASSLIST = "",
 	PERMBYPASSSEARCH = "",
 	PERMBYPASSTRANSFER = "",
-	PERMBYPASSRANDOM = "";
+	PERMBYPASSRANDOM = "",
+	
+	PERMBYPASSREPOSITION = "",
+	PERMBYPASSOPENOPTION = "",
+	PERMBYPASSIFSORVISUAL = "",
+	PERMBYPASSCOPYANDPASTE = "";
 	
 	public Utility(AdvancedStoreHouse plugin)
 	{
@@ -83,6 +88,11 @@ public class Utility
 		PERMBYPASSSEARCH = plugin.getYamlHandler().getCom().getString("Bypass.Search", "ash.bypass.search");
 		PERMBYPASSTRANSFER = plugin.getYamlHandler().getCom().getString("Bypass.Transfer", "ash.bypass.transfer");
 		PERMBYPASSRANDOM = plugin.getYamlHandler().getCom().getString("Bypass.Random", "ash.bypass.random");
+		
+		PERMBYPASSREPOSITION = ""; //ADDME
+		PERMBYPASSOPENOPTION = "";
+		PERMBYPASSIFSORVISUAL = "";
+		PERMBYPASSCOPYANDPASTE = "";
 	}
 	
 	public String getPrefix()

@@ -3,7 +3,6 @@ package main.java.me.avankziar.general.handler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -11,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -46,14 +46,108 @@ public class ChestHandler
 		}
 	}
 	
-	private static void debug(Player player, String s)
+	public static DistributionChest getDistributionChest(AdvancedStoreHouse plugin, Location loc) throws IOException
 	{
-		boolean bo = false;
-		if(bo)
+		String server = plugin.getYamlHandler().get().getString("Servername");
+		Block block = loc.getBlock();
+		if(block == null)
 		{
-			AdvancedStoreHouse.log.info(s);
-			player.spigot().sendMessage(ChatApi.tctl(s));
+			return null;
 		}
+		if(block.getState() instanceof Chest)
+		{
+			Chest chest = (Chest) block.getState();
+			if(chest.getInventory() instanceof DoubleChestInventory)
+			{
+				DoubleChestInventory dcinv = (DoubleChestInventory) chest.getInventory();
+				Location left = dcinv.getLeftSide().getLocation();
+				Location right = dcinv.getRightSide().getLocation();
+				if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+						server, left.getWorld().getName(), left.getBlockX(), left.getBlockY(), left.getBlockZ()))
+				{
+					DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+							"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+							server, left.getWorld().getName(), left.getBlockX(), left.getBlockY(), left.getBlockZ());
+					return dc;
+				} else
+				{
+					if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+							"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+							server, right.getWorld().getName(), right.getBlockX(), right.getBlockY(), right.getBlockZ()))
+					{
+						DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+								"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+								server, right.getWorld().getName(), right.getBlockX(), right.getBlockY(), right.getBlockZ());
+						return dc;
+					}
+				}
+			}
+		} else
+		{
+			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
+			{
+				DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+						server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+				return dc;
+			}
+		}
+		return null;
+	}
+	
+	public static StorageChest getStorageChest(AdvancedStoreHouse plugin, Location loc) throws IOException
+	{
+		String server = plugin.getYamlHandler().get().getString("Servername");
+		Block block = loc.getBlock();
+		if(block == null)
+		{
+			return null;
+		}
+		if(block.getState() instanceof Chest)
+		{
+			Chest chest = (Chest) block.getState();
+			if(chest.getInventory() instanceof DoubleChestInventory)
+			{
+				DoubleChestInventory dcinv = (DoubleChestInventory) chest.getInventory();
+				Location left = dcinv.getLeftSide().getLocation();
+				Location right = dcinv.getRightSide().getLocation();
+				if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
+						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+						server, left.getWorld().getName(), left.getBlockX(), left.getBlockY(), left.getBlockZ()))
+				{
+					StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST,
+							"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+							server, left.getWorld().getName(), left.getBlockX(), left.getBlockY(), left.getBlockZ());
+					return sc;
+				} else
+				{
+					if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
+							"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+							server, right.getWorld().getName(), right.getBlockX(), right.getBlockY(), right.getBlockZ()))
+					{
+						StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST,
+								"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+								server, right.getWorld().getName(), right.getBlockX(), right.getBlockY(), right.getBlockZ());
+						return sc;
+					}
+				}
+			}
+		} else
+		{
+			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
+					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
+			{
+				StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST,
+						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+						server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+				return sc;
+			}
+		}
+		return null;
 	}
 	
 	public static boolean isContentEmpty(ItemStack[] content)
@@ -96,9 +190,9 @@ public class ChestHandler
 		return new Location(Bukkit.getWorld(dc.getWorld()), dc.getBlockX(), dc.getBlockY(), dc.getBlockZ());
 	}
 	
-	public static Location getLocationStorageChest(StorageChest dc)
+	public static Location getLocationStorageChest(StorageChest sc)
 	{
-		return new Location(Bukkit.getWorld(dc.getWorld()), dc.getBlockX(), dc.getBlockY(), dc.getBlockZ());
+		return new Location(Bukkit.getWorld(sc.getWorld()), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ());
 	}
 	
 	public static ArrayList<DistributionChest> getChainChest(
@@ -243,283 +337,6 @@ public class ChestHandler
 			}
 		}
 		return chain;
-	}
-	
-	public static ItemStack[] distribute(Inventory toAddInv, ItemStack[] filter, ItemStack[] itemStacks, Inventory toRemoveInv,
-			boolean endstorage//, double durabiltyPercent, 
-			)
-	{
-		ArrayList<HashMap<Integer, ItemStack>> notDistributetItems = new ArrayList<>();
-		ArrayList<ItemStack> similarItems = new ArrayList<>();
-		ArrayList<ItemStack> filteredItems = new ArrayList<>();
-		
-		for(ItemStack is : itemStacks)
-		{
-			if(endstorage)
-			{
-				similarItems.add(is);
-			} else
-			{
-				if(isSimilar(is, filter))
-				{
-					similarItems.add(is);
-				} else if(is != null)
-				{
-					if(is.getType() != Material.AIR)
-					{
-						filteredItems.add(is);
-					}
-				}
-			}
-		}
-		debug("similar Items:"+similarItems.size() + " | filtered Items:"+filteredItems.size());
-		for(ItemStack is : similarItems)
-		{
-			if(is != null)
-			{
-				debug("add Item");
-				HashMap<Integer, ItemStack> hm = toAddInv.addItem(is);
-				if(!hm.isEmpty())
-				{
-					debug("!hm.isEmpty");
-					notDistributetItems.add(hm);
-					for(ItemStack nDItems : hm.values())
-					{
-						//Hier eigentliches Löschen der Items aus der Verteilerkiste
-						ItemStack toRemove = getNotDistributed(is, nDItems);
-						debug("toRemove Amount: "+toRemove.getAmount());
-						if(toRemove.getAmount() == 0)
-						{
-							debug("isAmount == toRemove.Amount");
-							continue; //Es konnte nichts verteilt werden.
-						} else if(toRemove.getAmount() == toRemove.getMaxStackSize())
-						{
-							debug("Amount == maxStackSize:"+toRemove.getMaxStackSize());
-							toRemoveInv.remove(is);
-						} else
-						{
-							debug("setToRemove.getAmount");
-							is.setAmount(toRemove.getAmount());
-						}
-					}
-				} else
-				{
-					debug("hm.isEmpty, Remove complet");
-					toRemoveInv.remove(is);
-				}
-			}
-		}
-		
-		ArrayList<ItemStack> re = new ArrayList<>();
-		for(ItemStack is : filteredItems)
-		{
-			re.add(is);
-		}
-		for(HashMap<Integer, ItemStack> map : notDistributetItems)
-		{
-			for(ItemStack is : map.values())
-			{
-				if(is != null)
-				{
-					if(is.getType() != Material.AIR)
-					{
-						re.add(is);
-						debug("EndLoop ++");
-					}
-				}
-			}
-		}
-		debug("re size "+re.size());
-		ItemStack[] r = new ItemStack[re.size()];
-		re.toArray(r);
-		return r;
-	}
-	
-	public static ItemStack[] distributeRandom(Inventory toAddInv, ItemStack[] filter, ItemStack[] itemStacks, Inventory toRemoveInv,
-			boolean endstorage//, double durabiltyPercent, 
-			)
-	{
-		ArrayList<HashMap<Integer, ItemStack>> notDistributetItems = new ArrayList<>();
-		ArrayList<ItemStack> similarItems = new ArrayList<>();
-		ArrayList<ItemStack> filteredItems = new ArrayList<>();
-		
-		for(ItemStack is : itemStacks)
-		{
-			ItemStack[] arr = new ItemStack[similarItems.size()];
-			if(endstorage && !isSimilar(is, toAddInv.getContents()) 
-					&& !isSimilar(is, similarItems.toArray(arr)))
-			{
-				similarItems.add(is);
-			} else
-			{
-				if(isSimilar(is, filter) && !isSimilar(is, toAddInv.getContents())
-						&& !isSimilar(is, similarItems.toArray(arr)))
-				{
-					similarItems.add(is);
-				} else if(is != null)
-				{
-					if(is.getType() != Material.AIR)
-					{
-						filteredItems.add(is);
-					}
-				}
-			}
-		}
-		debug("similar Items:"+similarItems.size() + " | filtered Items:"+filteredItems.size());
-		for(ItemStack is : similarItems)
-		{
-			if(is != null)
-			{
-				debug("add Item");
-				HashMap<Integer, ItemStack> hm = toAddInv.addItem(is);
-				if(!hm.isEmpty())
-				{
-					debug("!hm.isEmpty");
-					notDistributetItems.add(hm);
-					for(ItemStack nDItems : hm.values())
-					{
-						//Hier eigentliches Löschen der Items aus der Verteilerkiste
-						ItemStack toRemove = getNotDistributed(is, nDItems);
-						debug("toRemove Amount: "+toRemove.getAmount());
-						if(toRemove.getAmount() == 0)
-						{
-							debug("isAmount == toRemove.Amount");
-							continue; //Es konnte nichts verteilt werden.
-						} else if(toRemove.getAmount() == toRemove.getMaxStackSize())
-						{
-							debug("Amount == maxStackSize:"+toRemove.getMaxStackSize());
-							toRemoveInv.remove(is);
-						} else
-						{
-							debug("setToRemove.getAmount");
-							is.setAmount(toRemove.getAmount());
-						}
-					}
-				} else
-				{
-					debug("hm.isEmpty, Remove complet");
-					toRemoveInv.remove(is);
-				}
-			}
-		}
-		
-		ArrayList<ItemStack> re = new ArrayList<>();
-		for(ItemStack is : filteredItems)
-		{
-			re.add(is);
-		}
-		for(HashMap<Integer, ItemStack> map : notDistributetItems)
-		{
-			for(ItemStack is : map.values())
-			{
-				if(is != null)
-				{
-					if(is.getType() != Material.AIR)
-					{
-						re.add(is);
-						debug("EndLoop ++");
-					}
-				}
-			}
-		}
-		debug("re size "+re.size());
-		ItemStack[] r = new ItemStack[re.size()];
-		re.toArray(r);
-		return r;
-	}
-	
-	public static ItemStack getNotDistributed(ItemStack is, ItemStack other)
-	{
-		if(!isSimilar(is, other))
-		{
-			debug("getNotDistributed !isSimilar");
-			return is;
-		}
-		int amount = is.getAmount()-other.getAmount(); //64-30 = 34
-		debug("getNotDistributed: is "+is.getAmount()+" - other "+other.getAmount()+" = "+amount);
-		ItemStack i = is.clone();
-		i.setAmount(amount);
-		return i;
-	}
-	
-	@SuppressWarnings("deprecation")
-	public static boolean isSimilar(ItemStack item, ItemStack... filter)
-	{
-		for(ItemStack is : filter)
-		{
-			if (is == null || item == null) 
-	        {
-				//debug("i || o == null || i:"+(is == null)+" | o:"+(item == null));
-	            continue;
-	        }
-	        final ItemStack i = item.clone();
-	        final ItemStack f = is.clone();
-	        debug("i & f getType != |||| i:"+i.getType()+" | f:"+f.getType());
-	        if(i.getType() != f.getType())
-	        {
-	        	debug("i & f getType != || i:"+i.getType()+" | f:"+f.getType());
-	        	continue;
-	        }
-	        if(i.hasItemMeta() == true && f.hasItemMeta() == true)
-	        {
-	        	debug("i & f hasItemMeta == true");
-	        	if(i.getItemMeta() != null && f.getItemMeta() != null)
-	        	{
-	        		debug("i & f getItemMeta != null");
-	        		if(i.getItemMeta() instanceof Damageable && f.getItemMeta() instanceof Damageable)
-	        		{
-	        			Damageable id = (Damageable) i.getItemMeta();
-	        			id.setDamage(0);
-	        			i.setItemMeta((ItemMeta) id);
-	        			Damageable od = (Damageable) f.getItemMeta();
-	        			od.setDamage(0);
-	        			f.setItemMeta((ItemMeta) od);
-	        		}
-		        	if(i.getItemMeta() instanceof Repairable && f.getItemMeta() instanceof Repairable)
-	            	{
-	            		Repairable ir = (Repairable) i.getItemMeta();
-	            		ir.setRepairCost(0);
-	            		i.setItemMeta((ItemMeta) ir);
-	            		Repairable or = (Repairable) f.getItemMeta();
-	            		or.setRepairCost(0);
-	            		f.setItemMeta((ItemMeta) or);
-	            	}
-		        	if(i.getItemMeta() instanceof EnchantmentStorageMeta && f.getItemMeta() instanceof EnchantmentStorageMeta)
-		        	{
-		        		EnchantmentStorageMeta iesm = (EnchantmentStorageMeta) i.getItemMeta();
-		        		i.setItemMeta(orderStorageEnchantments(iesm));
-		        		EnchantmentStorageMeta oesm = (EnchantmentStorageMeta) f.getItemMeta();
-		        		f.setItemMeta(orderStorageEnchantments(oesm));
-		        	}
-		        	if(i.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK 
-		        			&& f.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK)
-		        	{
-		        		i.setItemMeta(orderEnchantments(i.getItemMeta()));
-		        		f.setItemMeta(orderEnchantments(f.getItemMeta()));
-		        	}
-		        	i.setAmount(1);
-		        	f.setAmount(1);
-		        	if(i.getItemMeta().toString().equals(f.getItemMeta().toString()))
-		        	{
-		        		debug("isSimliar : long");
-		        		return true;
-		        	}
-	        	}
-	        } else
-	        {
-	        	i.setAmount(1);
-	        	f.setAmount(1);
-	        	i.setDurability((short) 0);
-	        	f.setDurability((short) 0);
-	        	if(i.toString().equals(f.toString()))
-	        	{
-	        		debug("isSimliar : short");
-	        		return true;
-	        	}
-	        }
-		}
-		debug("!isSimilar");
-		return false;
 	}
 	
 	public static ItemMeta orderEnchantments(ItemMeta i)
@@ -678,37 +495,6 @@ public class ChestHandler
 		debug("Loc == null");
 		return null;
 	}
-	
-	/*public static Location isDoubleChestII(AdvancedStoreHouse plugin, Player player, String server, final Location loc,
-			DoubleChestInventory dchestInv)
-	{
-		if(isLocationsEquals(loc, dchestInv.getLeftSide().getLocation()))
-		{
-			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-					server, dchestInv.getRightSide().getLocation().getWorld().getName(),
-					dchestInv.getRightSide().getLocation().getBlockX(),
-					dchestInv.getRightSide().getLocation().getBlockY(),
-					dchestInv.getRightSide().getLocation().getBlockZ()))
-			{
-				
-				return dchestInv.getRightSide().getLocation();
-			}
-		} else if(isLocationsEquals(loc, dchestInv.getRightSide().getLocation()))
-		{
-			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-					server, dchestInv.getLeftSide().getLocation().getWorld().getName(),
-					dchestInv.getLeftSide().getLocation().getBlockX(),
-					dchestInv.getLeftSide().getLocation().getBlockY(),
-					dchestInv.getLeftSide().getLocation().getBlockZ()))
-			{
-				
-				return dchestInv.getLeftSide().getLocation();
-			}
-		}
-		return null;
-	}*/
 	
 	public static boolean isFull(Inventory inv)
 	{
@@ -975,4 +761,84 @@ public class ChestHandler
 		}
 		return damage;
 	}
+	
+	@SuppressWarnings("deprecation")
+	public static boolean isSimilarShort(ItemStack item, ItemStack[] filter)
+	{
+		for(ItemStack is : filter)
+		{
+			if (is == null || item == null) 
+	        {
+				//debug("i || o == null || i:"+(is == null)+" | o:"+(item == null));
+	            continue;
+	        }
+	        final ItemStack i = item.clone();
+	        final ItemStack f = is.clone();
+	        debug("i & f getType != |||| i:"+i.getType()+" | f:"+f.getType());
+	        if(i.getType() != f.getType())
+	        {
+	        	debug("i & f getType != || i:"+i.getType()+" | f:"+f.getType());
+	        	continue;
+	        }
+	        if(i.hasItemMeta() == true && f.hasItemMeta() == true)
+	        {
+	        	debug("i & f hasItemMeta == true");
+	        	if(i.getItemMeta() != null && f.getItemMeta() != null)
+	        	{
+	        		debug("i & f getItemMeta != null");
+	        		if(i.getItemMeta() instanceof Damageable && f.getItemMeta() instanceof Damageable)
+	        		{
+	        			Damageable id = (Damageable) i.getItemMeta();
+	        			id.setDamage(0);
+	        			i.setItemMeta((ItemMeta) id);
+	        			Damageable od = (Damageable) f.getItemMeta();
+	        			od.setDamage(0);
+	        			f.setItemMeta((ItemMeta) od);
+	        		}
+		        	if(i.getItemMeta() instanceof Repairable && f.getItemMeta() instanceof Repairable)
+	            	{
+	            		Repairable ir = (Repairable) i.getItemMeta();
+	            		ir.setRepairCost(0);
+	            		i.setItemMeta((ItemMeta) ir);
+	            		Repairable or = (Repairable) f.getItemMeta();
+	            		or.setRepairCost(0);
+	            		f.setItemMeta((ItemMeta) or);
+	            	}
+		        	if(i.getItemMeta() instanceof EnchantmentStorageMeta && f.getItemMeta() instanceof EnchantmentStorageMeta)
+		        	{
+		        		EnchantmentStorageMeta iesm = (EnchantmentStorageMeta) i.getItemMeta();
+		        		i.setItemMeta(ChestHandler.orderStorageEnchantments(iesm));
+		        		EnchantmentStorageMeta oesm = (EnchantmentStorageMeta) f.getItemMeta();
+		        		f.setItemMeta(ChestHandler.orderStorageEnchantments(oesm));
+		        	}
+		        	if(i.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK 
+		        			&& f.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK)
+		        	{
+		        		i.setItemMeta(ChestHandler.orderEnchantments(i.getItemMeta()));
+		        		f.setItemMeta(ChestHandler.orderEnchantments(f.getItemMeta()));	
+		        	}
+		        	i.setAmount(1);
+		        	f.setAmount(1);
+		        	if(i.getItemMeta().toString().equals(f.getItemMeta().toString()))
+		        	{
+		        		debug("isSimliar : long");
+		        		return true;
+		        	}
+	        	}
+	        } else
+	        {
+	        	i.setAmount(1);
+	        	f.setAmount(1);
+	        	i.setDurability((short) 0);
+	        	f.setDurability((short) 0);
+	        	if(i.toString().equals(f.toString()))
+	        	{
+	        		debug("isSimliar : short");
+	        		return true;
+	        	}
+	        }
+		}
+		debug("!isSimilar");
+		return false;
+	}	
 }

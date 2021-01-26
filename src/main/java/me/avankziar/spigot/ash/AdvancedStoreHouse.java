@@ -23,8 +23,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.ConvertHandler;
+import main.java.me.avankziar.general.handler.KeyHandler;
+import main.java.me.avankziar.general.handler.PluginUserHandler;
+import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
-import main.java.me.avankziar.general.objects.PluginUserHandler;
 import main.java.me.avankziar.spigot.ash.assistance.BackgroundTask;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.cmd.AshCommandExecutor;
@@ -45,7 +47,7 @@ import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Delete;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Info;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_List;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Member;
-import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Position;
+import main.java.me.avankziar.spigot.ash.cmd.ash._ARGDistributionChest_Position;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Random;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Search;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Select;
@@ -70,7 +72,7 @@ import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Delete;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Info;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_List;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_OpenItemFilter;
-import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Position;
+import main.java.me.avankziar.spigot.ash.cmd.ash._ARGStorageChest_Position;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Search;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Select;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Update;
@@ -144,6 +146,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 			Bukkit.getPluginManager().getPlugin("AdvancedStoreHouse").getPluginLoader().disablePlugin(this);
 			return;
 		}
+		PluginSettings.init(plugin);
 		//setupPlayers();
 		backgroundtask = new BackgroundTask(this);
 		setupStrings();
@@ -304,6 +307,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor sc_openitemfilter = new ArgumentConstructor(baseCommandI+"_sc_openitemfilter", 1, 1, 1, false, null);
 		ArgumentConstructor sc_position = new ArgumentConstructor(baseCommandI+"_sc_position", 1, 1, 1, false, null);
 		ArgumentConstructor sc_select = new ArgumentConstructor(baseCommandI+"_sc_select", 1, 2, 2, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.SC_SELECT, sc_select.getCommandString());
 		ArgumentConstructor sc_search = new ArgumentConstructor(baseCommandI+"_sc_search", 1, 1, 1, false, null);
 		ArgumentConstructor sc_update = new ArgumentConstructor(baseCommandI+"_sc_update", 1, 1, 1, false, null);
 		ArgumentConstructor sc = new ArgumentConstructor(baseCommandI+"_sc", 0, 0, 0, false, null,
@@ -347,7 +351,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		new ARGDistributionChest_Info(plugin, dc_info);
 		new ARGDistributionChest_List(plugin, dc_list);
 		new ARGDistributionChest_Member(plugin, dc_member);
-		new ARGDistributionChest_Position(plugin, dc_position);
+		new _ARGDistributionChest_Position(plugin, dc_position);
 		new ARGDistributionChest_Random(plugin, dc_random);
 		new ARGDistributionChest_Select(plugin, dc_select);
 		new ARGDistributionChest_Search(plugin, dc_search);
@@ -376,7 +380,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		new ARGStorageChest_Info(plugin, sc_info);
 		new ARGStorageChest_List(plugin, sc_list);
 		new ARGStorageChest_OpenItemFilter(plugin, sc_openitemfilter);
-		new ARGStorageChest_Position(plugin, sc_position);
+		new _ARGStorageChest_Position(plugin, sc_position);
 		new ARGStorageChest_Select(plugin, sc_select);
 		new ARGStorageChest_Search(plugin, sc_search);
 		new ARGStorageChest_Update(plugin, sc_update);

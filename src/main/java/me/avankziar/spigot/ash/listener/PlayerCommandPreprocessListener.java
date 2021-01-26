@@ -6,8 +6,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
+import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.PluginUser;
-import main.java.me.avankziar.general.objects.PluginUserHandler;
 import main.java.me.avankziar.spigot.ash.cmd.tree.CommandConstructor;
 
 public class PlayerCommandPreprocessListener implements Listener

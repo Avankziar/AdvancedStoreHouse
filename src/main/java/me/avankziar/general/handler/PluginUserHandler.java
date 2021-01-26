@@ -1,10 +1,12 @@
-package main.java.me.avankziar.general.objects;
+package main.java.me.avankziar.general.handler;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
+import main.java.me.avankziar.general.objects.ChatApi;
+import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.PluginUser.Mode;
 
 public class PluginUserHandler

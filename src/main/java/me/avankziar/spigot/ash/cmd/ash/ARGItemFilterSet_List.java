@@ -10,11 +10,11 @@ import org.bukkit.entity.Player;
 
 import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.ConvertHandler;
+import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.ItemFilterSet;
 import main.java.me.avankziar.general.objects.MatchApi;
 import main.java.me.avankziar.general.objects.PluginUser;
-import main.java.me.avankziar.general.objects.PluginUserHandler;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentConstructor;

@@ -151,13 +151,9 @@ public class YamlManager
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"ashCrossServerTransfer"}));
 		//Scheduler to automatic distribute. If false nothing running.
-		configKeys.put("RunTransferSchedularTimer"
+		configKeys.put("IsAutomaticDistribution"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				true}));
-		//In Minuten when the Schedular run and distributed the items to the storagechests.
-		configKeys.put("TransferSchedularTimer"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				15}));
 		//When your Server estimated to Restart. In order to be able to estimate when the last cycle must end in the Dynamic Format.
 		configKeys.put("ServerRestartTimes"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
@@ -168,9 +164,6 @@ public class YamlManager
 		 * And with or without the pause the task calculate the period to run the cyclus of the task.
 		 * Also is the dynamic format performace friendlyish. Also the Pause is only important in the dynamic format.
 		 */
-		configKeys.put("UseDynamicFormat"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				true}));
 		//The DirectPausevalue is a timevalue in ticks. A tick is 50 ms. Default is 10 min. In this Pause nothing will be distributed
 		configKeys.put("DirectPauseValue"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
@@ -183,33 +176,10 @@ public class YamlManager
 		configKeys.put("MinimumTickPerDistributionChest"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				10}));
-		//FIXME Werden die 3 nachfolgenden Werte korrekt verarbeitet?
-		configKeys.put("maximumDistributionChest"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				500}));
-		configKeys.put("maximumStorageChestPerDistributionChest"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				500}));
-		configKeys.put("maximumItemFilterSet"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				500}));
-		configKeys.put("IsAutomaticDistribution"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				false}));
-		configKeys.put("BlockBreakDistributionChestDeleteLinkedStorageChest"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				true}));
-		//The sphere radius to interact and trigger Distributionchests. Attention! To high number cann occur lags.
-		configKeys.put("ButtonPlateInteractRadius"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				3}));
 		/*
 		 * If UseDelayedDistribution is false can lags occur!
 		 * If true, per Tick it works off a storagechest. And in the next tick, the next storagechest is processed etc.
 		 */
-		configKeys.put("UseDelayedDistribution"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				true}));
 		//A Tick is 50 ms. Between 1 and 2 Ticks may should be enough for ~50 - 100 StorageChests per DistributionChest.
 		configKeys.put("DelayedTicks"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
@@ -222,14 +192,28 @@ public class YamlManager
 		configKeys.put("DelayedChainTicks"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				10}));
-		//Use this in the dynamic Format to upspeed the distribution with the next value
-		configKeys.put("UseFastDelayedDistribution"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				true}));
 		//The value set, how many storagechest per tick in a loop is processed
 		configKeys.put("ChestsPerTick"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				10}));
+		
+		//FIXME Werden die 3 nachfolgenden Werte korrekt verarbeitet?
+				configKeys.put("maximumDistributionChest"
+						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						500}));
+				configKeys.put("maximumStorageChestPerDistributionChest"
+						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						500}));
+				configKeys.put("maximumItemFilterSet"
+						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						500}));
+				configKeys.put("BlockBreakDistributionChestDeleteLinkedStorageChest"
+						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						true}));
+				//The sphere radius to interact and trigger Distributionchests. Attention! To high number cann occur lags.
+				configKeys.put("ButtonPlateInteractRadius"
+						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						3}));
 		/*
 		 * Set the diplayed Amount Chest in the "list" command (/ash distributionchest|storagechest list)
 		 * This is maded, because it happend by some server, that the player, which perform the command was kicked without errors
@@ -238,6 +222,38 @@ public class YamlManager
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				25}));
 		configKeys.put("AmountToDisplayStorageChestInListCommand"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				25}));
+		//Maximum Copy Paste
+		configKeys.put("CopyPasteMaxStorageChest"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				20}));
+		//Here is all Simple Methode Materials
+		configKeys.put("Simple.Creating"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"AIR"}));
+		configKeys.put("Simple.CreateDirectWithIFS"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"TRAPPED_CHEST"}));
+		configKeys.put("Simple.CreateDirectWithChestContents"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"CHEST"}));
+		configKeys.put("Simple.CopyAndPaste"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"ENDER_CHEST"}));
+		configKeys.put("Simple.Select"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"BARREL"}));
+		configKeys.put("Simple.OpenIFSAndVisuals"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"BLAST_FURNACE"}));
+		configKeys.put("Simple.OpenOptionGUI"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"FURNACE"}));
+		configKeys.put("Simple.Reposition"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"SMOKER"}));
+		configKeys.put("StorageChestAmountWhereShowParticels"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				25}));
 		/*configKeys.put(""
@@ -314,6 +330,7 @@ public class YamlManager
 				"/ash distributionchest member <playername>", "/ash distributionchest member ", 
 				"&c/ash distributionchest member <Spielername> &f| Fügt einen Spieler der Mitgliedsliste hinzu oder entfernt ihn.",
 				"&c/ash distributionchest member <playername> &f| Add or remove a player from the member list.");
+		//REMOVEME position cmd is not needed
 		argumentInput("ash_dc_position", "position", "ash.cmd.distributionchest.position",
 				"/ash distributionchest position", "/ash distributionchest position ", 
 				"&c/ash distributionchest position &f| Setzt den Spieler in den Positionswechselmodus für Verteilerkisten.", 
@@ -414,6 +431,7 @@ public class YamlManager
 				"/ash storagechest openitemfilter", "/ash storagechest openitemfilter ", 
 				"&c/ash storagechest openitemfilter <ID> &f| Öffnet das ItemfilterSet der Lagerkiste.", 
 				"&c/ash storagechest openitemfilter <ID> &f| Opens the item filter set of the storage crate.");
+		//REMOVEME position cmd is not needed
 		argumentInput("ash_sc_position", "position", "ash.cmd.storagechest.position",
 				"/ash storagechest position", "/ash storagechest position ", 
 				"&c/ash storagechest position &f| Setzt den Spieler in den Positionswechselmodus für Lagerkisten.", 
@@ -1075,6 +1093,7 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&ePositionswechselmodus ist deaktiviert!",
 						"&ePosition change mode is deactivated!"}));
+		//REMOVEME position cmd is not needed
 		languageKeys.put("CmdAsh.Position.DChest", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&ePositionswechselmodus für Verteilerkisten ist aktiviert!",
@@ -1107,6 +1126,7 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eBitte denkt daran die Aktion nun abzubrechen oder eine andere Verteiler-/Lagerkiste auszuwählen.",
 						"&ePlease remember to cancel the action now or select another distribution/storage box"}));
+		//position end
 		languageKeys.put("CmdAsh.Priority.Set",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&ePriorität auf &f%priority% &egesetzt!",
@@ -1127,6 +1147,10 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cBitte wähle zuvor erstmal eine Lagerkiste aus!",
 						"&cPlease select a storage box first!"}));
+		languageKeys.put("CmdAsh.Search.SelectScsHeadline", 
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&e===&aAuswählbare Lagerkisten&e===",
+						""}));
 		languageKeys.put("CmdAsh.Search.SelectDcDontExist", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDie ausgewählte Verteilerkiste existiert nicht!",
@@ -1256,7 +1280,87 @@ public class YamlManager
 						"&cDu hast den Änderungsmodus aktiv, jedoch bist du weder der Eigentümer oder Mitglied der neuen Verteilerkiste, welche du mit der Lagerkiste verlinken willst.",
 						"&cYou have change mode active, but you are neither the owner nor member of the new distribution box you want to link to the storage box."}));
 		
+		languageKeys.put("Interact.Base.DcNotSelected"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&cDu hast keine Verteilerkiste ausgewählt.",
+				""}));
+		languageKeys.put("Interact.Base.ScNotSelected"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&cDu hast keine Lagerkiste ausgewählt!",
+				""}));
+		languageKeys.put("Interact.Base.DcDontExist"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&cDie ausgewählte Verteilerkiste existiert nicht!",
+				""}));
+		languageKeys.put("Interact.Base.ScDontExist"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&cDie ausgewählte Lagerkiste existiert nicht!",
+				""}));
+		languageKeys.put("Interact.Base.ScsDontExist"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&cDie ausgewählten Lagerkisten existierten nicht!",
+				""}));
+		languageKeys.put("Interact.Base.ScDcDontExist"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&cDie Verteilerkiste der ausgewählten Lagerkiste existiert nicht!",
+				""}));
+		languageKeys.put("Interact.CopyPaste.TooManyToCopy"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&cDu bist dabei ein Lagersystem mit zu vielen Lagerkisten zu kopieren. Bitte wähle ein kleineres Lagersystem dafür aus.",
+				""}));
+		languageKeys.put("Interact.CopyPaste.CopyAndPasteTaskRun"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&eDer Kopiervorgang start nun. Je nach Größe des Lagersystems wird dies einige Momente dauern.",
+				""}));
+		languageKeys.put("Interact.CopyPaste.CopyAndPasteTaskRunFailed"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&cDer Kopiervorgang ist fehlgeschlagen! Siehe Console!",
+				""}));
+		languageKeys.put("Interact.CopyPaste.CopyAndPasteTaskRunSuccess"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&eDer Kopiervorgang ist erfolgreich beendet! Kopiert wurde ein Lagersystem von &f%count% &eLagerkisten!",
+				""}));
 		
+		languageKeys.put("Interact.Reposition.NoPermission"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&cDu hast nicht das Recht um diese Kiste zu versetzten!",
+				""}));
+		languageKeys.put("Interact.Reposition.DcIsReposition"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&eDie Verteilerkiste &f%dcid% - %dcname% &ewurde auf ihre neue Position versetzt!",
+				""}));
+		languageKeys.put("Interact.Reposition.ScIsReposition"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&eDie Lagerkiste &f%scid% - %scname% &ewurde auf ihre neue Position versetzt!",
+				""}));
+		languageKeys.put("Interact.Option.NoPermission"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&cDu hast nicht das Recht die Einstellungen aufzurufen!",
+				""}));
+		languageKeys.put("Interact.Select.NoPermission"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&cDu hast nicht das Recht diese Kiste auszuwählen!",
+				""}));
+		languageKeys.put(""
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"",
+				""}));
+		languageKeys.put(""
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"",
+				""}));
+		languageKeys.put(""
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"",
+				""}));
+		languageKeys.put(""
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"",
+				""}));
+		languageKeys.put(""
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"",
+				""}));
 		/*languageKeys.put(""
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 				"",

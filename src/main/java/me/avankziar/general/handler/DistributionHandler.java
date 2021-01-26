@@ -27,6 +27,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.ItemDistributeObject;
+import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
@@ -48,19 +49,8 @@ public class DistributionHandler
 		}
 	}
 	
-	private static void debug(Player player, String s)
+	public static void distributeStartVersionPhysical(String server, Location loc, Inventory inv) throws IOException
 	{
-		boolean bo = false;
-		if(bo)
-		{
-			AdvancedStoreHouse.log.info(s);
-			player.spigot().sendMessage(ChatApi.tctl(s));
-		}
-	}
-	
-	public static void distributeStart(String server, Location loc, Inventory inv) throws IOException
-	{
-		boolean dci = false;
 		if(!AdvancedStoreHouse.getPlugin().getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
 				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
@@ -70,7 +60,6 @@ public class DistributionHandler
 			{
 				DoubleChestInventory dcInv = (DoubleChestInventory) inv;
 				debug("distribution == DoubleChestInv");
-				dci = true;
 				loc = ChestHandler.isDoubleChest(AdvancedStoreHouse.getPlugin(), server, loc, dcInv);
 				if(loc == null)
 				{
@@ -83,14 +72,6 @@ public class DistributionHandler
 						+server+" "+loc.getWorld().getName()+" "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ());
 				return;
 			}
-		} else
-		{
-			debug("distribution found!");
-			if(inv instanceof DoubleChestInventory)
-			{
-				debug("distribution == DoubleChestInv II");
-				dci = true;
-			}
 		}
 		DistributionChest dc = (DistributionChest) AdvancedStoreHouse.getPlugin().getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
 				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
@@ -100,6 +81,29 @@ public class DistributionHandler
 			debug("Dc is already in distribution");
 			return;
 		}
+		distributeMiddle(server, dc, inv);
+	}
+	
+	public static void distributeStartVersionButton(String server, Location loc, Inventory inv) throws IOException
+	{
+		DistributionChest dc = (DistributionChest) AdvancedStoreHouse.getPlugin().getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+		if(ChestHandler.isDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc))
+		{
+			debug("Dc is already in distribution");
+			return;
+		}
+		distributeMiddle(server, dc, inv);
+	}
+	
+	public static void distributeStartVersionAutomatic(String server, DistributionChest dc, Inventory inv) throws IOException
+	{
+		distributeMiddle(server, dc, inv);
+	}
+	
+	private static void distributeMiddle(String server, DistributionChest dc, Inventory inv) throws IOException
+	{
 		ArrayList<StorageChest> prioList = ConvertHandler.convertListIII(
 				AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`priority`",
 						!dc.isNormalPriority(),
@@ -109,26 +113,22 @@ public class DistributionHandler
 						!dc.isNormalPriority(),
 						"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), true, server));
 		int storagechestamount = prioList.size()+endList.size();
-		ItemStack[] cloneInvL = null;
-		ItemStack[] cloneInvR = null;
+		
 		
 		if(ChestHandler.isContentEmpty(inv.getContents()))
 		{
 			return;
 		}
-		
 		ChestHandler.setDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc, storagechestamount, true);
 		
-		if(dci)
+		ItemStack[] cloneInvL = null;
+		ItemStack[] cloneInvR = null;
+		if(inv instanceof DoubleChestInventory)
 		{
-			debug("distribution dci == true");
-			if(inv instanceof DoubleChestInventory)
-			{
-				debug("distribution is DoubleChestInv");
-				DoubleChestInventory dcinv = (DoubleChestInventory) inv;
-				cloneInvL = dcinv.getLeftSide().getContents();
-				cloneInvR = dcinv.getRightSide().getContents();
-			}
+			debug("distribution is DoubleChestInv");
+			DoubleChestInventory dcinv = (DoubleChestInventory) inv;
+			cloneInvL = dcinv.getLeftSide().getContents();
+			cloneInvR = dcinv.getRightSide().getContents();
 		} else
 		{
 			debug("distribution dci == false");
@@ -169,7 +169,7 @@ public class DistributionHandler
 				inv, prioList, endList, cloneInvL, cloneInvR, server, dc.isDistributeRandom());
 		
 		//here Chainstart
-		long supposeCooldown = storagechestamount*AdvancedStoreHouse.getPlugin().getYamlHandler().get().getInt("DelayedTicks", 1)*20+10;
+		long supposeCooldown = storagechestamount*PluginSettings.settings.getDelayChainChest()*20+10;
 		distributeChain(server, supposeCooldown, prioList, endList);
 	}
 	
@@ -302,7 +302,7 @@ public class DistributionHandler
 				i++;
 			}
 		}.runTaskTimer(AdvancedStoreHouse.getPlugin(), supposeCooldown,
-				1L*AdvancedStoreHouse.getPlugin().getYamlHandler().get().getInt("DelayedChainTicks", 10));
+				1L*PluginSettings.settings.getDelayedChainTicks());
 	}
 	
 	public static ItemStack[] distribute(Inventory sender, Inventory reciever, ItemStack[] filter, ItemStack[] itemStacks,

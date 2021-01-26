@@ -95,7 +95,7 @@ public interface TableIII
 		        preparedStatement.setInt(9, cu.getBlockX());
 		        preparedStatement.setInt(10, cu.getBlockY());
 		        preparedStatement.setInt(11, cu.getBlockZ());
-		        preparedStatement.setString(12, cu.getChestname());
+		        preparedStatement.setString(12, cu.getChestName());
 		        preparedStatement.setBoolean(13, cu.isOptionVoid());
 		        preparedStatement.setBoolean(14, cu.isOptionDurability());
 		        preparedStatement.setInt(15, cu.getDurability());
@@ -162,7 +162,7 @@ public interface TableIII
 		        preparedStatement.setInt(9, cu.getBlockX());
 		        preparedStatement.setInt(10, cu.getBlockY());
 		        preparedStatement.setInt(11, cu.getBlockZ());
-		        preparedStatement.setString(12, cu.getChestname());
+		        preparedStatement.setString(12, cu.getChestName());
 		        preparedStatement.setBoolean(13, cu.isOptionVoid());
 		        preparedStatement.setBoolean(14, cu.isOptionDurability());
 		        preparedStatement.setInt(15, cu.getDurability());

@@ -13,9 +13,9 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import main.java.me.avankziar.general.handler.ChestHandler;
+import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.PluginUser;
-import main.java.me.avankziar.general.objects.PluginUserHandler;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 
 public class InventoryClickHandler implements Listener
@@ -59,23 +59,10 @@ public class InventoryClickHandler implements Listener
 		}
 		switch(user.getMode())
 		{
-		case CONSTRUCT:
-			//Hier passiert nix
-			return;
-		case NONE:
-			//Hier passiert nix
-			return;
-		case BLOCKINFO:
-			//Hier passiert nix
-			return;
-		case CREATEDISTRIBUTIONCHEST:
-			//Hier passiert nix
+		default:
 			return;
 		case CREATESTORAGE:
 			updateGui(event, player, user, isTopInventory);
-			return;
-		case UPDATESTORAGE:
-			//Hier passiert nix
 			return;
 		case UPDATESTORAGEITEMFILTERSET:
 			updateGui(event, player, user, isTopInventory);
@@ -85,12 +72,6 @@ public class InventoryClickHandler implements Listener
 			return;
 		case CHANGEITEMFILTERSET:
 			updateGui(event, player, user, isTopInventory);
-			return;
-		case POSITIONUPDATEDISTRIBUTION:
-			//Hier passiert nix
-			return;
-		case POSITIONUPDATESTORAGE:
-			//Hier passiert nix
 			return;
 		}
 	}
@@ -125,7 +106,7 @@ public class InventoryClickHandler implements Listener
 			inv.setItem(slot, null);
 		} else
 		{
-			if(ChestHandler.isSimilar(clicked, inv.getContents()))
+			if(ChestHandler.isSimilarShort(clicked, inv.getContents()))
 			{
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.InventoyClick.ItemExist")));
 				return;

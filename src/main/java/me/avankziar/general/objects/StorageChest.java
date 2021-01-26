@@ -51,7 +51,7 @@ public class StorageChest
 		setBlockX(blockX);
 		setBlockY(blockY);
 		setBlockZ(blockZ);
-		setChestname(chestname);
+		setChestName(chestname);
 		setOptionVoid(optionVoid);
 		setOptionDurability(optionDurability);
 		setDurability(durability);
@@ -181,12 +181,12 @@ public class StorageChest
 		this.endstorage = endstorage;
 	}
 
-	public String getChestname()
+	public String getChestName()
 	{
 		return chestname;
 	}
 
-	public void setChestname(String chestname)
+	public void setChestName(String chestname)
 	{
 		this.chestname = chestname;
 	}
