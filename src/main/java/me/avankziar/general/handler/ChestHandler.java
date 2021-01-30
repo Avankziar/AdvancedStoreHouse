@@ -48,7 +48,7 @@ public class ChestHandler
 	
 	public static DistributionChest getDistributionChest(AdvancedStoreHouse plugin, Location loc) throws IOException
 	{
-		String server = plugin.getYamlHandler().get().getString("Servername");
+		String server = plugin.getYamlHandler().getConfig().getString("Servername");
 		Block block = loc.getBlock();
 		if(block == null)
 		{
@@ -100,7 +100,7 @@ public class ChestHandler
 	
 	public static StorageChest getStorageChest(AdvancedStoreHouse plugin, Location loc) throws IOException
 	{
-		String server = plugin.getYamlHandler().get().getString("Servername");
+		String server = plugin.getYamlHandler().getConfig().getString("Servername");
 		Block block = loc.getBlock();
 		if(block == null)
 		{
@@ -534,10 +534,10 @@ public class ChestHandler
 	{
 		//int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, "`distributionchestid` = ?", dc.getId());
 		long storage = storagechestamount;
-		long dif = plugin.getYamlHandler().get().getInt("DelayedTicks", 1);
-		if(useFastDelay && plugin.getYamlHandler().get().getBoolean("UseFastDelayedDistribution", true))
+		long dif = plugin.getYamlHandler().getConfig().getInt("DelayedTicks", 1);
+		if(useFastDelay && plugin.getYamlHandler().getConfig().getBoolean("UseFastDelayedDistribution", true))
 		{
-			storage = storagechestamount / plugin.getYamlHandler().get().getInt("ChestsPerTick", 10);
+			storage = storagechestamount / plugin.getYamlHandler().getConfig().getInt("ChestsPerTick", 10);
 		}
 		long start = System.currentTimeMillis();
 		long cooldown = start

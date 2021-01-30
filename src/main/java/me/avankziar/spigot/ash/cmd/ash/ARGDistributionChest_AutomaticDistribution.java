@@ -33,14 +33,14 @@ public class ARGDistributionChest_AutomaticDistribution extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash distributionchest info")));
 			return;
 		}
 		int id = user.getDistributionChestID();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.DChestDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.DChestDontExist")));
 			return;
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
@@ -48,20 +48,20 @@ public class ARGDistributionChest_AutomaticDistribution extends ArgumentModule
 		if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
 				&& !player.hasPermission(Utility.PERMBYPASSSELECT))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwnerOrMember")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 			return;
 		}
 		if(dc.isAutomaticDistribution() == true)
 		{
 			dc.setAutomaticDistribution(false);
 			player.sendMessage(ChatApi.tl(
-					plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestAutomaticDistribution.Deactive")
+					plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestAutomaticDistribution.Deactive")
 					.replace("%name%", dc.getChestName())));
 		} else
 		{
 			dc.setAutomaticDistribution(true);
 			player.sendMessage(ChatApi.tl(
-					plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestAutomaticDistribution.Active")
+					plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestAutomaticDistribution.Active")
 					.replace("%name%", dc.getChestName())));
 		}
 		plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());

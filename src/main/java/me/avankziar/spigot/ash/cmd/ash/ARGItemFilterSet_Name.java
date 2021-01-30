@@ -33,20 +33,20 @@ public class ARGItemFilterSet_Name extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash itemfilterset name")));
 			return;
 		}
 		ItemFilterSet ifs = null;
 		if(user.getItemFilterSet() == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSet.NotExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSet.NotExist")));
 			return;
 		}
 		int id = user.getItemFilterSet().getID();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.ITEMFILTERSET, "`id` = ? AND `owner_uuid` = ?", id, user.getUUID()))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSet.NotExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSet.NotExist")));
 			return;
 		}
 		ifs = (ItemFilterSet) plugin.getMysqlHandler().getData(MysqlHandler.Type.ITEMFILTERSET,
@@ -54,12 +54,12 @@ public class ARGItemFilterSet_Name extends ArgumentModule
 		
 		if(ifs == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSet.NotExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSet.NotExist")));
 			return;
 		}
 		if(!ifs.getOwneruuid().equals(user.getUUID()) && !player.hasPermission(Utility.PERMBYPASSITEMFILTERSETSELECT))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwner")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwner")));
 			return;
 		}
 		final String oldname = ifs.getName();
@@ -67,7 +67,7 @@ public class ARGItemFilterSet_Name extends ArgumentModule
 		user.setItemFilterSet(ifs);
 		plugin.getMysqlHandler().updateData(MysqlHandler.Type.ITEMFILTERSET, ifs, "`id` = ?", ifs.getID());
 		PluginUserHandler.addUser(user);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSet.NewName")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSet.NewName")
 				.replace("%newname%", ifs.getName())
 				.replace("%oldname%", oldname)));
 		return;

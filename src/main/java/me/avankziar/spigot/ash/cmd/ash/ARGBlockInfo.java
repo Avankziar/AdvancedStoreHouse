@@ -28,18 +28,18 @@ public class ARGBlockInfo extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash check")));
 			return;
 		}
 		if(user.getMode() == Mode.BLOCKINFO)
 		{
 			user.setMode(Mode.CONSTRUCT);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.BlockInfo.Deactive")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.Deactive")));
 		} else
 		{
 			user.setMode(Mode.BLOCKINFO);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.BlockInfo.Active")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.Active")));
 		}
 		PluginUserHandler.addUser(user);
 		return;

@@ -32,7 +32,7 @@ public class ARGDistributionChest_Delete extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash distributionchest delete")));
 			return;
 		}
@@ -40,7 +40,7 @@ public class ARGDistributionChest_Delete extends ArgumentModule
 		int id = user.getDistributionChestID();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Delete.DistributionChestDontExist")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.DistributionChestDontExist")
 					.replace("%id%", String.valueOf(user.getDistributionChestID()))));
 			return;
 		}
@@ -48,23 +48,23 @@ public class ARGDistributionChest_Delete extends ArgumentModule
 				"`id` = ?", id);
 		if(dc == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Delete.DistributionChestDontExist")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.DistributionChestDontExist")
 					.replace("%id%", user.getDistributionChestName())));
 			return;
 		}
 		if(!dc.getOwneruuid().equals(user.getUUID()) && !player.hasPermission(Utility.PERMBYPASSDELETE))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwner")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwner")));
 			return;
 		}
 		plugin.getMysqlHandler().deleteData(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", dc.getId());
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Delete.DChestDeleted")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.DChestDeleted")
 				.replace("%name%", dc.getChestName())
 				.replace("%id%", String.valueOf(dc.getId()))));
 		int count = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST, 
 				"`distributionchestid` = ?", dc.getId());
 		plugin.getMysqlHandler().deleteData(MysqlHandler.Type.STORAGECHEST, "`distributionchestid` = ?", dc.getId());
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Delete.LinkedSChestDeleted")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.LinkedSChestDeleted")
 				.replace("%count%", String.valueOf(count))
 				.replace("%name%", dc.getChestName())
 				.replace("%id%", String.valueOf(dc.getId()))));

@@ -36,14 +36,14 @@ public class ARGStorageChest_OpenItemFilter extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash openitemfiler")));
 			return;
 		}
 		int id = user.getStorageChestID();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.OpenItemFilter.DontExist")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.OpenItemFilter.DontExist")
 					.replace("%id%", String.valueOf(id))));
 			return;
 		}
@@ -60,7 +60,7 @@ public class ARGStorageChest_OpenItemFilter extends ArgumentModule
 				iddc = ""+dc.getId();
 				if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString()))
 				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwnerOrMember")));
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 					return;
 				}
 			}
@@ -69,8 +69,8 @@ public class ARGStorageChest_OpenItemFilter extends ArgumentModule
 		user.setStorageChestID(sc.getId());
 		PluginUserHandler.addUser(user);
 		Inventory inv = Bukkit.createInventory(null, 6*9, 
-				plugin.getYamlHandler().getL().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
-				.replace("%p%", String.valueOf(sc.getPriority()))
+				plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
+				.replace("%p%", String.valueOf(sc.getPriorityNumber()))
 				.replace("%name%", name)
 				.replace("%dcid%", iddc)
 				.replace("%id%", String.valueOf(sc.getId())));

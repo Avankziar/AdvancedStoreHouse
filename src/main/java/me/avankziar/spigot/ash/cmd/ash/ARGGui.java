@@ -28,12 +28,12 @@ public class ARGGui extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash gui")));
 			return;
 		}
 		user.setMode(Mode.NONE);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Gui.Deactive")));
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Gui.Deactive")));
 		PluginUserHandler.addUser(user);
 	}
 }

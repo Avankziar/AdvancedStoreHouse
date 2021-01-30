@@ -33,31 +33,31 @@ public class ARGDistributionChest_Search extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash search")));
 			return;
 		}
 		if(user.getDistributionChestID() == 0)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Search.SelectDc")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.SelectDc")));
 			return;
 		}
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", user.getDistributionChestID()))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Search.SelectDcDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.SelectDcDontExist")));
 			return;
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
 				"`id` = ?", user.getDistributionChestID());
 		if(dc == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Search.SelectDcDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.SelectDcDontExist")));
 			return;
 		}
 		if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
 				&& !player.hasPermission(Utility.PERMBYPASSSEARCH))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwnerOrMember")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 			return;
 		}
 		switch(user.getSearchType())
@@ -79,10 +79,10 @@ public class ARGDistributionChest_Search extends ArgumentModule
 	
 	private void compass(Player player, PluginUser user, DistributionChest dc)
 	{
-		String server = plugin.getYamlHandler().get().getString("Servername");
+		String server = plugin.getYamlHandler().getConfig().getString("Servername");
 		if(!dc.getServer().equals(server))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotSameServer")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotSameServer")
 					.replace("%yourserver%", server)
 					.replace("%server%", dc.getServer())));
 			return;
@@ -90,7 +90,7 @@ public class ARGDistributionChest_Search extends ArgumentModule
 		user.setCompassLocation(player.getCompassTarget());
 		PluginUserHandler.addUser(user);
 		player.setCompassTarget(ChestHandler.getLocationDistributionChest(dc));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Search.Compass")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.Compass")
 				.replace("%world%", dc.getWorld())
 				.replace("%x%", String.valueOf(dc.getBlockX()))
 				.replace("%y%", String.valueOf(dc.getBlockY()))

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import main.java.me.avankziar.spigot.ash.database.Language.ISO639_2B;
@@ -16,6 +17,7 @@ public class YamlManager
 	private static LinkedHashMap<String, Language> configKeys = new LinkedHashMap<>();
 	private static LinkedHashMap<String, Language> commandsKeys = new LinkedHashMap<>();
 	private static LinkedHashMap<String, Language> languageKeys = new LinkedHashMap<>();
+	private static LinkedHashMap<String, LinkedHashMap<String, Language>> guiKeys = new LinkedHashMap<>();
 	
 	public YamlManager()
 	{
@@ -54,6 +56,16 @@ public class YamlManager
 		return languageKeys;
 	}
 	
+	public LinkedHashMap<String, Language> getGuiKeys(String key)
+	{
+		return guiKeys.get(key);
+	}
+
+	public static void setGuiKeys(LinkedHashMap<String, LinkedHashMap<String, Language>> guiKeys)
+	{
+		YamlManager.guiKeys = guiKeys;
+	}
+
 	public void setFileInput(YamlConfiguration yml, LinkedHashMap<String, Language> keyMap, String key, ISO639_2B languageType)
 	{
 		if(!keyMap.containsKey(key))
@@ -256,6 +268,10 @@ public class YamlManager
 		configKeys.put("StorageChestAmountWhereShowParticels"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				25}));
+		configKeys.put("GuiList" //ADDME more guitype
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"DC_MAIN", "DC_NUMPAD",
+				"SC_MAIN", "SC_PRIORITY_NUMPAD", "SC_DURABILITY_NUMPAD", "SC_REPAIR_NUMPAD"}));
 		/*configKeys.put(""
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				""}));*/
@@ -415,6 +431,10 @@ public class YamlManager
 				"/ash storagechest create", "/ash storagechest create ", 
 				"&c/ash storagechest create &f| Setzt den Spieler in den Erstellungsmodus für Lagerkisten.", 
 				"&c/ash storagechest create &f| Put the player in storagechest create mode.");
+		argumentInput("ash_sc_chestname", "chestname", "ash.cmd.storagechest.chestname",
+				"/ash storagechest chestname", "/ash storagechest chestname ", 
+				"&c/ash storagechest chestname <Name> &f| Setzt einen neuen Namen für die Lagerkiste.",
+				"&c/ash storagechest chestname <Name> &f| Sets a new name for the storagechest");
 		argumentInput("ash_sc_delete", "delete", "ash.cmd.storagechest.delete",
 				"/ash storagechest delete", "/ash storagechest delete ", 
 				"&c/ash storagechest delete &f| Löscht Lagerkiste.", 
@@ -757,6 +777,14 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&aLagerkiste+&f%sc%+&aerstellt!+&eFür+weitere+Informationen+klicke+hier~click@RUN_COMMAND@/ash+storagechest+info",
 						"&aStoragebox+&f%sc%+&created!+&eFor+more+information+click+here~click@RUN_COMMAND@/ash+storagechest+info"}));
+		languageKeys.put("CmdAsh.Create.SetupSChestIFS",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&aLagerkiste+&f%sc%+mit+ItemFilterSet+&aerstellt!+&eFür+weitere+Informationen+klicke+hier~click@RUN_COMMAND@/ash+storagechest+info",
+						"&aStoragebox+&f%sc%+with+ItemFilterSet+&acreated!+&eFor+more+information+click+here~click@RUN_COMMAND@/ash+storagechest+info"}));
+		languageKeys.put("CmdAsh.Create.SetupSChestInventory",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&aLagerkiste+&f%sc%+mit+Kisteninventar+&aerstellt!+&eFür+weitere+Informationen+klicke+hier~click@RUN_COMMAND@/ash+storagechest+info",
+						"&aStoragebox+&f%sc%+with+chestinventory+&acreated!+&eFor+more+information+click+here~click@RUN_COMMAND@/ash+storagechest+info"}));
 		languageKeys.put("CmdAsh.Create.UpdateStorageChest", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eLagerkiste+Update!+Klicke+hier+für+weitere+Informationen~click@RUN_COMMAND@/ash+storagechest+info",
@@ -1167,6 +1195,10 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cBitte nutze den Befehl, mit einem weiteren Argument aus der Tabliste!",
 						"&cPlease use the command, with another argument from the tab list!"}));
+		languageKeys.put("CmdAsh.StorageChestName.SetName",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eLagerkiste &f%oldname% &ewurde in &f%newname% &eumbenannt.",
+						"&eStorageChest% &f%oldname% &has been &renamed to &f%newname% &e."}));
 		languageKeys.put("CmdAsh.StorageChest.CreateDeactive", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eErstellungsmodus für Lagerkisten deaktiviert!",
@@ -1341,18 +1373,27 @@ public class YamlManager
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 				"&cDu hast nicht das Recht diese Kiste auszuwählen!",
 				""}));
-		languageKeys.put(""
+		
+		languageKeys.put("Gui.Base.GuiNotExist"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"",
+				"&cDas Gui der Yaml-Datei &f%file%.yml &cexistiert nicht!",
 				""}));
-		languageKeys.put(""
+		languageKeys.put("Gui.Base.DcTitle"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"",
-				""}));
-		languageKeys.put(""
+				"&eVK &f%id%&e-&f%name%",
+				"&eDC &f%id%&e-&f%name%"}));
+		languageKeys.put("Gui.Base.ScTitle"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"",
-				""}));
+				"&eLK &f%id%&e-&f%name%",
+				"&eSC &f%id%&e-&f%name%"}));
+		languageKeys.put("Gui.Dc.Chestname"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&eKlicke hier um den Befehlsvorschlag zum ändern des Kistennamens zu bekommen.",
+				"&eClick here to get the command suggestion to change the box name."}));
+		languageKeys.put("Gui.Sc.Chestname"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+				"&eKlicke hier um den Befehlsvorschlag zum ändern des Kistennamens zu bekommen.",
+				"&eClick here to get the command suggestion to change the box name."}));
 		languageKeys.put(""
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 				"",
@@ -1365,5 +1406,738 @@ public class YamlManager
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 				"",
 				""}))*/
+	}
+	
+	public enum GuiType
+	{
+		 DC_MAIN, DC_NUMPAD,
+		 SC_MAIN, SC_PRIORITY_NUMPAD, SC_DURABILITY_NUMPAD, SC_REPAIR_NUMPAD
+	}
+	
+	private void setSlot(GuiType type, int slot, Material material, String urlTexture,
+			String displaynameGER, String displaynameENG,
+			String[] itemflag, String[] enchantments, String[] lore)
+	{
+		if(guiKeys.containsKey(type.toString()))
+		{
+			LinkedHashMap<String, Language> gui = guiKeys.get(type.toString());
+			gui.put(slot+".Name"
+					, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+					displaynameGER,
+					displaynameENG}));
+			gui.put(slot+".Material"
+					, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+					material.toString()}));
+			if(urlTexture != null)
+			{
+				gui.put(slot+".PlayerHeadTexture"
+					, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+					urlTexture}));
+			}
+			if(itemflag != null)
+			{
+				gui.put(slot+".Itemflag"
+						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						itemflag}));
+			}
+			if(enchantments != null)
+			{
+				gui.put(slot+".Enchantments"
+						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						enchantments}));
+			}
+			if(lore == null)
+			{
+				gui.put(slot+".Lore"
+						, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						lore}));
+			}
+			guiKeys.replace(type.toString(), gui);
+		} else
+		{
+			LinkedHashMap<String, Language> gui = new LinkedHashMap<>();
+			gui.put(slot+".Name"
+					, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+					displaynameGER,
+					displaynameENG}));
+			gui.put(slot+".Material"
+					, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+					material.toString()}));
+			if(urlTexture != null)
+			{
+				gui.put(slot+".PlayerHeadTexture"
+					, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+					urlTexture}));
+			}
+			if(itemflag != null)
+			{
+				gui.put(slot+".Itemflag"
+						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						itemflag}));
+			}
+			if(enchantments != null)
+			{
+				gui.put(slot+".Enchantments"
+						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						enchantments}));
+			}
+			if(lore == null)
+			{
+				gui.put(slot+".Lore"
+						, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						lore}));
+			}
+			guiKeys.put(type.toString(), gui);
+		}
+	}
+	
+	public void initGuis() //INFO:Guis
+	{
+		setSlot(GuiType.DC_MAIN, 4, Material.BOOKSHELF,
+				null,
+				"&eVerteilerkiste &f%id% &e- &f%name%",
+				"&eDistributionchest &f%id% &e- &f%name%",
+				null,//Itemflag
+				null,//Ench
+				new String[] {
+				"&eErstellungsdatum &f%creationdate%",
+				"&ePrioritättyp &f%type%",
+				"&ePrioritätzustand &f%status%",
+				"&ePrioritätzahl &f%number%",
+				"&eIst in der Automatischen Verteilung &f%automaticdistribution%",
+				"&eVerteilt zufallig &f%random%",
+				"&eMitglieder &f%member%",
+				"&eLocation &f%location%",
+				"&eAnzahl Lagerkisten &f%storagechestamount%",
+				"&eAnzahl Endlagerkisten &f%storagechestendamount%",
+				
+				"&eCreationdate &f%creationdate%",
+				"&ePrioritytype &f%type%",
+				"&ePrioritystate &f%state%",
+				"&ePrioritynumber &f%number%",
+				"&eIs in the Automatic distribution &f%automaticdistribution%",
+				"&eDistrubute random &f%random%",
+				"&eMember &f%member%",
+				"&eLocation &f%location%",
+				"&eAmount Storagechest &f%storagechestamount%",
+				"&eAmount Endstoragechest &f%storagechestendamount%"
+				});
+		setSlot(GuiType.DC_MAIN, 10, Material.BOOK,
+				null,
+				"&eKistennamen ändern",
+				"&eChestname change", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_MAIN, 16, Material.CRIMSON_SIGN,
+				null,
+				"&ePrioritätzustand switchen",
+				"&ePrioritystate switch", 
+				null,
+				null,
+				new String[] {
+				"&eKlicke hier um den Prioritätenzustand zu switchen.",
+				"&ePer Klick wechselt es zu auf- oder absteigend (false/true)",
+				"&eClick here to switch the priority state.",
+				"&eBy click it changes to ascending or descending (false/true)"
+				});
+		setSlot(GuiType.DC_MAIN, 25, Material.OAK_SIGN,
+				null,
+				"&ePrioritättyp wechseln",
+				"&ePrioritytype change", 
+				null,
+				null,
+				new String[] {
+				"&eKliche hier um zwischen dem Typ SWITCH und PLACE zu wechseln.",
+				"&eSWITCH bedeutet, dass nach der Kistenpriorität geht.",
+				"&ePLACE bedeutet, dass nur Kiste MIT dieser exakten Priorität angesteuert werden.",
+				"&eClick here to switch between SWITCH and PLACE type.",
+				"&eSWITCH means that goes after the box priority.",
+				"&ePLACE means that only boxes WITH this exact priority are controlled."
+				});
+		setSlot(GuiType.DC_MAIN, 34, Material.JUNGLE_SAPLING,
+				null,
+				"&ePrioritätzahl setzten",
+				"&ePrioritynumber set", 
+				null,
+				null,
+				new String[] {
+				"&eLeitet dich zu einem weiteren Gui,",
+				"&ewo du die exakte Zahl eingeben kannst.",
+				"&eDirects you to another gui,",
+				"&ewhere you can enter the exact number."
+				});
+		setSlot(GuiType.DC_MAIN, 28, Material.CHEST_MINECART,
+				null,
+				"&eAutomatische Verteilung",
+				"&eAutomatic distribution", 
+				null,
+				null,
+				new String[] {
+				"&eWenn du hier klickst, schaltest du",
+				"&edie automatische Verteilung ein oder aus.",
+				"&eIf you click here, you will activate",
+				"&eor deactivate the Automatic distribution."
+				});
+		setSlot(GuiType.DC_MAIN, 46, Material.SUSPICIOUS_STEW,
+				null,
+				"&eZufällige Verteilung",
+				"&eRandom distribution", 
+				null,
+				null,
+				new String[] {
+				"&eWenn du hier klickst, schaltest du",
+				"&edie zufällige Verteilung ein oder aus.",
+				"&eIf you click here, you will activate",
+				"&eor deactivate the random distribution."
+				});
+		//INFO DC_NUMPAD
+		setSlot(GuiType.DC_NUMPAD, 4, Material.BOOKSHELF,
+				null,
+				"&eVerteilerkiste &f%id% &e- &f%name%",
+				"&eDistributionchest &f%id% &e- &f%name%",  
+				null,
+				null,
+				new String[] {
+				"&eKlicke auf das Numpad zum eingeben der exakten Zahl.",
+				"&eKlicke auf >&fC&e< um die Zahl auf 0 zu resetten.",
+				"&eAktuelle Prioritätzahl: %prioritynumber%",
+				"&eClick on the numpad to enter the exact number.",
+				"&eClick >&fC&e< to reset the number to 0.",
+				"&eCurrent priority number: %prioritynumber%"
+				});
+		setSlot(GuiType.DC_NUMPAD, 13, Material.PLAYER_HEAD, //C
+				"http://textures.minecraft.net/texture/abe983ec478024ec6fd046fcdfa4842676939551b47350447c77c13af18e6f",
+				"&eC",
+				"&eC", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 14, Material.PLAYER_HEAD, //N
+				"http://textures.minecraft.net/texture/bd8a99db2c37ec71d7199cd52639981a7513ce9cca9626a3936f965b131193",
+				"&eVorzeichen ändern",
+				"&eChange sign", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 23, Material.PLAYER_HEAD, //9
+				"http://textures.minecraft.net/texture/e67caf7591b38e125a8017d58cfc6433bfaf84cd499d794f41d10bff2e5b840",
+				"&e9",
+				"&e9", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 22, Material.PLAYER_HEAD, //8
+				"http://textures.minecraft.net/texture/59194973a3f17bda9978ed6273383997222774b454386c8319c04f1f4f74c2b5",
+				"&e8",
+				"&e8", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 21, Material.PLAYER_HEAD, //7
+				"http://textures.minecraft.net/texture/6db6eb25d1faabe30cf444dc633b5832475e38096b7e2402a3ec476dd7b9",
+				"&e7",
+				"&e7", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 32, Material.PLAYER_HEAD, //6
+				"http://textures.minecraft.net/texture/334b36de7d679b8bbc725499adaef24dc518f5ae23e716981e1dcc6b2720ab",
+				"&e6",
+				"&e6", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 31, Material.PLAYER_HEAD, //5
+				"http://textures.minecraft.net/texture/6d57e3bc88a65730e31a14e3f41e038a5ecf0891a6c243643b8e5476ae2",
+				"&e5",
+				"&e5", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 30, Material.PLAYER_HEAD, //4
+				"http://textures.minecraft.net/texture/d2e78fb22424232dc27b81fbcb47fd24c1acf76098753f2d9c28598287db5",
+				"&e4",
+				"&e4", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 41, Material.PLAYER_HEAD, //3
+				"http://textures.minecraft.net/texture/1d4eae13933860a6df5e8e955693b95a8c3b15c36b8b587532ac0996bc37e5",
+				"&e3",
+				"&e3", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 40, Material.PLAYER_HEAD, //2
+				"http://textures.minecraft.net/texture/4cd9eeee883468881d83848a46bf3012485c23f75753b8fbe8487341419847",
+				"&e2",
+				"&e2", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 39, Material.PLAYER_HEAD, //1
+				"http://textures.minecraft.net/texture/71bc2bcfb2bd3759e6b1e86fc7a79585e1127dd357fc202893f9de241bc9e530",
+				"&e1",
+				"&e1", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 49, Material.PLAYER_HEAD, //0
+				"http://textures.minecraft.net/texture/0ebe7e5215169a699acc6cefa7b73fdb108db87bb6dae2849fbe24714b27",
+				"&e0",
+				"&e0", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.DC_NUMPAD, 53, Material.ARROW, //Zurück
+				null,
+				"&eZurück",
+				"&eBack", 
+				null,
+				null,
+				null);
+		//INFO SC_MAIN
+		setSlot(GuiType.SC_MAIN, 4, Material.BOOKSHELF,
+				null,
+				"&eLagerkistekiste &f%id% &e- &f%name%",
+				"&eStoragechest &f%id% &e- &f%name%",
+				null,
+				null,
+				new String[] {
+				"&eEigentümer &f%owner%",
+				"&eErstellungsdatum &f%creationdate%",
+				"&eVerteilerkisten ID &f%distributionchestid%",
+				"&ePrioritätzahl &f%priority%",
+				"&eIst Endlagerkiste &f%isendstorage%",
+				"&eVoidkiste &f%isvoid%",
+				"&eSortierung Haltbarkeit &f%isdurability%",
+				"&eHaltbarkeit &f%durability%",
+				"&eSortierung Reparaturkosten &f%isrepair%",
+				"&eReparaturkosten &f%repaircost% &e%",
+				"&eSortierung Verzauberung &f%isenchantment%",
+				"&eLocation &f%location%",
+				
+				"&eOwner &f%owner%",
+				"&eCreationdate &f%creationdate%",
+				"&eDistributionchest ID &f%distributionchestid%",
+				"&ePrioritynumber &f%priority%",
+				"&eIs endstoragechest &f%isendstorage%",
+				"&eVoidchest &f%isvoid%",
+				"&eSorting durability &f%isdurability%",
+				"&eDurability &f%durability%",
+				"&eSorting repaircost &f%isrepair%",
+				"&eRepaircost &f%repaircost% &e%",
+				"&eSorting enchantments &f%isenchantment%",
+				"&eLocation &f%location%"
+				});
+		setSlot(GuiType.SC_MAIN, 11, Material.BOOK,
+				null,
+				"&eKistennamen ändern",
+				"&eChestname change", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_MAIN, 12, Material.BARREL,
+				null,
+				"&eEndlagerkisten ein- oder ausschalten.",
+				"&eSwitch on or off the endstorage boxes.", 
+				null,
+				null,
+				new String[] {
+				"&eKlicke hier um den Zustand des Endlagers zu wechseln.",
+				"&eEntweder ist es eine Endlagerkiste oder nicht.",
+				"&eClick here to change the state of the endstorage.",
+				"&eEither it's a endstorage or it's not."
+				});
+		setSlot(GuiType.SC_MAIN, 14, Material.PLAYER_HEAD,
+				"http://textures.minecraft.net/texture/9ae85f74f8e2c054b781a29fa9b25934ba63bb79f1de8a95b436d9bfdcaf4cd",
+				"&ePrioritätzahl setzten",
+				"&ePrioritynumber set",
+				null,
+				null,
+				new String[] {
+				"&eLeitet dich zu einem weiteren Gui,",
+				"&ewo du die exakte Zahl eingeben kannst.",
+				"&eDirects you to another gui,",
+				"&ewhere you can enter the exact number."
+				});
+		setSlot(GuiType.SC_MAIN, 15, Material.BUCKET,
+				null,
+				"&eVoid-Option ein- oder ausschalten.",
+				"&eVoid option toggle", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_MAIN, 19, Material.SMITHING_TABLE,
+				null,
+				"&eHaltbarkeit-Option ein- oder ausschalten.",
+				"&eDurability option toggle.", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_MAIN, 28, Material.WOODEN_SWORD,
+				null,
+				"&eHaltbarkeittype wechseln",
+				"&eDurabilitytype switch.", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_MAIN, 37, Material.WOODEN_SHOVEL,
+				null,
+				"&eHaltbarkeitswert setzen.",
+				"&eDurabilityvalue set.", 
+				null,
+				null,
+				new String[] {
+				"&eLeitet dich zu einem weiteren Gui,",
+				"&ewo du die exakte Zahl eingeben kannst.",
+				"&eDirects you to another gui,",
+				"&ewhere you can enter the exact number."
+				});
+		setSlot(GuiType.SC_MAIN, 25, Material.ANVIL,
+				null,
+				"&eReparatur-Option ein- oder ausschalten.",
+				"&eReparation option toggle.", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_MAIN, 34, Material.CHIPPED_ANVIL,
+				null,
+				"&eReparaturtype wechseln.",
+				"&eReparationtype switch.", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_MAIN, 43, Material.DAMAGED_ANVIL,
+				null,
+				"&eReparaturwert setzen.",
+				"&eReparationvalue set.", 
+				null,
+				null,
+				new String[] {
+				"&eLeitet dich zu einem weiteren Gui,",
+				"&ewo du die exakte Zahl eingeben kannst.",
+				"&eDirects you to another gui,",
+				"&ewhere you can enter the exact number."
+				});
+		setSlot(GuiType.SC_MAIN, 39, Material.ENCHANTING_TABLE,
+				null,
+				"&eVerzauberungsoption ein- oder ausschalten.",
+				"&eEnchantment option toggle.", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_MAIN, 41, Material.FILLED_MAP,
+				null,
+				"&eMaterial-Option ein- oder ausschalten.",
+				"&eMaterial option toggle.", 
+				null,
+				null,
+				null);
+		//INFO SC_PRIORITY_NUMPAD
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 4, Material.BOOKSHELF,
+				null,
+				"&eLagerkiste &f%id% &e- &f%name%",
+				"&eStoragechest &f%id% &e- &f%name%",  
+				null,
+				null,
+				new String[] {
+				"&eKlicke auf das Numpad zum eingeben der exakten Zahl.",
+				"&eKlicke auf >&fC&e< um die Zahl auf 0 zu resetten.",
+				"&eAktuelle Prioritätzahl: %priority%",
+				"&eClick on the numpad to enter the exact number.",
+				"&eClick >&fC&e< to reset the number to 0.",
+				"&eCurrent priority number: %priority%"
+				});
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 13, Material.PLAYER_HEAD, //C
+				"http://textures.minecraft.net/texture/abe983ec478024ec6fd046fcdfa4842676939551b47350447c77c13af18e6f",
+				"&eC",
+				"&eC", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 14, Material.PLAYER_HEAD, //N
+				"http://textures.minecraft.net/texture/bd8a99db2c37ec71d7199cd52639981a7513ce9cca9626a3936f965b131193",
+				"&eVorzeichen ändern",
+				"&eChange sign", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 23, Material.PLAYER_HEAD, //9
+				"http://textures.minecraft.net/texture/e67caf7591b38e125a8017d58cfc6433bfaf84cd499d794f41d10bff2e5b840",
+				"&e9",
+				"&e9", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 22, Material.PLAYER_HEAD, //8
+				"http://textures.minecraft.net/texture/59194973a3f17bda9978ed6273383997222774b454386c8319c04f1f4f74c2b5",
+				"&e8",
+				"&e8", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 21, Material.PLAYER_HEAD, //7
+				"http://textures.minecraft.net/texture/6db6eb25d1faabe30cf444dc633b5832475e38096b7e2402a3ec476dd7b9",
+				"&e7",
+				"&e7", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 32, Material.PLAYER_HEAD, //6
+				"http://textures.minecraft.net/texture/334b36de7d679b8bbc725499adaef24dc518f5ae23e716981e1dcc6b2720ab",
+				"&e6",
+				"&e6", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 31, Material.PLAYER_HEAD, //5
+				"http://textures.minecraft.net/texture/6d57e3bc88a65730e31a14e3f41e038a5ecf0891a6c243643b8e5476ae2",
+				"&e5",
+				"&e5", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 30, Material.PLAYER_HEAD, //4
+				"http://textures.minecraft.net/texture/d2e78fb22424232dc27b81fbcb47fd24c1acf76098753f2d9c28598287db5",
+				"&e4",
+				"&e4", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 41, Material.PLAYER_HEAD, //3
+				"http://textures.minecraft.net/texture/1d4eae13933860a6df5e8e955693b95a8c3b15c36b8b587532ac0996bc37e5",
+				"&e3",
+				"&e3", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 40, Material.PLAYER_HEAD, //2
+				"http://textures.minecraft.net/texture/4cd9eeee883468881d83848a46bf3012485c23f75753b8fbe8487341419847",
+				"&e2",
+				"&e2", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 39, Material.PLAYER_HEAD, //1
+				"http://textures.minecraft.net/texture/71bc2bcfb2bd3759e6b1e86fc7a79585e1127dd357fc202893f9de241bc9e530",
+				"&e1",
+				"&e1", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 49, Material.PLAYER_HEAD, //0
+				"http://textures.minecraft.net/texture/0ebe7e5215169a699acc6cefa7b73fdb108db87bb6dae2849fbe24714b27",
+				"&e0",
+				"&e0", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_PRIORITY_NUMPAD, 53, Material.ARROW, //Zurück
+				null,
+				"&eZurück",
+				"&eBack", 
+				null,
+				null,
+				null);
+		//INFO SC_DURABILITY_NUMPAD
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 4, Material.BOOKSHELF,
+				null,
+				"&eLagerkiste &f%id% &e- &f%name%",
+				"&eStoragechest &f%id% &e- &f%name%",  
+				null,
+				null,
+				new String[] {
+				"&eKlicke auf das Numpad zum eingeben der exakten Zahl.",
+				"&eKlicke auf >&fC&e< um die Zahl auf 0 zu resetten.",
+				"&eAktuelle Haltbarkeitprozent: %durability%",
+				"&eClick on the numpad to enter the exact number.",
+				"&eClick >&fC&e< to reset the number to 0.",
+				"&eCurrent durabiliypercent: %durability%"
+				});
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 13, Material.PLAYER_HEAD, //C
+				"http://textures.minecraft.net/texture/abe983ec478024ec6fd046fcdfa4842676939551b47350447c77c13af18e6f",
+				"&eC",
+				"&eC", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 23, Material.PLAYER_HEAD, //9
+				"http://textures.minecraft.net/texture/e67caf7591b38e125a8017d58cfc6433bfaf84cd499d794f41d10bff2e5b840",
+				"&e9",
+				"&e9", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 22, Material.PLAYER_HEAD, //8
+				"http://textures.minecraft.net/texture/59194973a3f17bda9978ed6273383997222774b454386c8319c04f1f4f74c2b5",
+				"&e8",
+				"&e8", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 21, Material.PLAYER_HEAD, //7
+				"http://textures.minecraft.net/texture/6db6eb25d1faabe30cf444dc633b5832475e38096b7e2402a3ec476dd7b9",
+				"&e7",
+				"&e7", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 32, Material.PLAYER_HEAD, //6
+				"http://textures.minecraft.net/texture/334b36de7d679b8bbc725499adaef24dc518f5ae23e716981e1dcc6b2720ab",
+				"&e6",
+				"&e6", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 31, Material.PLAYER_HEAD, //5
+				"http://textures.minecraft.net/texture/6d57e3bc88a65730e31a14e3f41e038a5ecf0891a6c243643b8e5476ae2",
+				"&e5",
+				"&e5", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 30, Material.PLAYER_HEAD, //4
+				"http://textures.minecraft.net/texture/d2e78fb22424232dc27b81fbcb47fd24c1acf76098753f2d9c28598287db5",
+				"&e4",
+				"&e4", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 41, Material.PLAYER_HEAD, //3
+				"http://textures.minecraft.net/texture/1d4eae13933860a6df5e8e955693b95a8c3b15c36b8b587532ac0996bc37e5",
+				"&e3",
+				"&e3", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 40, Material.PLAYER_HEAD, //2
+				"http://textures.minecraft.net/texture/4cd9eeee883468881d83848a46bf3012485c23f75753b8fbe8487341419847",
+				"&e2",
+				"&e2", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 39, Material.PLAYER_HEAD, //1
+				"http://textures.minecraft.net/texture/71bc2bcfb2bd3759e6b1e86fc7a79585e1127dd357fc202893f9de241bc9e530",
+				"&e1",
+				"&e1", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 49, Material.PLAYER_HEAD, //0
+				"http://textures.minecraft.net/texture/0ebe7e5215169a699acc6cefa7b73fdb108db87bb6dae2849fbe24714b27",
+				"&e0",
+				"&e0", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_DURABILITY_NUMPAD, 53, Material.ARROW, //Zurück
+				null,
+				"&eZurück",
+				"&eBack", 
+				null,
+				null,
+				null);
+		//INFO SC_REPAIR_NUMPAD
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 4, Material.BOOKSHELF,
+				null,
+				"&eLagerkiste &f%id% &e- &f%name%",
+				"&eStoragechest &f%id% &e- &f%name%",  
+				null,
+				null,
+				new String[] {
+				"&eKlicke auf das Numpad zum eingeben der exakten Zahl.",
+				"&eKlicke auf >&fC&e< um die Zahl auf 0 zu resetten.",
+				"&eAktuelle Reparaturpunkte: %repaircost%",
+				"&eClick on the numpad to enter the exact number.",
+				"&eClick >&fC&e< to reset the number to 0.",
+				"&eCurrent repairpoints: %repaircost%"
+				});
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 13, Material.PLAYER_HEAD, //C
+				"http://textures.minecraft.net/texture/abe983ec478024ec6fd046fcdfa4842676939551b47350447c77c13af18e6f",
+				"&eC",
+				"&eC", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 23, Material.PLAYER_HEAD, //9
+				"http://textures.minecraft.net/texture/e67caf7591b38e125a8017d58cfc6433bfaf84cd499d794f41d10bff2e5b840",
+				"&e9",
+				"&e9", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 22, Material.PLAYER_HEAD, //8
+				"http://textures.minecraft.net/texture/59194973a3f17bda9978ed6273383997222774b454386c8319c04f1f4f74c2b5",
+				"&e8",
+				"&e8", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 21, Material.PLAYER_HEAD, //7
+				"http://textures.minecraft.net/texture/6db6eb25d1faabe30cf444dc633b5832475e38096b7e2402a3ec476dd7b9",
+				"&e7",
+				"&e7", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 32, Material.PLAYER_HEAD, //6
+				"http://textures.minecraft.net/texture/334b36de7d679b8bbc725499adaef24dc518f5ae23e716981e1dcc6b2720ab",
+				"&e6",
+				"&e6", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 31, Material.PLAYER_HEAD, //5
+				"http://textures.minecraft.net/texture/6d57e3bc88a65730e31a14e3f41e038a5ecf0891a6c243643b8e5476ae2",
+				"&e5",
+				"&e5", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 30, Material.PLAYER_HEAD, //4
+				"http://textures.minecraft.net/texture/d2e78fb22424232dc27b81fbcb47fd24c1acf76098753f2d9c28598287db5",
+				"&e4",
+				"&e4", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 41, Material.PLAYER_HEAD, //3
+				"http://textures.minecraft.net/texture/1d4eae13933860a6df5e8e955693b95a8c3b15c36b8b587532ac0996bc37e5",
+				"&e3",
+				"&e3", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 40, Material.PLAYER_HEAD, //2
+				"http://textures.minecraft.net/texture/4cd9eeee883468881d83848a46bf3012485c23f75753b8fbe8487341419847",
+				"&e2",
+				"&e2", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 39, Material.PLAYER_HEAD, //1
+				"http://textures.minecraft.net/texture/71bc2bcfb2bd3759e6b1e86fc7a79585e1127dd357fc202893f9de241bc9e530",
+				"&e1",
+				"&e1", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 49, Material.PLAYER_HEAD, //0
+				"http://textures.minecraft.net/texture/0ebe7e5215169a699acc6cefa7b73fdb108db87bb6dae2849fbe24714b27",
+				"&e0",
+				"&e0", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_REPAIR_NUMPAD, 53, Material.ARROW, //Zurück
+				null,
+				"&eZurück",
+				"&eBack", 
+				null,
+				null,
+				null);
 	}
 }

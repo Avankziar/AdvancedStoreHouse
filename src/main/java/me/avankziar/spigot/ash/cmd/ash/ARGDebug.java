@@ -22,7 +22,7 @@ public class ARGDebug extends ArgumentModule
 	public void run(CommandSender sender, String[] args)
 	{
 		Player player = (Player) sender;
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChest.OtherCmd")));
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChest.OtherCmd")));
 		return;
 	}
 }

@@ -34,32 +34,32 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 	
 	public boolean loadMysqlHandler()
 	{
-		tableNameI = plugin.getYamlHandler().get().getString("Mysql.TableNameI");
+		tableNameI = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameI");
 		if(tableNameI == null)
 		{
 			return false;
 		}
-		tableNameII = plugin.getYamlHandler().get().getString("Mysql.TableNameII");
+		tableNameII = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameII");
 		if(tableNameII == null)
 		{
 			return false;
 		}
-		tableNameIII = plugin.getYamlHandler().get().getString("Mysql.TableNameIII");
+		tableNameIII = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameIII");
 		if(tableNameIII == null)
 		{
 			return false;
 		}
-		tableNameIV = plugin.getYamlHandler().get().getString("Mysql.TableNameIV");
+		tableNameIV = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameIV");
 		if(tableNameIV == null)
 		{
 			return false;
 		}
-		tableNameV = plugin.getYamlHandler().get().getString("Mysql.TableNameV");
+		tableNameV = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameV");
 		if(tableNameV == null)
 		{
 			return false;
 		}
-		tableNameVI = plugin.getYamlHandler().get().getString("Mysql.TableNameVI");
+		tableNameVI = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameVI");
 		if(tableNameVI == null)
 		{
 			return false;

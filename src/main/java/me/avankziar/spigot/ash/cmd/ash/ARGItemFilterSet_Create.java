@@ -34,21 +34,21 @@ public class ARGItemFilterSet_Create extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash itemfiltersetcreate")));
 			return;
 		}
 		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.ITEMFILTERSET, "`owner_uuid` = ?", user.getUUID());
 		if(!PermissionHandler.canCreate(player, Utility.PERMBYPASSITEMFILTERSET, Utility.PERMCOUNTITEMFILTERSET,
-				amount, plugin.getYamlHandler().get().getInt("maximumItemFilterSet", 500), false))
+				amount, plugin.getYamlHandler().getConfig().getInt("maximumItemFilterSet", 500), false))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetCreate.TooMany")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetCreate.TooMany")));
 			return;
 		}
 		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.ITEMFILTERSET, 
 				"`itemfiltersetname` = ? AND `owner_uuid` = ?", name, user.getUUID()))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetCreate.AlreadyExist")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetCreate.AlreadyExist")
 					.replace("%name%", name)));
 			return;
 		}

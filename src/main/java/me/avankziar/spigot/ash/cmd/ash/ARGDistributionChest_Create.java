@@ -30,7 +30,7 @@ public class ARGDistributionChest_Create extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash create")));
 			return;
 		}
@@ -38,22 +38,22 @@ public class ARGDistributionChest_Create extends ArgumentModule
 		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, 
 				"`owner_uuid` = ? AND `chestname` = ?", user.getUUID(), name))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Create.NameExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.NameExist")));
 			return;
 		}
 		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, "`owner_uuid` = ?", user.getUUID());
 		if(!PermissionHandler.canCreate(player, Utility.PERMCOUNTDISTRIBUTIONCHEST+"*", Utility.PERMCOUNTDISTRIBUTIONCHEST,
-				amount , plugin.getYamlHandler().get().getInt("maximumDistributionChest"), false))
+				amount , plugin.getYamlHandler().getConfig().getInt("maximumDistributionChest"), false))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Create.TooMany")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooMany")));
 			return;
 		}
 		user.setMode(PluginUser.Mode.CREATEDISTRIBUTIONCHEST);
 		user.setDistributionChestName(name);
 		PluginUserHandler.addUser(user);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Create.Init")));
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.Init")));
 		player.spigot().sendMessage(
-				ChatApi.generateTextComponent(plugin.getYamlHandler().getL().getString("CmdAsh.Cancel.SetCancel")));
+				ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Cancel.SetCancel")));
 		return;
 	}
 }

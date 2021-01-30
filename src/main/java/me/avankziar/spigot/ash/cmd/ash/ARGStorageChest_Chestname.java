@@ -1,7 +1,6 @@
 package main.java.me.avankziar.spigot.ash.cmd.ash;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,17 +10,19 @@ import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.PluginUser;
+import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentConstructor;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentModule;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
+import main.java.me.avankziar.spigot.ash.database.MysqlHandler.Type;
 
-public class ARGDistributionChest_Select extends ArgumentModule
+public class ARGStorageChest_Chestname extends ArgumentModule
 {
 	private AdvancedStoreHouse plugin;
 	
-	public ARGDistributionChest_Select(AdvancedStoreHouse plugin, ArgumentConstructor argumentConstructor)
+	public ARGStorageChest_Chestname(AdvancedStoreHouse plugin, ArgumentConstructor argumentConstructor)
 	{
 		super(plugin, argumentConstructor);
 		this.plugin = plugin;
@@ -35,53 +36,37 @@ public class ARGDistributionChest_Select extends ArgumentModule
 		if(user == null)
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
-				.replace("%cmd%", "/ash distributionchest select")));
+				.replace("%cmd%", "/ash storagechest chestname")));
 			return;
 		}
-		String name = args[2];
-		String otherplayer = player.getName();
-		String otheruuid = player.getUniqueId().toString();
-		if(args.length >= 4)
+		int id = user.getStorageChestID();
+		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST, "`id` = ?", id))
 		{
-			if(!otherplayer.equals(args[3]))
-			{
-				otherplayer = args[3];
-				UUID uuid = Utility.convertNameToUUID(otherplayer);
-				if(uuid == null)
-				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("PlayerNotExist")));
-					return;
-				}
-				otheruuid = uuid.toString();
-			}
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SChestDontExist")));
+			return;
 		}
-		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`chestname` = ? AND `owner_uuid` = ?", name, otheruuid))
+		StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(
+				MysqlHandler.Type.STORAGECHEST, "`id` = ?", id);
+		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
+				Type.DISTRIBUTIONCHEST, "`id` = ?", sc.getDistributionChestID());
+		if(dc == null)
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.DChestDontExist")));
 			return;
 		}
-		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
-				MysqlHandler.Type.DISTRIBUTIONCHEST, "`chestname` = ? AND `owner_uuid` = ?", name, otheruuid);
-		if(!ChestHandler.isMember(
-				player,
-				dc) && 
-				!dc
-				.getOwneruuid()
-				.equals(player
-						.getUniqueId()
-						.toString())
-				&& !player
-				.hasPermission(Utility.PERMBYPASSSELECT))
+		if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
+				&& !player.hasPermission(Utility.PERMBYPASSSELECT))
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 			return;
 		}
-		user.setDistributionChestID(dc.getId());
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectDChest")
-				.replace("%iddc%", String.valueOf(dc.getId()))
-				.replace("%name%", dc.getChestName())));
-		PluginUserHandler.addUser(user);
+		String name = args[2];
+		final String oldname = sc.getChestName();
+		sc.setChestName(name);
+		plugin.getMysqlHandler().updateData(MysqlHandler.Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestName.SetName")
+				.replace("%oldname%", oldname)
+				.replace("%newname%", name)));
 		return;
 	}
 }

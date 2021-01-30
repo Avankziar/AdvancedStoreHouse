@@ -53,7 +53,7 @@ public class ARGStorageChest_List extends ArgumentModule
 				page = Integer.parseInt(pageString);
 			} else
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("IllegalArgument")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("IllegalArgument")));
 				return;
 			}
 		}
@@ -63,14 +63,14 @@ public class ARGStorageChest_List extends ArgumentModule
 			{
 				if(!player.hasPermission(Utility.PERMBYPASSLIST))
 				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NoPermission")));
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NoPermission")));
 					return;
 				}
 				otherplayer = args[3];
 				UUID uuid = Utility.convertNameToUUID(otherplayer);
 				if(uuid == null)
 				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("PlayerNotExist")));
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("PlayerNotExist")));
 					return;
 				}
 				otheruuid = uuid.toString();
@@ -79,23 +79,23 @@ public class ARGStorageChest_List extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash StorageChest list")));
 			return;
 		}
-		int quantity = plugin.getYamlHandler().get().getInt("AmountToDisplayStorageChestInListCommand",10);
+		int quantity = plugin.getYamlHandler().getConfig().getInt("AmountToDisplayStorageChestInListCommand",10);
 		int start = page*quantity;		
 		ArrayList<StorageChest> dcList = ConvertHandler.convertListIII(
 				plugin.getMysqlHandler().getList(MysqlHandler.Type.STORAGECHEST, "`id`",
 						true, start, quantity, "`owner_uuid` = ?", otheruuid));
 		if(dcList == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.Empty")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.Empty")));
 			return;
 		}
 		if(dcList.isEmpty())
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.Empty")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.Empty")));
 			return;
 		}
 		int last = plugin.getMysqlHandler().lastID(Type.STORAGECHEST);
@@ -127,7 +127,7 @@ public class ARGStorageChest_List extends ArgumentModule
 				map.put(name, scarray);
 			}
 		}
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.Headline")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.Headline")
 				.replace("%player%", otherplayer)));
 		for(String name : map.keySet())
 		{
@@ -137,34 +137,34 @@ public class ARGStorageChest_List extends ArgumentModule
 			{
 				player.spigot().sendMessage(ChatApi.clickEvent("&c"+name+"&f:",
 						ClickEvent.Action.RUN_COMMAND, 
-						plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.CommandRun")
+						plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandRun")
 						.replace("%name%", name)));
 				bclist.add(ChatApi.tc("  "));
 				for(StorageChest sc : scarray)
 				{
 					TextComponent x = ChatApi.clickEvent("&6"+sc.getId()+"&f:",
 							ClickEvent.Action.RUN_COMMAND, 
-							plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandRun")
+							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRun")
 							.replace("%id%", String.valueOf(sc.getId())));
 					bclist.add(x);
 					TextComponent y = ChatApi.apiChat("&eⓘ",
 							ClickEvent.Action.RUN_COMMAND,
-							plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandRunInfo"),
+							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunInfo"),
 							HoverEvent.Action.SHOW_TEXT,
-							plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.InfoHover")
-							+plugin.getYamlHandler().getL().getString("BeforeSelect"));
+							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.InfoHover")
+							+plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 					bclist.add(y);
 					TextComponent z = ChatApi.apiChat("&aⓄ",
 							ClickEvent.Action.RUN_COMMAND,
-							plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandRunOpen"),
+							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunOpen"),
 							HoverEvent.Action.SHOW_TEXT, 
-							plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.OpenHover")
-							+plugin.getYamlHandler().getL().getString("BeforeSelect"));
+							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.OpenHover")
+							+plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 					bclist.add(z);
 					TextComponent alpha = ChatApi.apiChat("&c✖",
 							ClickEvent.Action.SUGGEST_COMMAND,
-							plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandRunDelete"),
-							HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getL().getString("BeforeSelect"));
+							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunDelete"),
+							HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 					bclist.add(alpha);
 					bclist.add(ChatApi.tctl(" &1| "));
 				}
@@ -181,35 +181,35 @@ public class ARGStorageChest_List extends ArgumentModule
 		ArrayList<StorageChest> scarray = map.get("=)(?%!-_null_-!%?)(=");
 		List<BaseComponent> bclist = new ArrayList<>();
 		player.spigot().sendMessage(ChatApi.clickEvent(
-				plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.LostChests")+"&f:",
+				plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.LostChests")+"&f:",
 				ClickEvent.Action.RUN_COMMAND, 
-				plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.CommandRun")));
+				plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandRun")));
 		if(scarray != null)
 		{
 			for(StorageChest sc : scarray)
 			{
 				TextComponent x = ChatApi.clickEvent("  &6"+sc.getId()+"&f:",
-						ClickEvent.Action.RUN_COMMAND, plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandRun")
+						ClickEvent.Action.RUN_COMMAND, plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRun")
 						.replace("%id%", String.valueOf(sc.getId())));
 				bclist.add(x);
 				TextComponent y = ChatApi.apiChat("&eⓘ",
 						ClickEvent.Action.RUN_COMMAND,
-						plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandRunInfo"),
+						plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunInfo"),
 						HoverEvent.Action.SHOW_TEXT, 
-						plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.InfoHover")
-						+plugin.getYamlHandler().getL().getString("BeforeSelect"));
+						plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.InfoHover")
+						+plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 				bclist.add(y);
 				TextComponent z = ChatApi.apiChat("&aⓄ",
 						ClickEvent.Action.RUN_COMMAND,
-						plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandRunOpen"),
+						plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunOpen"),
 						HoverEvent.Action.SHOW_TEXT, 
-						plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.OpenHover")
-						+plugin.getYamlHandler().getL().getString("BeforeSelect"));
+						plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.OpenHover")
+						+plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 				bclist.add(z);
 				TextComponent alpha = ChatApi.apiChat("&e✖",
 						ClickEvent.Action.SUGGEST_COMMAND,
-						plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandRunDelete"),
-						HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getL().getString("BeforeSelect"));
+						plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunDelete"),
+						HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 				bclist.add(alpha);
 				bclist.add(ChatApi.tctl(" &1| "));
 			}
@@ -218,7 +218,7 @@ public class ARGStorageChest_List extends ArgumentModule
 			player.spigot().sendMessage(tc);
 		}
 		plugin.getCommandHelper().pastNextPage(player, "CmdAsh.BaseInfo", page, lastpage,
-				plugin.getYamlHandler().getL().getString("CmdAsh.StorageChestList.CommandString"), otherplayer);
+				plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandString"), otherplayer);
 		return;
 	}
 }

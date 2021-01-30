@@ -33,14 +33,14 @@ public class ARGDistributionChest_Switch extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash distributionchest info")));
 			return;
 		}
 		int id = user.getDistributionChestID();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.DChestDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.DChestDontExist")));
 			return;
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
@@ -48,20 +48,20 @@ public class ARGDistributionChest_Switch extends ArgumentModule
 		if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
 				&& !player.hasPermission(Utility.PERMBYPASSINFO))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwnerOrMember")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 			return;
 		}
 		if(dc.isNormalPriority() == true)
 		{
 			dc.setNormalPriority(false);
 			player.sendMessage(ChatApi.tl(
-					plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestSwitch.Deactive")
+					plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestSwitch.Deactive")
 					.replace("%name%", dc.getChestName())));
 		} else
 		{
 			dc.setNormalPriority(true);
 			player.sendMessage(ChatApi.tl(
-					plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestSwitch.Active")
+					plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestSwitch.Active")
 					.replace("%name%", dc.getChestName())));
 		}
 		plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());

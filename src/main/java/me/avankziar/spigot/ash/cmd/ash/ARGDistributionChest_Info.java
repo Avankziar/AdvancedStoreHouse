@@ -35,14 +35,14 @@ public class ARGDistributionChest_Info extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash distributionchest info")));
 			return;
 		}
 		int id = user.getDistributionChestID();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.DChestDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.DChestDontExist")));
 			return;
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
@@ -50,28 +50,28 @@ public class ARGDistributionChest_Info extends ArgumentModule
 		if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
 				&& !player.hasPermission(Utility.PERMBYPASSINFO))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwnerOrMember")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 			return;
 		}
 		int storagechestamount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST,
 				"`distributionchestid` = ? AND `endstorage` = ?", id, false);
 		int storagechestamountend = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST,
 				"`distributionchestid` = ? AND `endstorage` = ?", id, true);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.HeadlineD")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.HeadlineD")
 				.replace("%id%", String.valueOf(id))
 				.replace("%name%", dc.getChestName())));
 		String owner = Utility.convertUUIDToName(dc.getOwneruuid());
 		if(owner != null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.Owner")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Owner")
 					.replace("%owner%", owner)));
 		} else
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.Owner")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Owner")
 					.replace("%owner%", "/")));
 		}
 		String loc = dc.getServer()+" &a"+dc.getWorld()+" &d"+dc.getBlockX()+" "+dc.getBlockY()+" "+dc.getBlockZ();
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.Location")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Location")
 				.replace("%pos%", loc)));
 		List<String> list = new ArrayList<>();
 		for(String uuid : dc.getMemberList())
@@ -82,14 +82,14 @@ public class ARGDistributionChest_Info extends ArgumentModule
 				list.add(name);
 			}
 		}
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.Member")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Member")
 				.replace("%member%", "["+String.join(" ", list)+"]")));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.AutoDistribution")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.AutoDistribution")
 				.replace("%auto%", String.valueOf(dc.isAutomaticDistribution()))));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.NormalPriority")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.NormalPriority")
 				.replace("%nprio%",  String.valueOf(dc.isNormalPriority()))));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.SChestAmount")+storagechestamount));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.SChestAmountEnd")+storagechestamountend));
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.SChestAmount")+storagechestamount));
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.SChestAmountEnd")+storagechestamountend));
 		return;
 	}
 }

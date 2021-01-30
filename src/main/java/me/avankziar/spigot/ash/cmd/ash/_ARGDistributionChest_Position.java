@@ -29,18 +29,18 @@ public class _ARGDistributionChest_Position extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash distributionchest position")));
 			return;
 		}
 		if(user.getMode() == Mode.POSITIONUPDATEDISTRIBUTION)
 		{
 			user.setMode(Mode.NONE);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Position.Deactive")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.Deactive")));
 		} else
 		{
 			user.setMode(Mode.POSITIONUPDATEDISTRIBUTION);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Position.DChest")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.DChest")));
 		}
 		plugin.getMysqlHandler().updateData(MysqlHandler.Type.PLUGINUSER, user, "`player_uuid` = ?", user.getUUID());
 		PluginUserHandler.addUser(user);

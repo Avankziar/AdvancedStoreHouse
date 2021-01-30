@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
@@ -34,18 +35,24 @@ public class ARGDebug_ItemMeta extends ArgumentModule
     			Damageable id = (Damageable) hand;
     			id.setDamage(0);
     			hand.setItemMeta((ItemMeta) id);
-    			player.sendMessage(ChatApi.tl("&7ItemString &8ModifiedI : &r"+hand.toString()));	
+    			player.sendMessage(ChatApi.tl("&7ItemString &8DamagableI : &r"+hand.toString()));	
     		} else
     		{
     			if(boo)
     			{
     				hand.setDurability((short) 0);
-        			player.sendMessage(ChatApi.tl("&7ItemString &8ModifiedII : &r"+hand.toString()));
+        			player.sendMessage(ChatApi.tl("&7ItemString &8DamagableII : &r"+hand.toString()));
     			}
     		}
 			if(hand.getItemMeta() != null)
 			{
 				player.sendMessage(ChatApi.tl("&7ItemMeta : &r"+hand.getItemMeta().toString()));
+				if(hand.getItemMeta() instanceof SkullMeta)
+				{
+					SkullMeta sm = (SkullMeta) hand.getItemMeta();
+					player.sendMessage(ChatApi.tl("&7ItemMeta &8SkullMeta Owner : &r"+sm.getOwner()));
+					player.sendMessage(ChatApi.tl("&7ItemMeta &8SkullMeta Owner : &r"+sm.getOwningPlayer().getUniqueId().toString()));
+				}
 				if(hand.getItemMeta() instanceof Damageable && boo)
 	    		{
 	    			Damageable id = (Damageable) hand.getItemMeta();

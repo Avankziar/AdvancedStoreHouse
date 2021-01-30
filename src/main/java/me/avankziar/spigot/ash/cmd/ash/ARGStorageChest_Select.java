@@ -35,20 +35,20 @@ public class ARGStorageChest_Select extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash delete")));
 			return;
 		}
 		String idString = args[2];
 		if(!MatchApi.isInteger(idString))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("IllegalArgument")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("IllegalArgument")));
 			return;
 		}
 		int id = Integer.parseInt(idString);
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.SChestDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SChestDontExist")));
 			return;
 		}
 		StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST, "`id` = ?", id);
@@ -64,11 +64,11 @@ public class ARGStorageChest_Select extends ArgumentModule
 			if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
 					&& !player.hasPermission(Utility.PERMBYPASSSELECT))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwnerOrMember")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 				return;
 			}
 			user.setStorageChestID(sc.getId());
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.SelectSChest")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectSChest")
 					.replace("%idsc%", String.valueOf(sc.getId()))
 					.replace("%iddc%", String.valueOf(dc.getId()))
 					.replace("%name%", dc.getChestName())));
@@ -77,11 +77,11 @@ public class ARGStorageChest_Select extends ArgumentModule
 			if(sc.getOwneruuid().equals(player.getUniqueId().toString())
 					&& !player.hasPermission(Utility.PERMBYPASSSELECT))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwner")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwner")));
 				return;
 			}
 			user.setStorageChestID(sc.getId());
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.SelectSChestWithOutD")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectSChestWithOutD")
 					.replace("%id%", String.valueOf(sc.getId()))));
 		}
 		PluginUserHandler.addUser(user);

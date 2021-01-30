@@ -36,14 +36,14 @@ public class ARGDistributionChest_Member extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash distributionchest member")));
 			return;
 		}
 		int id = user.getDistributionChestID();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.DChestDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.DChestDontExist")));
 			return;
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
@@ -51,14 +51,14 @@ public class ARGDistributionChest_Member extends ArgumentModule
 		if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
 				&& !player.hasPermission(Utility.PERMBYPASSINFO))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwnerOrMember")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 			return;
 		}
 		String otherplayername = args[2];
 		UUID uuid = Utility.convertNameToUUID(otherplayername);
 		if(uuid == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("PlayerNotExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("PlayerNotExist")));
 			return;
 		}
 		String otherplayeruuid = uuid.toString();
@@ -70,7 +70,7 @@ public class ARGDistributionChest_Member extends ArgumentModule
 				list.addAll(dc.getMemberList());
 				list.remove(otherplayeruuid);
 				dc.setMemberList(list);
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestMember.Remove")
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestMember.Remove")
 						.replace("%dc%", dc.getChestName())
 						.replace("%player%", otherplayername)));
 			} else
@@ -79,7 +79,7 @@ public class ARGDistributionChest_Member extends ArgumentModule
 				list.addAll(dc.getMemberList());
 				list.add(otherplayeruuid);
 				dc.setMemberList(list);
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestMember.Add")
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestMember.Add")
 						.replace("%dc%", dc.getChestName())
 						.replace("%player%", otherplayername)));
 			}

@@ -51,7 +51,7 @@ public class ARGDistributionChest_List extends ArgumentModule
 				page = Integer.parseInt(pageString);
 			} else
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("IllegalArgument")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("IllegalArgument")));
 				return;
 			}
 		}
@@ -61,14 +61,14 @@ public class ARGDistributionChest_List extends ArgumentModule
 			{
 				if(!player.hasPermission(Utility.PERMBYPASSLIST))
 				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NoPermission")));
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NoPermission")));
 					return;
 				}
 				otherplayer = args[3];
 				UUID uuid = Utility.convertNameToUUID(otherplayer);
 				if(uuid == null)
 				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("PlayerNotExist")));
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("PlayerNotExist")));
 					return;
 				}
 				otheruuid = uuid.toString();
@@ -77,23 +77,23 @@ public class ARGDistributionChest_List extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash distributionchest list")));
 			return;
 		}
-		int quantity = plugin.getYamlHandler().get().getInt("AmountToDisplayDistributuionChestInListCommand", 25);
+		int quantity = plugin.getYamlHandler().getConfig().getInt("AmountToDisplayDistributuionChestInListCommand", 25);
 		int start = page*quantity;		
 		ArrayList<DistributionChest> dcList = ConvertHandler.convertListII(
 				plugin.getMysqlHandler().getList(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id`",
 						true, start, quantity, "`owner_uuid` = ?", otheruuid));
 		if(dcList == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.Empty")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.Empty")));
 			return;
 		}
 		if(dcList.isEmpty())
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.Empty")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.Empty")));
 			return;
 		}
 		int last = plugin.getMysqlHandler().lastID(Type.DISTRIBUTIONCHEST);
@@ -108,28 +108,28 @@ public class ARGDistributionChest_List extends ArgumentModule
 		{
 			TextComponent x = ChatApi.clickEvent("&6"+dc.getChestName()+"&f:",
 					ClickEvent.Action.RUN_COMMAND,
-					plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.CommandRun")
+					plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandRun")
 					.replace("%name%", String.valueOf(dc.getChestName()) +" "+ otherplayer));
 			bclist.add(x);
 			TextComponent y = ChatApi.apiChat("&eⓘ",
 					ClickEvent.Action.RUN_COMMAND,
-					plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.CommandRunInfo"),
-					HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getL().getString("BeforeSelect"));
+					plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandRunInfo"),
+					HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 			bclist.add(y);
 			TextComponent z = ChatApi.apiChat("&c✖",
 					ClickEvent.Action.SUGGEST_COMMAND,
-					plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.CommandRunDelete"),
-					HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getL().getString("BeforeSelect"));
+					plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandRunDelete"),
+					HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 			bclist.add(z);
 			bclist.add(ChatApi.tctl(" &1| "));
 		}
 		TextComponent tc = ChatApi.tc("");
 		tc.setExtra(bclist);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.Headline")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.Headline")
 				.replace("%player%", otherplayer)));
 		player.spigot().sendMessage(tc);
 		plugin.getCommandHelper().pastNextPage(player, "CmdAsh.BaseInfo", page, lastpage,
-				plugin.getYamlHandler().getL().getString("CmdAsh.DistributionChestList.CommandString"), otherplayer);
+				plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandString"), otherplayer);
 		return;
 	}
 }

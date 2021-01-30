@@ -79,7 +79,7 @@ public class BlockBreakListener implements Listener
 		{
 			return;
 		}
-		final String server = plugin.getYamlHandler().get().getString("Servername");
+		final String server = plugin.getYamlHandler().getConfig().getString("Servername");
 		final Location loc = event.getBlock().getLocation();
 		if(loc == null || server == null)
 		{
@@ -96,7 +96,7 @@ public class BlockBreakListener implements Listener
 			if(!dc.getOwneruuid().equals(event.getPlayer().getUniqueId().toString()) 
 					&& !event.getPlayer().hasPermission(Utility.PERMBYPASSDELETE))
 			{
-				event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwner")));
+				event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwner")));
 				event.setCancelled(true);
 				return;
 			}
@@ -105,22 +105,22 @@ public class BlockBreakListener implements Listener
 			{
 				if(!user.canDistributionChestBreak())
 				{
-					event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("SafetyBreak")));
+					event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("SafetyBreak")));
 					event.setCancelled(true);
 					return;
 				}
 			}
 			final int id = dc.getId();
-			event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.BlockBreak.DeleteDC")
+			event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockBreak.DeleteDC")
 					.replace("%id%", String.valueOf(dc.getId()))
 					.replace("%name%", dc.getChestName())));
-			if(plugin.getYamlHandler().get().getBoolean("BlockBreakDistributionChestDeleteLinkedStorageChest", true))
+			if(plugin.getYamlHandler().getConfig().getBoolean("BlockBreakDistributionChestDeleteLinkedStorageChest", true))
 			{
 				int count = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST, 
 						"`distributionchestid` = ?", id);
 				plugin.getMysqlHandler().deleteData(MysqlHandler.Type.STORAGECHEST, "`distributionchestid` = ?", id);
 				event.getPlayer().sendMessage(ChatApi.tl(
-						plugin.getYamlHandler().getL().getString("CmdAsh.Delete.LinkedSChestDeleted")
+						plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.LinkedSChestDeleted")
 						.replace("%count%", String.valueOf(count))
 						.replace("%name%", dc.getChestName())
 						.replace("%id%", String.valueOf(dc.getId()))));
@@ -151,13 +151,13 @@ public class BlockBreakListener implements Listener
 					if(!dc.getOwneruuid().equals(event.getPlayer().getUniqueId().toString()) 
 							&& !event.getPlayer().hasPermission(Utility.PERMBYPASSDELETE))
 					{
-						event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwner")));
+						event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwner")));
 						event.setCancelled(true);
 						return;
 					}
 				}
 			}
-			event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.BlockBreak.DeleteSC")
+			event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockBreak.DeleteSC")
 					.replace("%id%", scid)));
 			plugin.getMysqlHandler().deleteData(MysqlHandler.Type.STORAGECHEST, 
 					" `server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",

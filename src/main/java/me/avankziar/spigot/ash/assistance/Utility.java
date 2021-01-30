@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Barrel;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
 
 import main.java.me.avankziar.general.objects.ChatApi;
@@ -65,7 +64,7 @@ public class Utility
 	
 	public boolean loadUtility()
 	{
-		setPrefix(plugin.getYamlHandler().get().getString("Prefix", "&7[&eASH&7] &r"));
+		setPrefix(plugin.getYamlHandler().getConfig().getString("Prefix", "&7[&eASH&7] &r"));
 		return true;
 	}
 	
@@ -298,9 +297,7 @@ public class Utility
 	
 	public boolean isNOTStoragechest(BlockState state)
 	{
-		if(!(state instanceof Chest)
-				&& !(state instanceof ShulkerBox)
-				&& !(state instanceof Barrel))
+		if(!(state instanceof Chest) && !(state instanceof Barrel))
 		{
 			return true;
 		}

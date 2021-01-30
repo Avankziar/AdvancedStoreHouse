@@ -4,12 +4,19 @@ import java.util.List;
 
 public class DistributionChest
 {
+	public enum PriorityType
+	{
+		SWITCH, PLACE
+	}
+	
 	private int id;
 	private String owneruuid;
 	private List<String> memberList; //uuid
 	private long creationDate;
 	private String chestName;
 	private boolean normalPriority;
+	private PriorityType priorityType;
+	private int priorityNumber;
 	private boolean automaticDistribution;
 	private boolean distributeRandom;
 	private String server;
@@ -19,7 +26,8 @@ public class DistributionChest
 	private int blockZ;
 	
 	public DistributionChest(int id, String owneruuid, List<String> memberlist, long creationDate,
-			String chestName, boolean normalPriority, boolean automaticDistribution, boolean distributeRandom,
+			String chestName, boolean normalPriority, PriorityType priorityType, int priorityNumber,
+			boolean automaticDistribution, boolean distributeRandom,
 			String server, String world, int blockX, int blockY, int blockZ)
 	{
 		setId(id);
@@ -28,6 +36,8 @@ public class DistributionChest
 		setCreationDate(creationDate);
 		setChestName(chestName);
 		setNormalPriority(normalPriority);
+		setPriorityType(priorityType);
+		setPriorityNumber(priorityNumber);
 		setAutomaticDistribution(automaticDistribution);
 		setDistributeRandom(distributeRandom);
 		setServer(server);
@@ -165,5 +175,25 @@ public class DistributionChest
 	public void setDistributeRandom(boolean distributeRandom)
 	{
 		this.distributeRandom = distributeRandom;
+	}
+
+	public PriorityType getPriorityType()
+	{
+		return priorityType;
+	}
+
+	public void setPriorityType(PriorityType priorityType)
+	{
+		this.priorityType = priorityType;
+	}
+
+	public int getPriorityNumber()
+	{
+		return priorityNumber;
+	}
+
+	public void setPriorityNumber(int priorityNumber)
+	{
+		this.priorityNumber = priorityNumber;
 	}
 }

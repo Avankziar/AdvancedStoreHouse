@@ -34,14 +34,14 @@ public class ARGStorageChest_Info extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash storagechest info")));
 			return;
 		}
 		int id = user.getStorageChestID();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.SChestDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SChestDontExist")));
 			return;
 		}
 		StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST, "`id` = ?", id);
@@ -52,40 +52,40 @@ public class ARGStorageChest_Info extends ArgumentModule
 			if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
 					&& !player.hasPermission(Utility.PERMBYPASSINFO))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwnerOrMember")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 				return;
 			}
 		}
 		
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.HeadlineS")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.HeadlineS")
 				.replace("%id%", String.valueOf(id))));
 		if(dc != null)
 		{
 			String owner = Utility.convertUUIDToName(dc.getOwneruuid());
 			if(owner != null)
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.Owner")
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Owner")
 						.replace("%owner%", owner)));
 			} else
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.Owner")
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Owner")
 						.replace("%owner%", "/")));
 			}
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.DChestName")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.DChestName")
 					.replace("%id%", String.valueOf(dc.getId()))
 					.replace("%name%", dc.getChestName())));
 		}
 		String loc = sc.getServer()+" &a"+sc.getWorld()+" &d"+sc.getBlockX()+" "+sc.getBlockY()+" "+sc.getBlockZ();
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.Location")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Location")
 				.replace("%pos%", loc)));
 		if(dc != null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.Member")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Member")
 					.replace("%member%", "["+String.join(" ", dc.getMemberList())+"]")));
 		}
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.Priority")
-				.replace("%prio%", String.valueOf(sc.getPriority()))));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Info.Endstorage")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Priority")
+				.replace("%prio%", String.valueOf(sc.getPriorityNumber()))));
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Endstorage")
 				.replace("%end%", String.valueOf(sc.isEndstorage()))));
 		return;
 	}

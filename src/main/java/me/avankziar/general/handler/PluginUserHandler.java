@@ -64,57 +64,12 @@ public class PluginUserHandler
 	{
 		switch(mode)
 		{
-		case BLOCKINFO:
-			user.setMode(Mode.CONSTRUCT);
-			addUser(user);
-			player.sendMessage(ChatApi.tl(message));
-			return;
-		case CREATEDISTRIBUTIONCHEST:
-			user.setMode(Mode.CONSTRUCT);
-			addUser(user);
-			player.sendMessage(ChatApi.tl(message));
-			return;
-		case CREATESTORAGE:
-			user.setMode(Mode.CONSTRUCT);
-			addUser(user);
-			player.sendMessage(ChatApi.tl(message));
-			return;
-		case UPDATESTORAGE:
-			user.setMode(Mode.CONSTRUCT);
-			addUser(user);
-			player.sendMessage(ChatApi.tl(message));
-			return;
-		case UPDATESTORAGEITEMFILTERSET:
-			user.setMode(Mode.CONSTRUCT);
-			addUser(user);
-			player.sendMessage(ChatApi.tl(message));
-			return;
-		case CREATEITEMFILTERSET:
-			user.setMode(Mode.CONSTRUCT);
-			addUser(user);
-			player.sendMessage(ChatApi.tl(message));
-			return;
-		case CHANGEITEMFILTERSET:
-			user.setMode(Mode.CONSTRUCT);
-			addUser(user);
-			player.sendMessage(ChatApi.tl(message));
-			return;
-		case POSITIONUPDATEDISTRIBUTION:
-			user.setMode(Mode.CONSTRUCT);
-			addUser(user);
-			player.sendMessage(ChatApi.tl(message));
-			return;
-		case POSITIONUPDATESTORAGE:
+		default:
 			user.setMode(Mode.CONSTRUCT);
 			addUser(user);
 			player.sendMessage(ChatApi.tl(message));
 			return;
 		case CONSTRUCT:
-			return;
-		case NONE:
-			user.setMode(Mode.CONSTRUCT);
-			addUser(user);
-			player.sendMessage(ChatApi.tl(message));
 			return;
 		}
 	}

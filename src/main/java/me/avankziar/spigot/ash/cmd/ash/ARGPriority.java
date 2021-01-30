@@ -28,20 +28,20 @@ public class ARGPriority extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash priority")));
 			return;
 		}
 		String ps = args[1];
 		if(!MatchApi.isInteger(ps))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("IllegalArgument")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("IllegalArgument")));
 			return;
 		}
 		int p = Integer.parseInt(ps);
 		user.setPriority(p);
 		PluginUserHandler.addUser(user);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Priority.Set")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Priority.Set")
 				.replace("%priority%", ps)));
 		return;
 	}

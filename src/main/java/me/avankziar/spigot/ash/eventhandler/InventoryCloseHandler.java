@@ -59,17 +59,14 @@ public class InventoryCloseHandler implements Listener
 		case CONSTRUCT:
 			distributionStart(event, player, user);
 			return;
-		case NONE:
-			distributionStart(event, player, user);
-			return;
 		case CREATESTORAGE:
-			createStorageChest(event, player, user); //Update des ItemStack[]
+			updateStorageChest(event, player, user); //Update des ItemStack[]
 			return;
 		case UPDATESTORAGE:
-			createStorageChest(event, player, user); //Update des ItemStack[], update anderer Werte im InteractHandler
+			updateStorageChest(event, player, user); //Update des ItemStack[], update anderer Werte im InteractHandler
 			return;
 		case UPDATESTORAGEITEMFILTERSET:
-			createStorageChest(event, player, user); //Update des ItemStack[]
+			updateStorageChest(event, player, user); //Update des ItemStack[]
 			return;
 		case CREATEITEMFILTERSET:
 			createItemFilterSet(event, player, user); //Erstellen spezieller ItemStack[]
@@ -93,7 +90,7 @@ public class InventoryCloseHandler implements Listener
 	}
 	
 	//Nur eine Update für den ItemFilterSet der Lagerkiste
-	private void createStorageChest(InventoryCloseEvent event, Player player, PluginUser user) throws IOException
+	private void updateStorageChest(InventoryCloseEvent event, Player player, PluginUser user) throws IOException
 	{
 		debug(player, "=> Begin Methode createStorageChest (Inventory)");
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST, "`id` = ?", user.getStorageChestID()))
@@ -112,7 +109,7 @@ public class InventoryCloseHandler implements Listener
 			PluginUserHandler.addUser(user);
 		}
 		player.spigot().sendMessage(
-				ChatApi.generateTextComponent(plugin.getYamlHandler().getL().getString("CmdAsh.Create.UpdateStorageChest")));
+				ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.UpdateStorageChest")));
 		return;
 	}
 	
@@ -138,7 +135,7 @@ public class InventoryCloseHandler implements Listener
 		user.setItemFilterSet(ifs);
 		user.setMode(Mode.NONE);
 		PluginUserHandler.addUser(user);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSet.Create")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSet.Create")
 				.replace("%name%", ifs.getName())));
 		return;
 	}
@@ -164,7 +161,7 @@ public class InventoryCloseHandler implements Listener
 		final ItemStack[] content = event.getView().getTopInventory().getContents();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.ITEMFILTERSET, "`id` = ?", user.getItemFilterSet().getID()))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSet.NotExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSet.NotExist")));
 			return;
 		}
 		ItemFilterSet ifs = (ItemFilterSet) plugin.getMysqlHandler().getData(MysqlHandler.Type.ITEMFILTERSET,
@@ -174,7 +171,7 @@ public class InventoryCloseHandler implements Listener
 		user.setItemFilterSet(ifs);
 		user.setMode(Mode.NONE);
 		PluginUserHandler.addUser(user);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSet.Update")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSet.Update")
 				.replace("%name%", ifs.getName())));
 		return;
 	}

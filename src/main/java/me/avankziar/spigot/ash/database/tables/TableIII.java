@@ -76,18 +76,18 @@ public interface TableIII
 				String sql = "INSERT INTO `" + plugin.getMysqlHandler().tableNameIII 
 						+ "`(`distributionchestid`, `owner_uuid`, `creationdate`, `priority`, `content`,"
 						+ " `endstorage`, `server`, `world`, `blockx`, `blocky`, `blockz`,"
-						+ " `chestname`, `optionvoid`, `optiondurability`, `durability`,"
-						+ " `optionrepair`, `repaircost`, `optionenchantments`, `enchantments`) " 
+						+ " `chestname`, `optionvoid`, `optiondurability`, `durabilitytype`, `durability`,"
+						+ " `optionrepair`, `repairtype`, `repaircost`, `optionenchantments`, `optionmaterial`) " 
 						+ "VALUES("
 						+ "?, ?, ?, ?, ?, "
 						+ "?, ?, ?, ?, ?, "
 						+ "?, ?, ?, ?, ?, "
-						+ "?, ?, ?)";
+						+ "?, ?, ?, ?, ?)";
 				preparedStatement = conn.prepareStatement(sql);
 				preparedStatement.setInt(1, cu.getDistributionChestID());
 		        preparedStatement.setString(2, cu.getOwneruuid());
 		        preparedStatement.setLong(3, cu.getCreationDate());
-		        preparedStatement.setInt(4, cu.getPriority());
+		        preparedStatement.setInt(4, cu.getPriorityNumber());
 		        preparedStatement.setString(5, ConvertHandler.ToBase64itemStackArray(cu.getContents()));
 		        preparedStatement.setBoolean(6, cu.isEndstorage());
 		        preparedStatement.setString(7, cu.getServer());
@@ -98,11 +98,13 @@ public interface TableIII
 		        preparedStatement.setString(12, cu.getChestName());
 		        preparedStatement.setBoolean(13, cu.isOptionVoid());
 		        preparedStatement.setBoolean(14, cu.isOptionDurability());
-		        preparedStatement.setInt(15, cu.getDurability());
-		        preparedStatement.setBoolean(16, cu.isOptionRepair());
-		        preparedStatement.setInt(16, cu.getRepairCost());
-		        preparedStatement.setBoolean(17, cu.isOptionEnchantment());
-		        preparedStatement.setString(18, cu.encryptEnchantments());
+		        preparedStatement.setString(15, cu.getDurabilityType().toString());
+		        preparedStatement.setInt(16, cu.getDurability());
+		        preparedStatement.setBoolean(17, cu.isOptionRepair());
+		        preparedStatement.setString(18, cu.getRepairType().toString());
+		        preparedStatement.setInt(19, cu.getRepairCost());
+		        preparedStatement.setBoolean(20, cu.isOptionEnchantment());
+		        preparedStatement.setBoolean(21, cu.isOptionMaterial());
 		        
 		        preparedStatement.executeUpdate();
 		        return true;
@@ -147,14 +149,14 @@ public interface TableIII
 				String data = "UPDATE `" + plugin.getMysqlHandler().tableNameIII
 						+ "` SET `distributionchestid` = ?, `owner_uuid` = ?, `creationdate` = ?, `priority` = ?, `content` = ?," 
 						+ " `endstorage` = ?, `server` = ?, `world` = ?, `blockx` = ?, `blocky` = ?, `blockz` = ?,"
-						+ " `chestname` = ?, `optionvoid` = ?, `optiondurability` = ?, `durability` = ?," 
-						+ "	`optionrepair` = ?, `repaircost` = ?, `optionenchantments` = ?, `enchantments` = ?" 
+						+ " `chestname` = ?, `optionvoid` = ?, `optiondurability` = ?, `durabilitytype` = ?, `durability` = ?," 
+						+ "	`optionrepair` = ?, `repairtype` = ?, `repaircost` = ?, `optionenchantments` = ?, `optionmaterial` = ?" 
 						+ " WHERE "+whereColumn;
 				preparedStatement = conn.prepareStatement(data);
 				preparedStatement.setInt(1, cu.getDistributionChestID());
 		        preparedStatement.setString(2, cu.getOwneruuid());
 		        preparedStatement.setLong(3, cu.getCreationDate());
-		        preparedStatement.setInt(4, cu.getPriority());
+		        preparedStatement.setInt(4, cu.getPriorityNumber());
 		        preparedStatement.setString(5, ConvertHandler.ToBase64itemStackArray(cu.getContents()));
 		        preparedStatement.setBoolean(6, cu.isEndstorage());
 		        preparedStatement.setString(7, cu.getServer());
@@ -165,13 +167,15 @@ public interface TableIII
 		        preparedStatement.setString(12, cu.getChestName());
 		        preparedStatement.setBoolean(13, cu.isOptionVoid());
 		        preparedStatement.setBoolean(14, cu.isOptionDurability());
-		        preparedStatement.setInt(15, cu.getDurability());
-		        preparedStatement.setBoolean(16, cu.isOptionRepair());
-		        preparedStatement.setInt(16, cu.getRepairCost());
-		        preparedStatement.setBoolean(17, cu.isOptionEnchantment());
-		        preparedStatement.setString(18, cu.encryptEnchantments());
+		        preparedStatement.setString(15, cu.getDurabilityType().toString());
+		        preparedStatement.setInt(16, cu.getDurability());
+		        preparedStatement.setBoolean(17, cu.isOptionRepair());
+		        preparedStatement.setString(18, cu.getRepairType().toString());
+		        preparedStatement.setInt(19, cu.getRepairCost());
+		        preparedStatement.setBoolean(20, cu.isOptionEnchantment());
+		        preparedStatement.setBoolean(21, cu.isOptionMaterial());
 		        
-		        int i = 19;
+		        int i = 22;
 		        for(Object o : whereObject)
 		        {
 		        	preparedStatement.setObject(i, o);
@@ -234,11 +238,13 @@ public interface TableIII
 		        			result.getString("chestname"),
 		        			result.getBoolean("optionvoid"),
 		        			result.getBoolean("optiondurability"),
+		        			StorageChest.Type.valueOf(result.getString("durabilitytype")),
 		        			result.getInt("durability"),
 		        			result.getBoolean("optionrepair"),
+		        			StorageChest.Type.valueOf(result.getString("repairtype")),
 		        			result.getInt("repaircost"),
 		        			result.getBoolean("optionenchantments"),
-		        			StorageChest.decryptEnchantments(result.getString("enchantments")));
+		        			result.getBoolean("optionmaterial"));
 		        }
 		    } catch (SQLException e) 
 			{
@@ -436,11 +442,13 @@ public interface TableIII
 		        			result.getString("chestname"),
 		        			result.getBoolean("optionvoid"),
 		        			result.getBoolean("optiondurability"),
+		        			StorageChest.Type.valueOf(result.getString("durabilitytype")),
 		        			result.getInt("durability"),
 		        			result.getBoolean("optionrepair"),
+		        			StorageChest.Type.valueOf(result.getString("repairtype")),
 		        			result.getInt("repaircost"),
 		        			result.getBoolean("optionenchantments"),
-		        			StorageChest.decryptEnchantments(result.getString("enchantments")));
+		        			result.getBoolean("optionmaterial"));
 		        	list.add(ep);
 		        }
 		        return list;
@@ -500,11 +508,13 @@ public interface TableIII
 		        			result.getString("chestname"),
 		        			result.getBoolean("optionvoid"),
 		        			result.getBoolean("optiondurability"),
+		        			StorageChest.Type.valueOf(result.getString("durabilitytype")),
 		        			result.getInt("durability"),
 		        			result.getBoolean("optionrepair"),
+		        			StorageChest.Type.valueOf(result.getString("repairtype")),
 		        			result.getInt("repaircost"),
 		        			result.getBoolean("optionenchantments"),
-		        			StorageChest.decryptEnchantments(result.getString("enchantments")));
+		        			result.getBoolean("optionmaterial"));
 		        	list.add(ep);
 		        }
 		        return list;
@@ -578,11 +588,13 @@ public interface TableIII
 		        			result.getString("chestname"),
 		        			result.getBoolean("optionvoid"),
 		        			result.getBoolean("optiondurability"),
+		        			StorageChest.Type.valueOf(result.getString("durabilitytype")),
 		        			result.getInt("durability"),
 		        			result.getBoolean("optionrepair"),
+		        			StorageChest.Type.valueOf(result.getString("repairtype")),
 		        			result.getInt("repaircost"),
 		        			result.getBoolean("optionenchantments"),
-		        			StorageChest.decryptEnchantments(result.getString("enchantments")));
+		        			result.getBoolean("optionmaterial"));
 		        	list.add(ep);
 		        }
 		        return list;

@@ -27,18 +27,18 @@ public class ARGEndStorage extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash endstorage")));
 			return;
 		}
 		if(user.isEndStorage())
 		{
 			user.setEndStorage(false);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.EndStorage.Deactive")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.EndStorage.Deactive")));
 		} else
 		{
 			user.setEndStorage(true);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.EndStorage.Active")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.EndStorage.Active")));
 		}
 		PluginUserHandler.addUser(user);
 		return;

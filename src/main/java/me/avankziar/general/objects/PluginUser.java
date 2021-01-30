@@ -8,7 +8,7 @@ public class PluginUser
 	public enum Mode
 	{
 		CONSTRUCT, //Wenn man nur bauen will.
-		NONE, //Leerlauf, der durch shift rechtsklick den UpdateStorageItemFilterSet triggert
+		NONE, //Zwischen ding
 		BLOCKINFO, //Durch shift+Rechtsklick werden alle Infos zu dem Block angezeigt.
 		CREATEDISTRIBUTIONCHEST, //Man hat den Cmd /ash create genutzt
 		CREATESTORAGE, //Man hat eine Verteilerkiste erstellt und will nun Lagerkisten erstellen
@@ -21,7 +21,7 @@ public class PluginUser
 		
 		DISTRIBUTIONCHESTGUI, //Das main Gui für Verteilerkisten
 		
-		STORAGECHESTGUI, //Das main Gui für Lagerkisten
+		OPTIONGUI, //Das Gui für Sc und Dc, per PDC wird darin unterschieden.
 		
 		;
 	}

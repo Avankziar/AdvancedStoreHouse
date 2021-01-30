@@ -28,18 +28,18 @@ public class _ARGStorageChest_Position extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash create")));
 			return;
 		}
 		if(user.getMode() == Mode.POSITIONUPDATESTORAGE)
 		{
 			user.setMode(Mode.NONE);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Position.Deactive")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.Deactive")));
 		} else
 		{
 			user.setMode(Mode.POSITIONUPDATESTORAGE);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Position.SChest")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.SChest")));
 		}
 		PluginUserHandler.addUser(user);
 		return;

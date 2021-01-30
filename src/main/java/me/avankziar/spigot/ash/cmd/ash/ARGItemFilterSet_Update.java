@@ -35,13 +35,13 @@ public class ARGItemFilterSet_Update extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash itemfilterset update")));
 			return;
 		}
 		if(user.getItemFilterSet() == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSet.NotExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSet.NotExist")));
 			return;
 		}
 		ItemFilterSet ifs = user.getItemFilterSet();
@@ -50,14 +50,14 @@ public class ARGItemFilterSet_Update extends ArgumentModule
 		{
 			int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.ITEMFILTERSET, "`owner_uuid` = ?", user.getUUID());
 			if(!PermissionHandler.canCreate(player, Utility.PERMBYPASSITEMFILTERSET, Utility.PERMCOUNTITEMFILTERSET,
-					amount, plugin.getYamlHandler().get().getInt("maximumItemFilterSet", 500), false))
+					amount, plugin.getYamlHandler().getConfig().getInt("maximumItemFilterSet", 500), false))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetCreate.TooMany")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetCreate.TooMany")));
 				return;
 			}
 			newifs = new ItemFilterSet(0, ifs.getName()+"_Copy", user.getUUID(), ifs.getContents());
 			plugin.getMysqlHandler().create(MysqlHandler.Type.ITEMFILTERSET, newifs);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetUpdate.NewOne")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetUpdate.NewOne")));
 			newifs.setID(((ItemFilterSet) plugin.getMysqlHandler().getData(MysqlHandler.Type.ITEMFILTERSET,
 					"`itemfiltersetname` = ? AND `owner_uuid` = ?", newifs.getName(), user.getUUID())).getID());
 		}

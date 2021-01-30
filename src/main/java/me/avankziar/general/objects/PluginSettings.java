@@ -53,21 +53,21 @@ public class PluginSettings
 	
 	public static void init(AdvancedStoreHouse plugin)
 	{
-		String server = plugin.getYamlHandler().get().getString("Servername", "hub");
-		boolean mysql = plugin.getYamlHandler().get().getBoolean("Mysql.Status", false);
+		String server = plugin.getYamlHandler().getConfig().getString("Servername", "hub");
+		boolean mysql = plugin.getYamlHandler().getConfig().getBoolean("Mysql.Status", false);
 		
-		boolean automaticDistribution = plugin.getYamlHandler().get().getBoolean("IsAutomaticDistribution", false);
-		List<String> serverRestartTime = plugin.getYamlHandler().get().getStringList("ServerRestartTimes");
-		int minimumTickPerDistributionChest = plugin.getYamlHandler().get().getInt("MinimumTickPerDistributionChest", 10);
-		long directPauseValue = plugin.getYamlHandler().get().getLong("DirectPauseValue", 20*60*10);
-		long indirectPauseValue = plugin.getYamlHandler().get().getLong("IndirectPauseValue", 20*60*10);
+		boolean automaticDistribution = plugin.getYamlHandler().getConfig().getBoolean("IsAutomaticDistribution", false);
+		List<String> serverRestartTime = plugin.getYamlHandler().getConfig().getStringList("ServerRestartTimes");
+		int minimumTickPerDistributionChest = plugin.getYamlHandler().getConfig().getInt("MinimumTickPerDistributionChest", 10);
+		long directPauseValue = plugin.getYamlHandler().getConfig().getLong("DirectPauseValue", 20*60*10);
+		long indirectPauseValue = plugin.getYamlHandler().getConfig().getLong("IndirectPauseValue", 20*60*10);
 		
-		int delayedTicks = plugin.getYamlHandler().get().getInt("DelayedTicks", 1);
-		int delayChainChest = plugin.getYamlHandler().get().getInt("DelayChainChests", 10);
-		int delayedChainTicks = plugin.getYamlHandler().get().getInt("DelayedChainTicks", 10);
-		int chestsPerTick = plugin.getYamlHandler().get().getInt("ChestsPerTick", 10);
+		int delayedTicks = plugin.getYamlHandler().getConfig().getInt("DelayedTicks", 1);
+		int delayChainChest = plugin.getYamlHandler().getConfig().getInt("DelayChainChests", 10);
+		int delayedChainTicks = plugin.getYamlHandler().getConfig().getInt("DelayedChainTicks", 10);
+		int chestsPerTick = plugin.getYamlHandler().getConfig().getInt("ChestsPerTick", 10);
 		
-		int storageChestAmountWhereShowParticels = plugin.getYamlHandler().get().getInt("StorageChestAmountWhereShowParticels", 10);
+		int storageChestAmountWhereShowParticels = plugin.getYamlHandler().getConfig().getInt("StorageChestAmountWhereShowParticels", 10);
 		settings = new PluginSettings(server, mysql,
 				automaticDistribution, serverRestartTime, minimumTickPerDistributionChest, directPauseValue, indirectPauseValue,
 				delayedTicks, delayChainChest, delayedChainTicks, chestsPerTick,

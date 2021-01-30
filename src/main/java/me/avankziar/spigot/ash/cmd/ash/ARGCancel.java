@@ -31,7 +31,7 @@ public class ARGCancel extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 					.replace("%cmd%", "/ash cancel")));
 			return;
 		}
@@ -50,7 +50,7 @@ public class ARGCancel extends ArgumentModule
 		}
 		PluginUserHandler.addUser(user);
 		player.sendMessage(ChatApi.tl(plugin.getUtility().getPrefix()+" "+
-				plugin.getYamlHandler().getL().getString("CmdAsh.Cancel.IsCancel")));
+				plugin.getYamlHandler().getLang().getString("CmdAsh.Cancel.IsCancel")));
 		return;
 	}
 }

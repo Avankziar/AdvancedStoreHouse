@@ -39,7 +39,7 @@ public class ARGPlayerInfo extends ArgumentModule
 			{
 				if(!player.hasPermission(Utility.PERMBYPASSPLAYERINFO))
 				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NoPermission")));
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NoPermission")));
 					return;
 				}
 			}
@@ -47,46 +47,46 @@ public class ARGPlayerInfo extends ArgumentModule
 		UUID uuid = Utility.convertNameToUUID(name);
 		if(uuid == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("PlayerNotExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("PlayerNotExist")));
 			return;
 		}
 		PluginUser user = PluginUserHandler.getUser(uuid);
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("PlayerNotOnline")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("PlayerNotOnline")));
 			return;
 		}
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.Headline")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.Headline")
 				.replace("%name%", user.getName())));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.Mode")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.Mode")
 				.replace("%mode%", returnMode(user.getMode()))));
 		int id = user.getDistributionChestID();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.DChestDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.DChestDontExist")));
 			return;
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
 				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.DC")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.DC")
 				+user.getDistributionChestID() + " &r| "+dc.getChestName()));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.SC")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.SC")
 				+user.getStorageChestID()));
 		if(user.getItemFilterSet() != null)
 		{
 			if(user.getItemFilterSet().getID() != 0)
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.ItemFilterID")
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.ItemFilterID")
 						+user.getItemFilterSet().getID()));
 			}
 		}
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.Priority")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.Priority")
 				+user.getPriority()));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.SearchType")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.SearchType")
 				+user.getSearchType()));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.Override")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.Override")
 				+user.isOverride()));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.EndStorage")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.EndStorage")
 				+user.isEndStorage()));
 		return;
 	}
@@ -96,27 +96,27 @@ public class ARGPlayerInfo extends ArgumentModule
 		switch(mode)
 		{
 		case BLOCKINFO:
-			return plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.BLOCKINFO");
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.BLOCKINFO");
 		case CHANGEITEMFILTERSET:
-			return plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.CHANGEITEMFILTERSET");
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.CHANGEITEMFILTERSET");
 		case CONSTRUCT:
-			return plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.CONSTRUCT");
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.CONSTRUCT");
 		case CREATEDISTRIBUTIONCHEST:
-			return plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.CREATEDISTRIBUTIONCHEST");
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.CREATEDISTRIBUTIONCHEST");
 		case CREATEITEMFILTERSET:
-			return plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.CREATEITEMFILTERSET");
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.CREATEITEMFILTERSET");
 		case CREATESTORAGE:
-			return plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.CREATESTORAGE");
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.CREATESTORAGE");
 		case NONE:
-			return plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.NONE");
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.NONE");
 		case POSITIONUPDATEDISTRIBUTION:
-			return plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.POSITIONUPDATEDISTRIBUTION");
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.POSITIONUPDATEDISTRIBUTION");
 		case POSITIONUPDATESTORAGE: 
-			return plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.POSITIONUPDATESTORAGE");
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.POSITIONUPDATESTORAGE");
 		case UPDATESTORAGE:
-			return plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.UPDATESTORAGE");
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.UPDATESTORAGE");
 		case UPDATESTORAGEITEMFILTERSET:
-			return plugin.getYamlHandler().getL().getString("CmdAsh.PlayerInfo.UPDATESTORAGEITEMFILTERSET");
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.UPDATESTORAGEITEMFILTERSET");
 		}
 		return "";
 	}

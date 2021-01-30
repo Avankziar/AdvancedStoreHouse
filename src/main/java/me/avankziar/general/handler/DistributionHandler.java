@@ -2,8 +2,6 @@ package main.java.me.avankziar.general.handler;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -26,16 +24,16 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
+import main.java.me.avankziar.general.objects.DistributionChest.PriorityType;
 import main.java.me.avankziar.general.objects.ItemDistributeObject;
 import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.StorageChest;
+import main.java.me.avankziar.general.objects.StorageChest.Type;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 
 public class DistributionHandler
-{
-	public static ArrayList<Enchantment> enchantments;
-	
+{	
 	public static void debug(String s)
 	{
 		boolean bo = false;
@@ -104,12 +102,23 @@ public class DistributionHandler
 	
 	private static void distributeMiddle(String server, DistributionChest dc, Inventory inv) throws IOException
 	{
-		ArrayList<StorageChest> prioList = ConvertHandler.convertListIII(
-				AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`priority`",
-						!dc.isNormalPriority(),
-						"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), false, server));
+		ArrayList<StorageChest> prioList = new ArrayList<>();
+		if(dc.getPriorityType() == PriorityType.SWITCH)
+		{
+			prioList = ConvertHandler.convertListIII(
+					AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`normalpriority`",
+							!dc.isNormalPriority(),
+							"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), false, server));
+		} else
+		{
+			prioList = ConvertHandler.convertListIII(
+					AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`normalpriority`",
+							!dc.isNormalPriority(),
+							"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ? AND `prioritynumber` = ?",
+							dc.getId(), false, server, dc.getPriorityNumber()));
+		}
 		ArrayList<StorageChest> endList = ConvertHandler.convertListIII(
-				AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`priority`",
+				AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`normalpriority`",
 						!dc.isNormalPriority(),
 						"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), true, server));
 		int storagechestamount = prioList.size()+endList.size();
@@ -308,9 +317,10 @@ public class DistributionHandler
 	public static ItemStack[] distribute(Inventory sender, Inventory reciever, ItemStack[] filter, ItemStack[] itemStacks,
 			boolean endstorage, boolean isRandom,
 			//boolean optionVoid, Is only in the Background
-			boolean optionDurability, int durability, //In full percentage
-			boolean optionRepair, int repaircost, //in level
-			boolean optionEnchantments, LinkedHashMap<Enchantment, Integer> enchantments
+			boolean optionDurability, StorageChest.Type durabilityType, int durability, //In full percentage
+			boolean optionRepair, StorageChest.Type repairType, int repaircost, //in level
+			boolean optionEnchantments,
+			boolean optionMaterial
 			)
 	{
 		ArrayList<ItemStack> similarItems = new ArrayList<>();
@@ -333,9 +343,9 @@ public class DistributionHandler
 				} else
 				{
 					if(isSimilar(is, filter,
-							optionDurability, durability,
-							optionRepair, repaircost,
-							optionEnchantments, enchantments))
+							optionDurability, durabilityType, durability,
+							optionRepair, repairType, repaircost,
+							optionEnchantments, optionMaterial))
 					{
 						similarItems.add(is);
 					}
@@ -357,9 +367,10 @@ public class DistributionHandler
 	
 	@SuppressWarnings("deprecation")
 	public static boolean isSimilar(ItemStack item, ItemStack[] filter, 
-			boolean optionDurability, int durability, //In full percentage
-			boolean optionRepair, int repaircost, //in level
-			boolean optionEnchantments, LinkedHashMap<Enchantment, Integer> enchantments)
+			boolean optionDurability, StorageChest.Type durabilityType, int durability, //In full percentage
+			boolean optionRepair, StorageChest.Type repairType, int repaircost, //in level
+			boolean optionEnchantments,
+			boolean optionMaterial)
 	{
 		for(ItemStack is : filter)
 		{
@@ -371,6 +382,16 @@ public class DistributionHandler
 	        final ItemStack i = item.clone();
 	        final ItemStack f = is.clone();
 	        debug("i & f getType != |||| i:"+i.getType()+" | f:"+f.getType());
+	        if(optionMaterial)
+	        {
+	        	if(i.getType() == f.getType())
+		        {
+	        		return true;
+		        } else
+		        {
+		        	continue;
+		        }
+	        }
 	        if(i.getType() != f.getType())
 	        {
 	        	debug("i & f getType != || i:"+i.getType()+" | f:"+f.getType());
@@ -389,9 +410,18 @@ public class DistributionHandler
 	        			{
 	        				int percent = ChestHandler.getMaxDamage(i.getType())/(id.getDamage() == 0 ? 1 : id.getDamage());
 	        				//the percentage muss be OVER the value, to be distributed!
-	        				if(percent < durability)
+	        				if(durabilityType == Type.LESSTHAN)
 	        				{
-		        				return false;
+	        					if(percent < durability)
+		        				{
+			        				continue;
+		        				}
+	        				} else
+	        				{
+	        					if(percent > durability)
+		        				{
+			        				continue;
+		        				}
 	        				}
 	        			}
 	        			id.setDamage(0);
@@ -405,11 +435,20 @@ public class DistributionHandler
 	            		Repairable ir = (Repairable) i.getItemMeta();
 	            		if(optionRepair)
 	            		{
-	            			//The itemrepaircost must be UNDER the value, to be distributed!
-	            			if(ir.getRepairCost() > repaircost)
+	            			if(repairType == Type.LESSTHAN)
 	            			{
-	            				return false;
+	            				if(ir.getRepairCost() > repaircost)
+		            			{
+		            				continue;
+		            			}
+	            			} else
+	            			{
+	            				if(ir.getRepairCost() < repaircost)
+		            			{
+		            				continue;
+		            			}
 	            			}
+	            			
 	            		}
 	            		ir.setRepairCost(0);
 	            		i.setItemMeta((ItemMeta) ir);
@@ -420,31 +459,32 @@ public class DistributionHandler
 		        	if(i.getItemMeta() instanceof EnchantmentStorageMeta && f.getItemMeta() instanceof EnchantmentStorageMeta)
 		        	{
 		        		EnchantmentStorageMeta iesm = (EnchantmentStorageMeta) i.getItemMeta();
+		        		EnchantmentStorageMeta fesm = (EnchantmentStorageMeta) f.getItemMeta();
 		        		if(optionEnchantments)
 		        		{
-		        			int checkcount = 0;
-		        			final int countEnch = iesm.getEnchants().size();
-		        			for(Entry<Enchantment, Integer> iench : iesm.getEnchants().entrySet())
+		        			if(!iesm.hasEnchants())
 		        			{
-		        				for(Entry<Enchantment, Integer> fench : enchantments.entrySet())
+		        				continue;
+		        			} else
+		        			{
+		        				for(Enchantment e : ChestHandler.enchantments)
 		        				{
-		        					if(iench.getKey().getName().equals(fench.getKey().getName())
-		        							&& iench.getValue() >= fench.getValue())
+		        					if(iesm.hasEnchant(e))
 		        					{
-		        						checkcount++;
+		        						iesm.removeEnchant(e);
+		        					}
+		        					if(fesm.hasEnchant(e))
+		        					{
+		        						fesm.removeEnchant(e);
 		        					}
 		        				}
-		        			}
-		        			//the item muss be have all OR MORE Enchantments as stated!
-		        			if(checkcount < countEnch)
-		        			{
-		        				return false;
+		        				i.setItemMeta(iesm);
+				        		f.setItemMeta(fesm);
 		        			}
 		        		} else
 		        		{
 		        			i.setItemMeta(ChestHandler.orderStorageEnchantments(iesm));
-			        		EnchantmentStorageMeta oesm = (EnchantmentStorageMeta) f.getItemMeta();
-			        		f.setItemMeta(ChestHandler.orderStorageEnchantments(oesm));
+			        		f.setItemMeta(ChestHandler.orderStorageEnchantments(fesm));
 		        		}
 		        	}
 		        	if(i.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK 
@@ -452,23 +492,26 @@ public class DistributionHandler
 		        	{
 		        		if(optionEnchantments)
 		        		{
-		        			int checkcount = 0;
-		        			final int countEnch = i.getItemMeta().getEnchants().size();
-		        			for(Entry<Enchantment, Integer> iench : i.getItemMeta().getEnchants().entrySet())
+		        			ItemMeta im = i.getItemMeta();
+		        			ItemMeta fm = f.getItemMeta();
+		        			if(!im.hasEnchants())
 		        			{
-		        				for(Entry<Enchantment, Integer> fench : enchantments.entrySet())
+		        				continue;
+		        			} else
+		        			{
+		        				for(Enchantment e : ChestHandler.enchantments)
 		        				{
-		        					if(iench.getKey().getName().equals(fench.getKey().getName())
-		        							&& iench.getValue() >= fench.getValue())
+		        					if(im.hasEnchant(e))
 		        					{
-		        						checkcount++;
+		        						im.removeEnchant(e);
+		        					}
+		        					if(fm.hasEnchant(e))
+		        					{
+		        						fm.removeEnchant(e);
 		        					}
 		        				}
-		        			}
-		        			//the item muss be have all OR MORE Enchantments as stated!
-		        			if(checkcount < countEnch)
-		        			{
-		        				return false;
+		        				i.setItemMeta(im);
+				        		f.setItemMeta(fm);
 		        			}
 		        		} else
 		        		{

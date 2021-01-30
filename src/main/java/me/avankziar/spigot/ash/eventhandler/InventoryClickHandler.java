@@ -1,5 +1,7 @@
 package main.java.me.avankziar.spigot.ash.eventhandler;
 
+import java.io.IOException;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -28,7 +30,7 @@ public class InventoryClickHandler implements Listener
 	}
 	
 	@EventHandler
-	public void onInventoryClick(InventoryClickEvent event)
+	public void onInventoryClick(InventoryClickEvent event) throws IOException
 	{
 		if(!(event.getWhoClicked() instanceof Player))
 		{
@@ -73,6 +75,8 @@ public class InventoryClickHandler implements Listener
 		case CHANGEITEMFILTERSET:
 			updateGui(event, player, user, isTopInventory);
 			return;
+		case OPTIONGUI:
+			new OptionGuiHandler().clickStart(event, player, user, isTopInventory);
 		}
 	}
 	
@@ -108,12 +112,12 @@ public class InventoryClickHandler implements Listener
 		{
 			if(ChestHandler.isSimilarShort(clicked, inv.getContents()))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.InventoyClick.ItemExist")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.InventoyClick.ItemExist")));
 				return;
 			}
 			if(ChestHandler.isFull(inv))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.InventoyClick.InventoryFull")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.InventoyClick.InventoryFull")));
 				return;
 			}
 			inv.addItem(clicked);

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import main.java.me.avankziar.general.objects.DistributionChest;
+import main.java.me.avankziar.general.objects.DistributionChest.PriorityType;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 
 public interface TableII
@@ -74,21 +75,23 @@ public interface TableII
 			{
 				String sql = "INSERT INTO `" + plugin.getMysqlHandler().tableNameII 
 						+ "`(`owner_uuid`, `memberlist`, `creationdate`, `chestname`, `normalpriority`,"
-						+ " `automaticdistribution`, `random`, `server`, `world`, `blockx`, `blocky`, `blockz`) " 
-						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+						+ " `prioritytype`, `prioritynumber`, `automaticdistribution`, `random`, `server`, `world`, `blockx`, `blocky`, `blockz`) " 
+						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 				preparedStatement = conn.prepareStatement(sql);
 		        preparedStatement.setString(1, cu.getOwneruuid());
 		        preparedStatement.setString(2, String.join(";", cu.getMemberList()));
 		        preparedStatement.setLong(3, cu.getCreationDate());
 		        preparedStatement.setString(4, cu.getChestName());
 		        preparedStatement.setBoolean(5, cu.isNormalPriority());
-		        preparedStatement.setBoolean(6, cu.isAutomaticDistribution());
-		        preparedStatement.setBoolean(7, cu.isDistributeRandom());
-		        preparedStatement.setString(8, cu.getServer());
-		        preparedStatement.setString(9, cu.getWorld());
-		        preparedStatement.setInt(10, cu.getBlockX());
-		        preparedStatement.setInt(11, cu.getBlockY());
-		        preparedStatement.setInt(12, cu.getBlockZ());
+		        preparedStatement.setString(6, cu.getPriorityType().toString());
+		        preparedStatement.setInt(7, cu.getPriorityNumber());
+		        preparedStatement.setBoolean(8, cu.isAutomaticDistribution());
+		        preparedStatement.setBoolean(9, cu.isDistributeRandom());
+		        preparedStatement.setString(10, cu.getServer());
+		        preparedStatement.setString(11, cu.getWorld());
+		        preparedStatement.setInt(12, cu.getBlockX());
+		        preparedStatement.setInt(13, cu.getBlockY());
+		        preparedStatement.setInt(14, cu.getBlockZ());
 		        
 		        preparedStatement.executeUpdate();
 		        return true;
@@ -132,7 +135,8 @@ public interface TableII
 			{
 				String data = "UPDATE `" + plugin.getMysqlHandler().tableNameII
 						+ "` SET `owner_uuid` = ?, `memberlist` = ?, `creationdate` = ?, `chestname` = ?, `normalpriority` = ?," 
-						+ " `automaticdistribution` = ?, `random` = ?,  `server` = ?, `world` = ?, `blockx` = ?, `blocky` = ?, `blockz` = ?" 
+						+ " `prioritytype` = ?, `prioritynumber` = ?, `automaticdistribution` = ?, `random` = ?,"
+						+ " `server` = ?, `world` = ?, `blockx` = ?, `blocky` = ?, `blockz` = ?" 
 						+ " WHERE "+whereColumn;
 				preparedStatement = conn.prepareStatement(data);
 				preparedStatement.setString(1, cu.getOwneruuid());
@@ -140,15 +144,17 @@ public interface TableII
 		        preparedStatement.setLong(3, cu.getCreationDate());
 		        preparedStatement.setString(4, cu.getChestName());
 		        preparedStatement.setBoolean(5, cu.isNormalPriority());
-		        preparedStatement.setBoolean(6, cu.isAutomaticDistribution());
-		        preparedStatement.setBoolean(7, cu.isDistributeRandom());
-		        preparedStatement.setString(8, cu.getServer());
-		        preparedStatement.setString(9, cu.getWorld());
-		        preparedStatement.setInt(10, cu.getBlockX());
-		        preparedStatement.setInt(11, cu.getBlockY());
-		        preparedStatement.setInt(12, cu.getBlockZ());
+		        preparedStatement.setString(6, cu.getPriorityType().toString());
+		        preparedStatement.setInt(7, cu.getPriorityNumber());
+		        preparedStatement.setBoolean(8, cu.isAutomaticDistribution());
+		        preparedStatement.setBoolean(9, cu.isDistributeRandom());
+		        preparedStatement.setString(10, cu.getServer());
+		        preparedStatement.setString(11, cu.getWorld());
+		        preparedStatement.setInt(12, cu.getBlockX());
+		        preparedStatement.setInt(13, cu.getBlockY());
+		        preparedStatement.setInt(14, cu.getBlockZ());
 		        
-		        int i = 13;
+		        int i = 15;
 		        for(Object o : whereObject)
 		        {
 		        	preparedStatement.setObject(i, o);
@@ -203,6 +209,8 @@ public interface TableII
 		        			result.getLong("creationdate"),
 		        			result.getString("chestname"),
 		        			result.getBoolean("normalpriority"),
+		        			PriorityType.valueOf(result.getString("prioritytype")),
+		        			result.getInt("prioritynumber"),
 		        			result.getBoolean("automaticdistribution"),
 		        			result.getBoolean("random"),
 		        			result.getString("server"),
@@ -399,6 +407,8 @@ public interface TableII
 		        			result.getLong("creationdate"),
 		        			result.getString("chestname"),
 		        			result.getBoolean("normalpriority"),
+		        			PriorityType.valueOf(result.getString("prioritytype")),
+		        			result.getInt("prioritynumber"),
 		        			result.getBoolean("automaticdistribution"),
 		        			result.getBoolean("random"),
 		        			result.getString("server"),
@@ -457,6 +467,8 @@ public interface TableII
 		        			result.getLong("creationdate"),
 		        			result.getString("chestname"),
 		        			result.getBoolean("normalpriority"),
+		        			PriorityType.valueOf(result.getString("prioritytype")),
+		        			result.getInt("prioritynumber"),
 		        			result.getBoolean("automaticdistribution"),
 		        			result.getBoolean("random"),
 		        			result.getString("server"),
@@ -529,6 +541,8 @@ public interface TableII
 		        			result.getLong("creationdate"),
 		        			result.getString("chestname"),
 		        			result.getBoolean("normalpriority"),
+		        			PriorityType.valueOf(result.getString("prioritytype")),
+		        			result.getInt("prioritynumber"),
 		        			result.getBoolean("automaticdistribution"),
 		        			result.getBoolean("random"),
 		        			result.getString("server"),

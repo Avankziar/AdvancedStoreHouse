@@ -37,7 +37,7 @@ public class ARGItemFilterSet_Select extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash itemfilterset select")));
 			return;
 		}
@@ -48,7 +48,7 @@ public class ARGItemFilterSet_Select extends ArgumentModule
 			{
 				if(!player.hasPermission(Utility.PERMBYPASSITEMFILTERSETSELECT))
 				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NoPermission")));
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NoPermission")));
 					return;
 				}
 				otherplayer = args[3];
@@ -58,7 +58,7 @@ public class ARGItemFilterSet_Select extends ArgumentModule
 					String nameconvert = Utility.convertUUIDToName(otherplayer);
 					if(nameconvert == null)
 					{
-						player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("PlayerNotExist")));
+						player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("PlayerNotExist")));
 						return;
 					}
 					otheruuid = otherplayer; //Es wurde eine UUId angegeben.
@@ -74,7 +74,7 @@ public class ARGItemFilterSet_Select extends ArgumentModule
 			int id = Integer.parseInt(nameOrID);
 			if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.ITEMFILTERSET, "`id` = ? AND `owner_uuid` = ?", id, otheruuid))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetDelete.NotExist")
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetDelete.NotExist")
 						.replace("%name%", nameOrID)));
 				return;
 			}
@@ -85,7 +85,7 @@ public class ARGItemFilterSet_Select extends ArgumentModule
 			if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.ITEMFILTERSET,
 					"`itemfiltersetname` = ? AND `owner_uuid` = ?", nameOrID, otheruuid))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetDelete.NotExist")
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetDelete.NotExist")
 						.replace("%name%", nameOrID)));
 				return;
 			}
@@ -94,18 +94,18 @@ public class ARGItemFilterSet_Select extends ArgumentModule
 		}
 		if(ifs == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetDelete.NotExist")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetDelete.NotExist")
 					.replace("%name%", nameOrID)));
 			return;
 		}
 		if(!ifs.getOwneruuid().equals(user.getUUID()) && !player.hasPermission(Utility.PERMBYPASSITEMFILTERSETSELECT))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwner")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwner")));
 			return;
 		}
 		user.setItemFilterSet(ifs);
 		PluginUserHandler.addUser(user);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetSelect.Selected")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetSelect.Selected")
 				.replace("%name%", ifs.getName())
 				.replace("%id%", String.valueOf(ifs.getID()))));
 		return;

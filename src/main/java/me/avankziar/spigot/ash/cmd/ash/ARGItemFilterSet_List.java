@@ -51,7 +51,7 @@ public class ARGItemFilterSet_List extends ArgumentModule
 				page = Integer.parseInt(pageString);
 			} else
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("IllegalArgument")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("IllegalArgument")));
 				return;
 			}
 		}
@@ -61,14 +61,14 @@ public class ARGItemFilterSet_List extends ArgumentModule
 			{
 				if(!player.hasPermission(Utility.PERMBYPASSITEMFILTERSETLIST))
 				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NoPermission")));
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NoPermission")));
 					return;
 				}
 				otherplayer = args[3];
 				UUID uuid = Utility.convertNameToUUID(otherplayer);
 				if(uuid == null)
 				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("PlayerNotExist")));
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("PlayerNotExist")));
 					return;
 				}
 				otheruuid = uuid.toString();
@@ -77,7 +77,7 @@ public class ARGItemFilterSet_List extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash itemfilterset list")));
 			return;
 		}
@@ -88,12 +88,12 @@ public class ARGItemFilterSet_List extends ArgumentModule
 						true, start, quantity, "`owner_uuid` = ?", otheruuid));
 		if(ifsList == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetList.Empty")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetList.Empty")));
 			return;
 		}
 		if(ifsList.isEmpty())
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetList.Empty")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetList.Empty")));
 			return;
 		}
 		int last = ((ItemFilterSet) plugin.getMysqlHandler().getData(MysqlHandler.Type.ITEMFILTERSET, "`owner_uuid` = ?", otheruuid)).getID();
@@ -110,12 +110,12 @@ public class ARGItemFilterSet_List extends ArgumentModule
 			String hovertext = "";
 			if(amount > 0)
 			{
-				hovertext += plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetList.LineOne")
+				hovertext += plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetList.LineOne")
 						.replace("%amount%", String.valueOf(amount));
 				hovertext += ChestHandler.getMaterialList(ifs.getContents());
 			}
 			TextComponent x = ChatApi.apiChat("&e"+ifs.getName()+"&f:",
-					ClickEvent.Action.RUN_COMMAND, plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetList.CommandRun")
+					ClickEvent.Action.RUN_COMMAND, plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetList.CommandRun")
 					.replace("%id%", String.valueOf(ifs.getID()))
 					.replace("%uuid%", ifs.getOwneruuid()),
 					HoverEvent.Action.SHOW_TEXT,
@@ -123,26 +123,26 @@ public class ARGItemFilterSet_List extends ArgumentModule
 			bclist.add(x);
 			TextComponent y = ChatApi.apiChat("&aⓄ",
 					ClickEvent.Action.RUN_COMMAND,
-					plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetList.CommandRunOpen")
+					plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetList.CommandRunOpen")
 					.replace("%uuid%", ifs.getOwneruuid()),
 					HoverEvent.Action.SHOW_TEXT, 
-					plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetList.OpenHover")
-					+plugin.getYamlHandler().getL().getString("BeforeSelect"));
+					plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetList.OpenHover")
+					+plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 			bclist.add(y);
 			TextComponent z = ChatApi.apiChat("&c✖",
 					ClickEvent.Action.SUGGEST_COMMAND,
-					plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetList.CommandRunDelete"),
-					HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getL().getString("BeforeSelect"));
+					plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetList.CommandRunDelete"),
+					HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 			bclist.add(z);
 			bclist.add(ChatApi.tctl(" &1| "));
 		}
 		TextComponent tc = ChatApi.tc("");
 		tc.setExtra(bclist);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetList.Headline")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetList.Headline")
 				.replace("%player%", otherplayer)));
 		player.spigot().sendMessage(tc);
 		plugin.getCommandHelper().pastNextPage(player, "CmdAsh.BaseInfo", page, lastpage,
-				plugin.getYamlHandler().getL().getString("CmdAsh.ItemFilterSetList.CommandString"), otherplayer);
+				plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetList.CommandString"), otherplayer);
 		return;
 	}
 }

@@ -29,7 +29,7 @@ public class ARGDelete extends ArgumentModule
 		String world = args[2];
 		plugin.getMysqlHandler().deleteData(MysqlHandler.Type.DISTRIBUTIONCHEST, "`server` = ? AND `world` = ?", server, world);
 		plugin.getMysqlHandler().deleteData(MysqlHandler.Type.STORAGECHEST, "`server` = ? AND `world` = ?", server, world);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Delete.IsDeleted")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.IsDeleted")
 				.replace("%server%", server)
 				.replace("%world%", world)));
 		return;

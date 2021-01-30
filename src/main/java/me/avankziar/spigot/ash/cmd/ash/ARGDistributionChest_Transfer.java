@@ -34,14 +34,14 @@ public class ARGDistributionChest_Transfer extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash distributionchest transfer")));
 			return;
 		}
 		int id = user.getDistributionChestID();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Select.DChestDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.DChestDontExist")));
 			return;
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
@@ -49,25 +49,25 @@ public class ARGDistributionChest_Transfer extends ArgumentModule
 		if(!dc.getOwneruuid().equals(player.getUniqueId().toString())
 				&& !player.hasPermission(Utility.PERMBYPASSTRANSFER))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwner")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwner")));
 			return;
 		}
 		String othername = args[2];
 		String otheruuid = Utility.convertNameToUUID(othername).toString();
 		if(otheruuid == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("PlayerNotExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("PlayerNotExist")));
 			return;
 		}
 		dc.setOwneruuid(otheruuid);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Transfer.TransferDc")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Transfer.TransferDc")
 				.replace("%id%", String.valueOf(id))
 				.replace("%name%", dc.getChestName())
 				.replace("%player%", othername)));
 		Player other = Bukkit.getPlayer(UUID.fromString(otheruuid));
 		if(other != null)
 		{
-			other.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Transfer.TransferDcToYou")
+			other.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Transfer.TransferDcToYou")
 					.replace("%id%", String.valueOf(id))
 					.replace("%name%", dc.getChestName())
 					.replace("%player%", player.getName())));

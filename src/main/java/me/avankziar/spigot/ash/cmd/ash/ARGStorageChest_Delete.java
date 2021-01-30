@@ -32,14 +32,14 @@ public class ARGStorageChest_Delete extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash delete")));
 			return;
 		}
 		int id = user.getStorageChestID();
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Delete.StorageChestDontExist")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.StorageChestDontExist")
 					.replace("%id%", String.valueOf(id))));
 			return;
 		}
@@ -47,11 +47,11 @@ public class ARGStorageChest_Delete extends ArgumentModule
 				"`id` = ?", id);
 		if(!sc.getOwneruuid().equals(user.getUUID()) && !player.hasPermission(Utility.PERMBYPASSDELETE))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotOwner")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwner")));
 			return;
 		}
 		plugin.getMysqlHandler().deleteData(MysqlHandler.Type.STORAGECHEST, "`id` = ?", sc.getId());
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Delete.SChestDeleted")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.SChestDeleted")
 				.replace("%id%", String.valueOf(sc.getId()))));
 		return;
 	}

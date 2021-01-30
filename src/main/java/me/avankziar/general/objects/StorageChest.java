@@ -1,13 +1,14 @@
 package main.java.me.avankziar.general.objects;
 
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
-
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 public class StorageChest
 {
+	public enum Type
+	{
+		LESSTHAN, LARGERTHAN
+	}
+	
 	private int id;
 	private String owneruuid;
 	private int distributionChestID;
@@ -23,27 +24,27 @@ public class StorageChest
 	private String chestname;
 	private boolean optionVoid;
 	private boolean optionDurability;
+	private Type durabilityType;
 	private int durability;
 	private boolean optionRepair;
+	private Type repairType;
 	private int repairCost;
 	private boolean optionEnchantment;
-	private LinkedHashMap<Enchantment, Integer> enchantments;
+	private boolean optionMaterial;
 	
 	public StorageChest(int id, int distributionChestID, String owneruuid, int priority, long creationDate,
 			ItemStack[] contents, boolean endstorage, String server, String world, int blockX, int blockY, int blockZ,
 			String chestname, boolean optionVoid,
-			boolean optionDurability,
-			int durability,
-			boolean optionRepair,
-			int repairCost,
+			boolean optionDurability, Type durabilityType, int durability, 
+			boolean optionRepair, Type repairType, int repairCost,
 			boolean optionEnchantment,
-			LinkedHashMap<Enchantment, Integer> enchantments)
+			boolean optionMaterial)
 	{
 		setId(id);
 		setOwneruuid(owneruuid);
 		setDistributionChestID(distributionChestID);
 		setCreationDate(creationDate);
-		setPriority(priority);
+		setPriorityNumber(priority);
 		setContents(contents);
 		setEndstorage(endstorage);
 		setServer(server);
@@ -55,10 +56,12 @@ public class StorageChest
 		setOptionVoid(optionVoid);
 		setOptionDurability(optionDurability);
 		setDurability(durability);
+		setDurabilityType(durabilityType);
 		setOptionRepair(optionRepair);
+		setRepairType(repairType);
 		setRepairCost(repairCost);
 		setOptionEnchantment(optionEnchantment);
-		setEnchantments(enchantments);
+		setOptionMaterial(optionMaterial);
 	}
 
 	public int getId()
@@ -161,12 +164,12 @@ public class StorageChest
 		this.blockZ = blockZ;
 	}
 
-	public int getPriority()
+	public int getPriorityNumber()
 	{
 		return priority;
 	}
 
-	public void setPriority(int priority)
+	public void setPriorityNumber(int priority)
 	{
 		this.priority = priority;
 	}
@@ -251,42 +254,33 @@ public class StorageChest
 		this.optionEnchantment = optionEnchantment;
 	}
 
-	public LinkedHashMap<Enchantment, Integer> getEnchantments()
+	public Type getDurabilityType()
 	{
-		return enchantments;
+		return durabilityType;
 	}
 
-	public void setEnchantments(LinkedHashMap<Enchantment, Integer> enchantments)
+	public void setDurabilityType(Type durabilityType)
 	{
-		this.enchantments = enchantments;
+		this.durabilityType = durabilityType;
 	}
-	
-	public String encryptEnchantments()
+
+	public Type getRepairType()
 	{
-		String s = "";
-		for(Entry<Enchantment, Integer> entry : enchantments.entrySet())
-		{
-			s += entry.getKey().getKey().getKey()+";"+entry.getValue()+"@";
-		}
-		s.substring(0, s.length()-1);
-		return s;
+		return repairType;
 	}
-	
-	@SuppressWarnings("deprecation")
-	public static LinkedHashMap<Enchantment, Integer> decryptEnchantments(String s)
+
+	public void setRepairType(Type repairType)
 	{
-		LinkedHashMap<Enchantment, Integer> map = new LinkedHashMap<>();
-		String[] split = s.split("@");
-		for(String ench : split)
-		{
-			String[] e = ench.split(";");
-			if(e.length == 2)
-			{
-				Enchantment ec = Enchantment.getByName(e[0]);
-				int level = Integer.parseInt(e[1]);
-				map.put(ec, level);
-			}
-		}
-		return map;
+		this.repairType = repairType;
+	}
+
+	public boolean isOptionMaterial()
+	{
+		return optionMaterial;
+	}
+
+	public void setOptionMaterial(boolean optionMaterial)
+	{
+		this.optionMaterial = optionMaterial;
 	}
 }

@@ -24,14 +24,14 @@ public class ARGAutomaticDistributionInfo extends ArgumentModule
 	public void run(CommandSender sender, String[] args)
 	{
 		Player player = (Player) sender;
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.AutoDistribution.Headline")));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.AutoDistribution.TotalTick")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.AutoDistribution.Headline")));
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.AutoDistribution.TotalTick")
 				.replace("%time%", 
 						TimeHandler.getRepeatingTime(new Long(BackgroundTask.schedularTotalTicks*20)))));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.AutoDistribution.TicksPerDc")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.AutoDistribution.TicksPerDc")
 				.replace("%time%", 
 						TimeHandler.getRepeatingTime(new Long(BackgroundTask.schedularTicksPerDc*20)))));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.AutoDistribution.NextDc")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.AutoDistribution.NextDc")
 				.replace("%id%", String.valueOf(BackgroundTask.nextDcId))));
 		return;
 	}

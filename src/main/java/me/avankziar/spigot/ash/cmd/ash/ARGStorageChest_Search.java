@@ -32,25 +32,25 @@ public class ARGStorageChest_Search extends ArgumentModule
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("DatabaseError")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
 				.replace("%cmd%", "/ash search")));
 			return;
 		}
 		if(user.getStorageChestID() == 0)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Search.SelectSc")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.SelectSc")));
 			return;
 		}
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST, "`id` = ?", user.getStorageChestID()))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Search.SelectScDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.SelectScDontExist")));
 			return;
 		}
 		StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST,
 				"`id` = ?", user.getStorageChestID());
 		if(sc == null)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Search.SelectScDontExist")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.SelectScDontExist")));
 			return;
 		}
 		switch(user.getSearchType())
@@ -72,10 +72,10 @@ public class ARGStorageChest_Search extends ArgumentModule
 	
 	private void compass(Player player, PluginUser user, StorageChest dc)
 	{
-		String server = plugin.getYamlHandler().get().getString("Servername");
+		String server = plugin.getYamlHandler().getConfig().getString("Servername");
 		if(!dc.getServer().equals(server))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("NotSameServer")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotSameServer")
 					.replace("%yourserver%", server)
 					.replace("%server%", dc.getServer())));
 			return;
@@ -83,7 +83,7 @@ public class ARGStorageChest_Search extends ArgumentModule
 		user.setCompassLocation(player.getCompassTarget());
 		PluginUserHandler.addUser(user);
 		player.setCompassTarget(ChestHandler.getLocationStorageChest(dc));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("CmdAsh.Search.Compass")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.Compass")
 				.replace("%world%", dc.getWorld())
 				.replace("%x%", String.valueOf(dc.getBlockX()))
 				.replace("%y%", String.valueOf(dc.getBlockY()))

@@ -26,6 +26,9 @@ public class YamlHandler
 	private String languages;
 	private File language = null;
 	private YamlConfiguration lang = new YamlConfiguration();
+	
+	private LinkedHashMap<String, File> guifiles = new LinkedHashMap<>();
+	private LinkedHashMap<String, YamlConfiguration> gui = new LinkedHashMap<>();
 
 	public YamlHandler(AdvancedStoreHouse plugin)
 	{
@@ -33,7 +36,7 @@ public class YamlHandler
 		loadYamlHandler();
 	}
 	
-	public YamlConfiguration get()
+	public YamlConfiguration getConfig()
 	{
 		return cfg;
 	}
@@ -43,9 +46,14 @@ public class YamlHandler
 		return com;
 	}
 	
-	public YamlConfiguration getL()
+	public YamlConfiguration getLang()
 	{
 		return lang;
+	}
+	
+	public YamlConfiguration getGui(String guitype)
+	{
+		return gui.get(guitype);
 	}
 	
 	public boolean loadYamlHandler()
@@ -140,6 +148,11 @@ public class YamlHandler
 		{
 			return false;
 		}
+		
+		if(!mkdirGuis())
+		{
+			return false;
+		}
 		return true;
 	}
 	
@@ -173,6 +186,54 @@ public class YamlHandler
 		return true;
 	}
 	
+	private boolean mkdirGuis()
+	{
+		File directory = new File(plugin.getDataFolder()+"/Guis/");
+		if(!directory.exists())
+		{
+			directory.mkdir();
+		}
+		List<String> guilist = getConfig().getStringList("GuiList");
+		if(guilist == null || guilist.isEmpty())
+		{
+			return false;
+		}
+		for(String g : guilist)
+		{
+			if(guifiles.containsKey(g))
+			{
+				guifiles.remove(g);
+			}
+			File guifile = new File(directory.getPath(), g+".yml");
+			if(!guifile.exists()) 
+			{
+				AdvancedStoreHouse.log.info("Create %file%.yml...".replace("%file%", g));
+				try
+				{
+					FileUtils.copyToFile(plugin.getResource("default.yml"), guifile);
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			if(gui.containsKey(g))
+			{
+				gui.remove(g);
+			}
+			YamlConfiguration gyaml = new YamlConfiguration();
+			//Laden der Datei
+			if(!loadYamlTask(guifile, gyaml))
+			{
+				return false;
+			}
+			//Niederschreiben aller Werte in die Datei
+			writeFile(guifile, gyaml, plugin.getYamlManager().getGuiKeys(g));
+			gui.put(g, gyaml);
+		}
+		return true;
+	}
+	
 	private boolean loadYamlTask(File file, YamlConfiguration yaml)
 	{
 		try 
@@ -191,7 +252,7 @@ public class YamlHandler
 	
 	private boolean writeFile(File file, YamlConfiguration yml, LinkedHashMap<String, Language> keyMap)
 	{
-		yml.options().header("For more explanation see \n https://www.spigotmc.org/resources/AdvancedStoreHouse.80677/");
+		yml.options().header(" For more explanation see \n https://www.spigotmc.org/resources/AdvancedStoreHouse.80677/");
 		for(String key : keyMap.keySet())
 		{
 			Language languageObject = keyMap.get(key);

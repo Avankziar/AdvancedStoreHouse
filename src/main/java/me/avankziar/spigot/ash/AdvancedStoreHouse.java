@@ -136,7 +136,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		utility = new Utility(this);
 		commandHelper = new CommandHelper(this);
 		
-		if(yamlHandler.get().getBoolean("Mysql.Status", false))
+		if(yamlHandler.getConfig().getBoolean("Mysql.Status", false))
 		{
 			mysqlHandler = new MysqlHandler(plugin);
 			mysqlSetup = new MysqlSetup(this);
@@ -159,7 +159,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 	{
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
-		if(yamlHandler.get().getBoolean("Mysql.Status", false))
+		if(yamlHandler.getConfig().getBoolean("Mysql.Status", false))
 		{
 			if (mysqlSetup.getConnection() != null) 
 			{
@@ -268,6 +268,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor dc_autodistr = new ArgumentConstructor(baseCommandI+"_dc_autodistr", 1, 1, 1, false, null);
 		ArgumentConstructor dc_breaking = new ArgumentConstructor(baseCommandI+"_dc_breaking", 1, 1, 1, false, null);
 		ArgumentConstructor dc_chestname = new ArgumentConstructor(baseCommandI+"_dc_chestname", 1, 2, 2, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.DC_CHESTNAME, dc_chestname.getCommandString());
 		ArgumentConstructor dc_create = new ArgumentConstructor(baseCommandI+"_dc_create", 1, 2, 2, false, null);
 		ArgumentConstructor dc_delete = new ArgumentConstructor(baseCommandI+"_dc_delete", 1, 1, 1, false, null);
 		ArgumentConstructor dc_info = new ArgumentConstructor(baseCommandI+"_dc_info", 1, 1, 1, false, null);
@@ -301,6 +302,8 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor priority = new ArgumentConstructor(baseCommandI+"_priority", 0, 1, 1, false, null);
 	
 		ArgumentConstructor sc_create = new ArgumentConstructor(baseCommandI+"_sc_create", 1, 1, 1, false, null);
+		ArgumentConstructor sc_chestname = new ArgumentConstructor(baseCommandI+"_sc_chestname", 1, 2, 2, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.SC_CHESTNAME, sc_chestname.getCommandString());
 		ArgumentConstructor sc_delete = new ArgumentConstructor(baseCommandI+"_sc_delete", 1, 1, 1, false, null);
 		ArgumentConstructor sc_info = new ArgumentConstructor(baseCommandI+"_sc_info", 1, 1, 1, false, null);
 		ArgumentConstructor sc_list = new ArgumentConstructor(baseCommandI+"_sc_list", 1, 1, 3, false, null);
@@ -311,7 +314,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor sc_search = new ArgumentConstructor(baseCommandI+"_sc_search", 1, 1, 1, false, null);
 		ArgumentConstructor sc_update = new ArgumentConstructor(baseCommandI+"_sc_update", 1, 1, 1, false, null);
 		ArgumentConstructor sc = new ArgumentConstructor(baseCommandI+"_sc", 0, 0, 0, false, null,
-				sc_create, sc_delete, sc_info, sc_list, sc_openitemfilter, sc_position, sc_select, sc_search, sc_update);
+				sc_create, sc_chestname, sc_delete, sc_info, sc_list, sc_openitemfilter, sc_position, sc_select, sc_search, sc_update);
 		
 		CommandConstructor ash = new CommandConstructor(baseCommandI, false,
 				autodistributioninfo, blockinfo, cancel, debug, delete, dc, endstorage, gui, itemfilterset, mode, override, playerinfo, priority, sc);
@@ -396,7 +399,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		{
 			return false;
 		}
-		if(yamlHandler.get().getBoolean("Mysql.Status", false))
+		if(yamlHandler.getConfig().getBoolean("Mysql.Status", false))
 		{
 			mysqlSetup.closeConnection();
 			if(!mysqlHandler.loadMysqlHandler())
