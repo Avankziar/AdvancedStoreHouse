@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,7 +22,6 @@ import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.ConvertHandler;
 import main.java.me.avankziar.general.handler.DistributionHandler;
@@ -29,6 +29,8 @@ import main.java.me.avankziar.general.handler.PermissionHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
+import main.java.me.avankziar.general.objects.MatchApi;
+import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.DistributionChest.PriorityType;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.StorageChest;
@@ -36,6 +38,7 @@ import main.java.me.avankziar.general.objects.StorageChest.Type;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -103,16 +106,17 @@ public class InteractHandler implements Listener
 		{
 			cooldown.put(event.getPlayer().getName(), System.currentTimeMillis()+1000*1);
 		}
-		if(event.getClickedBlock() == null)
-		{
-			debug(event.getPlayer(), "ClickedBlock == null");
-			return;
-		}
 		Player player = event.getPlayer();
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{
 			debug(event.getPlayer(), "User == null");
+			return;
+		}
+		if(event.getClickedBlock() == null)
+		{
+			debug(event.getPlayer(), "ClickedBlock == null");
+			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
 		}
 		if(event.isCancelled())
@@ -137,9 +141,9 @@ public class InteractHandler implements Listener
 			//PluginUserHandler.cancelAction(user, user.getMode());
 			return;
 		}
-		if(event.getClickedBlock().getType() == Material.LEVER)
+		if(isSign(event.getClickedBlock().getType()))
 		{
-			lever(event, player, user);
+			sign(event, player, user);
 			return;
 		}
 		if(plugin.getUtility().isButtonOrPlate(event.getClickedBlock().getType()))
@@ -165,9 +169,7 @@ public class InteractHandler implements Listener
 		{
 		default:
 			return;
-		case CONSTRUCT:
-			irch.checkIfDistributionChest(event, player, user);
-			return;
+		case CONSTRUCT: //Fallthrough
 		case NONE:
 			irch.simplifiedHandling(event, player, user);
 			return;
@@ -191,12 +193,6 @@ public class InteractHandler implements Listener
 			return;
 		case CHANGEITEMFILTERSET:
 			irch.checkIfDistributionChest(event, player, user);
-			return;
-		case POSITIONUPDATEDISTRIBUTION:
-			updatePosition(event, player, user, true);
-			return;
-		case POSITIONUPDATESTORAGE:
-			updatePosition(event, player, user, false);
 			return;
 		}
 	}
@@ -320,6 +316,27 @@ public class InteractHandler implements Listener
 					.replace("%dc%", String.valueOf(user.getDistributionChestID()))));
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
+		}
+		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
+				"`distributionchestid` <> ? AND `server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+				user.getDistributionChestID(),
+				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
+		{
+			StorageChest othersc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST,
+					"`distributionchestid` <> ? AND `server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+							user.getDistributionChestID(), server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+			DistributionChest otherdc = (DistributionChest) plugin.getMysqlHandler().getData(
+					MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", othersc.getDistributionChestID());
+			if(otherdc != null)
+			{
+				if(!otherdc.getOwneruuid().equals(player.getUniqueId().toString())
+						&& !otherdc.getMemberList().contains(player.getUniqueId().toString()))
+				{
+					player.sendMessage(ChatApi.tl(
+							plugin.getYamlHandler().getLang().getString("CmdAsh.Create.OtherStorageChestExistAndNoAccess")));
+					return;
+				}
+			}
 		}
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", user.getDistributionChestID()))
 		{
@@ -548,102 +565,6 @@ public class InteractHandler implements Listener
 		return;
 	}
 	
-	private void updatePosition(PlayerInteractEvent event, Player player, PluginUser user, boolean isDistributionChest) throws IOException
-	{
-		debug(event.getPlayer(), "=> Begin Methode updatePosition");
-		if(plugin.getUtility().isNOTStoragechest(event.getClickedBlock().getState()))
-		{
-			debug(event.getPlayer(), "!(ClickedBlock.State instanceof Chest && Barrel)");
-			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
-			return;
-		}
-		if(user.getDistributionChestID() == 0 && user.getStorageChestID() == 0)
-		{
-			player.spigot().sendMessage(
-					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.NoSelectedChest")));
-			return;
-		}
-		String server = plugin.getYamlHandler().getConfig().getString("Servername");
-		Location loc = event.getClickedBlock().getLocation();
-		
-		if(isDistributionChest)
-		{
-			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-					" `server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())
-					&& plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-							"`id` = ?", user.getDistributionChestID()))
-			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.SameDistributionChest")));
-				return;
-			}
-			//DcId wird /ash select !=0 gecheckt
-			if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", user.getDistributionChestID()))
-			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.DistributionChestNotExist")));
-				return;
-			}
-			DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
-					"`id` = ?", user.getDistributionChestID());
-			dc.setServer(server);
-			dc.setWorld(loc.getWorld().getName());
-			dc.setBlockX(loc.getBlockX());
-			dc.setBlockY(loc.getBlockY());
-			dc.setBlockZ(loc.getBlockZ());
-			plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.IsUpdated")));
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.MayChange")));
-		} else
-		{
-			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-					" `server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())
-					&& plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-							"`id` = ?", user.getStorageChestID()))
-			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.SameStorageChest")));
-				return;
-			}
-			StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST,
-					"`id` = ?", user.getStorageChestID());
-			
-			int dcID = 0;
-			if(sc == null)
-			{
-				if(user.getDistributionChestID() == 0
-						|| !plugin.getMysqlHandler().exist(
-								MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", user.getDistributionChestID()))
-				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.DistributionChestDontExistNone")
-							.replace("%dc%", String.valueOf(user.getDistributionChestID()))));
-					player.spigot().sendMessage(
-							ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Update.MayDeleteNone")));
-					return;
-				}
-				dcID = user.getDistributionChestID();
-			} else
-			{
-				dcID = sc.getDistributionChestID();
-			}
-			DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
-					"`id` = ?", dcID);
-			if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString()))
-			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Update.NotOwnerOrMember")));
-				return;
-			}
-			sc.setServer(server);
-			sc.setWorld(loc.getWorld().getName());
-			sc.setBlockX(loc.getBlockX());
-			sc.setBlockY(loc.getBlockY());
-			sc.setBlockZ(loc.getBlockZ());
-			plugin.getMysqlHandler().updateData(MysqlHandler.Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.IsUpdated")));
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Position.MayChange")));
-		}
-		return;
-	}
-	
 	@SuppressWarnings("deprecation")
 	private void buttonAndPlate(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
 	{
@@ -749,107 +670,121 @@ public class InteractHandler implements Listener
 				1L*plugin.getYamlHandler().getConfig().getInt("DelayedChainTicks", 10));
 	}
 	
-	@SuppressWarnings("deprecation")
-	private void lever(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
+	private boolean isSign(Material mat)
+	{
+		if(mat == Material.ACACIA_SIGN || mat == Material.ACACIA_WALL_SIGN
+				|| mat == Material.BIRCH_SIGN || mat == Material.BIRCH_WALL_SIGN
+				|| mat == Material.OAK_SIGN || mat == Material.OAK_WALL_SIGN
+				|| mat == Material.SPRUCE_SIGN || mat == Material.SPRUCE_WALL_SIGN
+				|| mat == Material.DARK_OAK_SIGN || mat == Material.DARK_OAK_WALL_SIGN
+				|| mat == Material.JUNGLE_SIGN || mat == Material.JUNGLE_WALL_SIGN
+				|| mat == Material.CRIMSON_SIGN || mat == Material.CRIMSON_WALL_SIGN
+				|| mat == Material.WARPED_SIGN || mat == Material.WARPED_WALL_SIGN)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	private void sign(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
 	{
 		debug(event.getPlayer(), "=> Begin Lever");
-		Block blocks = event.getClickedBlock();
-		if(blocks == null)
+		Block block = event.getClickedBlock();
+		if(block == null)
 		{
 			debug(event.getPlayer(), "Block == null");
 			return;
 		}
-		if(blocks.getType() != Material.LEVER)
-		{
-			debug(event.getPlayer(), "Not a Lever");
-			return;
-		}
-		if(event.isCancelled())
+		Sign sign = (Sign) block.getState();
+
+		if(!sign.getLine(1).contains("[Lager]") && !sign.getLine(1).contains("[ASH]"))
 		{
 			return;
 		}
-		Location loc = blocks.getLocation().add(-1, -1, -1);
-		String server = plugin.getYamlHandler().getConfig().getString("Servername");
-		
-		int reup = 0;
-		int reside = 0;
-		
-		for(int deep = 0; deep <= 2; deep++)
+		if(MatchApi.isInteger(ChatColor.stripColor(sign.getLine(2))) == false)
 		{
-			for(int up = 0; up <= 2; up++)
+			return;
+		}
+		int id = Integer.parseInt(ChatColor.stripColor(sign.getLine(2)));
+		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
+		{
+			return;
+		}
+		if(!sign.getLine(3).contains("SWITCH")
+				&& !sign.getLine(3).contains("DISTRIBUTE")
+				&& !sign.getLine(3).contains("VERTEILEN")
+				&& !MatchApi.isInteger(ChatColor.stripColor(sign.getLine(3))))
+		{
+			return;
+		}
+		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
+				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", Integer.parseInt(sign.getLine(2)));
+		if(dc == null)
+		{
+			return;
+		}
+		if(!dc.getServer().equals(PluginSettings.settings.getServer()))
+		{
+			return;
+		}
+		if(PluginSettings.settings.isLwc() && com.griefcraft.lwc.LWC.getInstance() != null)
+		{
+			com.griefcraft.lwc.LWC lwc = com.griefcraft.lwc.LWC.getInstance();
+			if(lwc.findProtection(sign.getBlock()) != null)
 			{
-				for(int side = 0; side <= 2; side++)
+				if(!lwc.canAccessProtection(player, sign.getBlock()))
 				{
-					final Block block = loc.getBlock();
-					loc.add(0, 0, 1);
-					reside--;
-					if(block == null)
-					{
-						debug(event.getPlayer(), "Loop Block == null");
-						continue;
-					}
-					Location l = block.getLocation();
-					if(block.getState() == null)
-					{
-						debug(event.getPlayer(), "Loop Block.State == null");
-						continue;
-					}
-					if(!(block.getState() instanceof Container))
-					{
-						debug(event.getPlayer(), "Loop Block != Container | Type: "+block.getType().toString());
-						continue;
-					}
-					debug(event.getPlayer(), "Loop Block == Container | Type: "+block.getType().toString());
-					debug(player, "Distributionchest dont find, search: "
-							+server+" "+block.getLocation().getWorld().getName()+" "+block.getLocation().getBlockX()+" "+
-							block.getLocation().getBlockY()+" "+block.getLocation().getBlockZ());
-					Container c = (Container) block.getState();
-					Inventory inv = c.getInventory();
-					if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-							" `server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-							server, l.getWorld().getName(), l.getBlockX(), l.getBlockY(), l.getBlockZ()))
-					{
-						if(inv instanceof DoubleChestInventory)
-						{
-							DoubleChestInventory dcInv = (DoubleChestInventory) inv;
-							l = ChestHandler.isDoubleChest(plugin, server, l, dcInv);
-							if(l == null)
-							{
-								debug(event.getPlayer(), "Loop DoubleChest Loc == null");
-								continue;
-							}
-						} else
-						{
-							debug(event.getPlayer(), "Loop Block dont Exist And isnt DoubleChest");
-							debug(player, "Distributionchest dont find, search: "
-									+server+" "+l.getWorld().getName()+" "+l.getBlockX()+" "+l.getBlockY()+" "+l.getBlockZ());
-							continue;
-						}
-					}
-					DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
-							"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-							server, l.getWorld().getName(), l.getBlockX(), l.getBlockY(), l.getBlockZ());
-					if(dc.isNormalPriority() == true)
-					{
-						dc.setNormalPriority(false);
-						player.sendMessage(ChatApi.tl(
-								plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestSwitch.Deactive")
-								.replace("%name%", dc.getChestName())));
-					} else
-					{
-						dc.setNormalPriority(true);
-						player.sendMessage(ChatApi.tl(
-								plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestSwitch.Active")
-								.replace("%name%", dc.getChestName())));
-					}
-					plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Sign.LWC.NotAccess")));
+					return;
 				}
-				reup--;
-				loc.add(1, 0, reside);
-				reside = 0;
 			}
-			loc.add(reup, 1, 0);
-			reup = 0;
+		}
+		if(sign.getLine(3).contains("SWITCH"))
+		{
+			if(dc.getPriorityType() != PriorityType.SWITCH)
+			{
+				dc.setPriorityType(PriorityType.SWITCH);
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Sign.SWITCH.SetSWITCH")
+						.replace("%id%", String.valueOf(dc.getId()))
+						.replace("%name%", dc.getChestName())));
+			} else
+			{
+				if(dc.isNormalPriority())
+				{
+					dc.setNormalPriority(false);
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Sign.SWITCH.SetDESC")
+							.replace("%id%", String.valueOf(dc.getId()))
+							.replace("%name%", dc.getChestName())));
+				} else
+				{
+					dc.setNormalPriority(true);
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Sign.SWITCH.SetAESC")
+							.replace("%id%", String.valueOf(dc.getId()))
+							.replace("%name%", dc.getChestName())));
+				}
+			}
+			plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
+			return;
+		} else if(sign.getLine(3).contains("DISTRIBUTE") || sign.getLine(3).contains("VERTEILEN"))
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Sign.DISTRIBUTE.Start")
+					.replace("%id%", String.valueOf(dc.getId()))
+					.replace("%name%", dc.getChestName())));
+			DistributionHandler.distributeStartVersionRemoteTriggering(dc);
+			return;
+		} else if(MatchApi.isInteger(ChatColor.stripColor(sign.getLine(3))))
+		{
+			if(dc.getPriorityType() == PriorityType.SWITCH)
+			{
+				dc.setPriorityType(PriorityType.PLACE);
+			}
+			dc.setPriorityNumber(Integer.parseInt(ChatColor.stripColor(sign.getLine(3))));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Sign.PLACE.SetPLACE")
+					.replace("%prio%", ChatColor.stripColor(sign.getLine(3)))
+					.replace("%id%", String.valueOf(dc.getId()))
+					.replace("%name%", dc.getChestName())));
+			plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
+			return;
 		}
 	}	
 	

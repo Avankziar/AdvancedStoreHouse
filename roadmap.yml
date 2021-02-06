@@ -12,7 +12,7 @@ Build 4 ========================================================================
 - +Die Option "Haltbarkeit" zu den Lagerkisten hinzufügen. Welche einen größer, kleiner oder zwischen Betrag angeben lässt, um Items, welche eine Haltbarkeit haben, dahingehend sortiert werden kann.
 - +Die Option "Reparatur" zu den Lagerkisten hinzugefügt. Welche einen größer, kleiner oder zwischen Betrag angeben lässt, um Items, welche eine Reparaturkosten haben dahingehend sortieren zu können.
 - +Die Option "Verzauberung" hinzufügen. Diese soll als Filter dafür sorgen, dass mit dem ItemFilterset Items welchen beides entspricht sortiert wird. Beispiel. Itemfilter Goldhelm unverz. Verzauberung on. 
-  Nun legt man ein verzauberten Goldhelm hinein. Ungeachtet welche Verz. dieser hat, wird der reinsortiert.
+    Nun legt man ein verzauberten Goldhelm hinein. Ungeachtet welche Verz. dieser hat, wird der reinsortiert.
 - +Vereinfachung des Erstellungsprozesses für Lagersysteme:
   - +(Mit Befehl)Ohne Item (leere Hand) (Ohne Shift) soll zukünftig nach einem eingangsbefehl die Lagerkisten erstellt werden, wie es zuvor auch war.
   - +(Mit Befehl)Mit einer redstonekiste in der hand (Ohne Shift) beim erstellen von Lagerkisten, soll direkt der eingestellte Itemfilterset übernommen werden, ohne das gui aufzurufen.
@@ -28,15 +28,16 @@ Build 4 ========================================================================
   - +Button Verteilung
   - +Automatische Verteilung
 - Das Plugin soll intern es blocken, weitere Lagersystem auf bereits existierende Lagerkisten zu setzten wenn es NICHT die Mitglieder des orginalen Lagersystem ist.
-- Über ein Schild per LWC so handhaben, dass nur LWC Mitglieder die Priorität des Lagersystem Switchen können.
-- Über ein Schild per LWC so handhaben, die Prioritäten zuweisen können um somit NUR Lagerkisten mit der exakten Prio anzusprechen.
-  Zeile 2: [Lager]
-  Zeile 3: Verteilerkiste ID (Exakt)
-  Zeile 4: Entweder das Wort Switch ODER die Priorität als Zahl zur Zuweisung ODER das Wort "Verteilen" um den verteilungsprozess fern zu aktivieren.
-  Die Schilder müssen NUR auf dem gleichen Server sein. (Aka nicht an der Kiste selbst)
+- +Über ein Schild per LWC so handhaben, dass nur LWC Mitglieder die Priorität des Lagersystem Switchen können.
+- +Über ein Schild per LWC so handhaben, die Prioritäten zuweisen können um somit NUR Lagerkisten mit der exakten Prio anzusprechen.
+- +Schild funktionen
+    Zeile 2: [Lager]
+    Zeile 3: Verteilerkiste ID (Exakt)
+    Zeile 4: Entweder das Wort Switch ODER die Priorität als Zahl zur Zuweisung ODER das Wort "Verteilen" um den verteilungsprozess fern zu aktivieren.
+    Die Schilder müssen NUR auf dem gleichen Server sein. (Aka nicht an der Kiste selbst)
 - +Namen für Lagerkisten
 - +Die Visualisierung soll in Schritten passieren. Bspw. immer 10 Lagerkisten werden per Hologram angezeigt. Dabei werden dann Verteilerkistename, ID der Lagerkiste und dessen Priorität.
-- Per befehl kann man den nächsten/vorherigen Schritt der Visualisierung triggern. Durch eine Option kann man auch nur bestimmte Prioritäten angezeigt.
+- ?Per befehl kann man den nächsten/vorherigen Schritt der Visualisierung triggern. Durch eine Option kann man auch nur bestimmte Prioritäten angezeigt.
 - +Bugfix: Positionsupdate für Lager- und Verteilerkisten
 - +Bugfix: Interner Fehler = Nullpointer ChatColor InteractHandler.java:509
 - +Bugfix: Interner Fehler = InteractHandler.java:728

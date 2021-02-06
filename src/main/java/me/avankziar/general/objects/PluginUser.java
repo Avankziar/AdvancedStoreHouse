@@ -16,8 +16,6 @@ public class PluginUser
 		UPDATESTORAGEITEMFILTERSET, //Das eigentliche Update der Gui nach NONE
 		CREATEITEMFILTERSET, //Erstellen von individuelle ItemFilterSet
 		CHANGEITEMFILTERSET, //Ändern von individuellen ItemFilterSet
-		POSITIONUPDATEDISTRIBUTION, //Ändern von verteilerkisten positionen
-		POSITIONUPDATESTORAGE, //Ändern von lagerkisten positionen
 		
 		DISTRIBUTIONCHESTGUI, //Das main Gui für Verteilerkisten
 		

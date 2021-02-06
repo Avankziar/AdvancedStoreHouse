@@ -95,6 +95,29 @@ public class DistributionHandler
 		distributeMiddle(server, dc, inv);
 	}
 	
+	public static void distributeStartVersionRemoteTriggering(DistributionChest dc) throws IOException
+	{
+		Block dcblock = new Location(Bukkit.getWorld(dc.getWorld()), dc.getBlockX(), dc.getBlockY(), dc.getBlockZ()).getBlock();
+		if(dcblock == null)
+		{
+			return;
+		}
+		if(dcblock.getState() == null)
+		{
+			return;
+		}
+		if(!(dcblock.getState() instanceof Container))
+		{
+			return;
+		}
+		Inventory inv = ((Container)dcblock.getState()).getInventory();
+		if(inv == null)
+		{
+			return;
+		}
+		distributeMiddle(dc.getServer(), dc, inv);
+	}
+	
 	public static void distributeStartVersionAutomatic(String server, DistributionChest dc, Inventory inv) throws IOException
 	{
 		distributeMiddle(server, dc, inv);

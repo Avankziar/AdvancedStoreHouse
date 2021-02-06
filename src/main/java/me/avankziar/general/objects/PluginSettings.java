@@ -10,6 +10,7 @@ public class PluginSettings
 {
 	private String server;
 	private boolean mysql;
+	private boolean lwc;
 	
 	private boolean automaticDistribution;
 	private List<String> serverRestartTime = new ArrayList<>();
@@ -28,7 +29,7 @@ public class PluginSettings
 	
 	public static PluginSettings settings;
 	
-	public PluginSettings(String server, boolean mysql, 
+	public PluginSettings(String server, boolean mysql, boolean lwc,
 			boolean automaticDistribution, List<String> serverRestartTime, int minimumTickPerDistributionChest,
 			long directPauseValue, long indirectPauseValue,
 			int delayedTicks, int delayChainChest, int delayedChainTicks, int chestsPerTick,
@@ -55,7 +56,7 @@ public class PluginSettings
 	{
 		String server = plugin.getYamlHandler().getConfig().getString("Servername", "hub");
 		boolean mysql = plugin.getYamlHandler().getConfig().getBoolean("Mysql.Status", false);
-		
+		boolean lwc = plugin.existHook("LWC");
 		boolean automaticDistribution = plugin.getYamlHandler().getConfig().getBoolean("IsAutomaticDistribution", false);
 		List<String> serverRestartTime = plugin.getYamlHandler().getConfig().getStringList("ServerRestartTimes");
 		int minimumTickPerDistributionChest = plugin.getYamlHandler().getConfig().getInt("MinimumTickPerDistributionChest", 10);
@@ -68,7 +69,7 @@ public class PluginSettings
 		int chestsPerTick = plugin.getYamlHandler().getConfig().getInt("ChestsPerTick", 10);
 		
 		int storageChestAmountWhereShowParticels = plugin.getYamlHandler().getConfig().getInt("StorageChestAmountWhereShowParticels", 10);
-		settings = new PluginSettings(server, mysql,
+		settings = new PluginSettings(server, mysql, lwc,
 				automaticDistribution, serverRestartTime, minimumTickPerDistributionChest, directPauseValue, indirectPauseValue,
 				delayedTicks, delayChainChest, delayedChainTicks, chestsPerTick,
 				storageChestAmountWhereShowParticels);
@@ -202,6 +203,16 @@ public class PluginSettings
 	public void setStorageChestAmountWhereShowParticels(int storageChestAmountWhereShowParticels)
 	{
 		this.storageChestAmountWhereShowParticels = storageChestAmountWhereShowParticels;
+	}
+
+	public boolean isLwc()
+	{
+		return lwc;
+	}
+
+	public void setLwc(boolean lwc)
+	{
+		this.lwc = lwc;
 	}
 
 }

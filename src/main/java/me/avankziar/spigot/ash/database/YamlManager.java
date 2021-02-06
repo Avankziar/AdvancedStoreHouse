@@ -289,7 +289,8 @@ public class YamlManager
 		argumentInput("ash_automaticdistributioninfo", "automaticdistributioninfo", "ash.cmd.automaticdistributioninfo",
 				"/ash automaticdistributioninfo", "/ash automaticdistributioninfo ", 
 				"&c/ash automaticdistributioninfo &f| Zeigt alle Info zum Automatischen Verteilen an.",
-				""); //FIXME Alle fehlende Einträge müssen übersetzt werden. Aber erst nach dem die GUIS eingebaut wurden.
+				"&c/ash automaticdistributioninfo &f| Displays all info about the automatic distribution."); 
+		//FIXME Alle fehlende Einträge müssen übersetzt werden. Aber erst nach dem die GUIS eingebaut wurden.
 		argumentInput("ash_blockinfo", "blockinfo", "ash.cmd.blockinfo",
 				"/ash blockinfo", "/ash blockinfo ", 
 				"&c/ash blockinfo &f| Zeigt mit shift+Rechtsklick alle Blocksinfo vom Lagersystem.",
@@ -305,11 +306,11 @@ public class YamlManager
 		argumentInput("ash_debug_itemmeta", "itemmeta", "ash.cmd.debug.itemmeta",
 				"/ash debug itemmeta", "/ash debug itemmeta ", 
 				"&c/ash debug itemmeta &f| Zeigt einen String der Itemmeta des Items in der Haupthand an.",
-				"");
+				"&c/ash debug itemmeta &f| Displays a string of the item meta of the item in the main hand.");
 		argumentInput("ash_delete", "delete", "ash.cmd.delete",
 				"/ash delete <server> <world>", "/ash delete ", 
 				"&c/ash delete <server> <welt> &f| Löscht alle Verteiler- und Lagerkisten die sich auf diesem Server und in dieser Welt befinden.",
-				"");
+				"&c/ash delete <server> <welt> &f| Deletes all distribution and storage chests that are on this server and in this world.");
 		argumentInput("ash_dc", "distributionchest", "ash.cmd.distributionchest",
 				"/ash distributionchest", "/ash distributionchest ", 
 				"&c/ash distributionchest &f| Zwischenbefehl.",
@@ -370,7 +371,7 @@ public class YamlManager
 		argumentInput("ash_dc_transfer", "transfer", "ash.cmd.distributionchest.transfer",
 				"/ash distributionchest transfer <playername>", "/ash distributionchest transfer ", 
 				"&c/ash distributionchest transfer <Spielername> &f| Überträgt den Eigentümerstatus auf den angegebenen Spieler.",
-				"");
+				"&c/ash distributionchest transfer <playername> &f| Transfers the owner status to the specified player.");
 		argumentInput("ash_endstorage", "endstorage", "ash.cmd.endstorage",
 				"/ash endstorage", "/ash endstorage ", 
 				"&c/ash endstorage &f| Toggelt die Lagerkiste zu einer Endlagerkiste.", 
@@ -636,11 +637,11 @@ public class YamlManager
 		languageKeys.put("DistributionIsRunning", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cAchtung! &7Der Verteilungsprozess ist schon aktiv für diesen Block, deshalb kann er nicht geöffnet werden. &eStartzeit: &f%start% &7| &eZu Ende: &f%time%",
-						""}));
+						"&cAttention! &7The distribution process is already active for this block, so it cannot be opened. &eStart time: &f%start% &7| &eTo end: &f%time%"}));
 		languageKeys.put("SafetyBreak",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cAchtung! Du bist dabei eine Verteilerkiste abzubauen! Falls das gewollt ist, stelle per Befehl zuerst dies ein!",
-						""}));
+						"&cAttention! You are about to dismantle a distributionchest! If that is wanted, set by command first this!"}));
 		languageKeys.put("NoNumber", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDas Argument &f%args% &cist keine Nummer!",
@@ -736,7 +737,7 @@ public class YamlManager
 		languageKeys.put("CmdAsh.CanBreakDChest.Deactive",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eDu kannst nun keine Verteilerkisten mehr abbauen!",
-						""}));
+						"&eYou can now no longer dismantle distribution boxes!"}));
 		languageKeys.put("CmdAsh.Create.Init", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eDu bist dabei eine Verteilerkiste zu erstellen! Bitte klicke mit &cShift + Rechts &enun die neue Verteilerkiste an!",
@@ -792,11 +793,15 @@ public class YamlManager
 		languageKeys.put("CmdAsh.Create.SChestDontBeSameAsDChest",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDie Lagerkiste kann nicht gleichzeitig die Verteilerkiste, des gleichen Lagersystems sein!",
-						""}));
+						"&cThe storage box cannot be the distribution box of the same storage system at the same time!"}));
+		languageKeys.put("CmdAsh.Create.OtherStorageChestExistAndNoAccess",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eDiese Kiste beinhalten schon eine Lagerkiste eines anderen Lagersystems, wo du keinen Zugriff hast. Somit kannst du keine Lagerkiste eines Anderen Lagersystem dort einrichten!",
+						"&eThis box already contains a storage box of another storage system, where you have no access. So you can't set up a storage box of another storage system there!"}));
 		languageKeys.put("CmdAsh.Delete.IsDeleted", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eVerteiler- und Lagerkisten welche sich auf dem Server &f%server% &eund in der Welt &f%world% &esich befanden, wurden gelöscht!",
-						""}));
+						"&eDistribution and storagechest which were on the server &f%server% &eand in the world &f%world% &ewere deleted!"}));
 		languageKeys.put("CmdAsh.Delete.DistributionChestDontExist",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDie Verteilerkiste &f%id% &cexistiert nicht!",
@@ -1278,11 +1283,11 @@ public class YamlManager
 		languageKeys.put("CmdAsh.Transfer.TransferDc", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eDu hast die Verteilerkiste &f%id% | %name% &ean &c%player% &eübertragen!",
-						""}));
+						"&eYou have transferred the distributionchest &f%id% | %name% &eto &c%player%&e!"}));
 		languageKeys.put("CmdAsh.Transfer.TransferDcToYou", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eDer Spieler &c%player% &ehat dir den Eigentümerstatus der Verteilerkiste &f%id% | %name% &eübertragen!",
-						""}));
+						"&eThe player &c%player% &ehas given you the owner status of the distribution box &f%id% | %name%&e!"}));
 		languageKeys.put("CmdAsh.Update.StorageChestDontExist", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDie Lagerkiste mit der gewählten Verteilerkiste existiert nicht!",
@@ -1314,94 +1319,112 @@ public class YamlManager
 		
 		languageKeys.put("Interact.Base.DcNotSelected"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDu hast keine Verteilerkiste ausgewählt.",
-				""}));
+						"&cDu hast keine Verteilerkiste ausgewählt.",
+						"&cYou have not selected a distribution box."}));
 		languageKeys.put("Interact.Base.ScNotSelected"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDu hast keine Lagerkiste ausgewählt!",
-				""}));
+						"&cDu hast keine Lagerkiste ausgewählt!",
+						"&cYou have not selected a storage box!"}));
 		languageKeys.put("Interact.Base.DcDontExist"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDie ausgewählte Verteilerkiste existiert nicht!",
-				""}));
+						"&cDie ausgewählte Verteilerkiste existiert nicht!",
+						"&cThe selected distribution box does not exist!"}));
 		languageKeys.put("Interact.Base.ScDontExist"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDie ausgewählte Lagerkiste existiert nicht!",
-				""}));
+						"&cDie ausgewählte Lagerkiste existiert nicht!",
+						"&cThe selected storagechest does not exist!"}));
 		languageKeys.put("Interact.Base.ScsDontExist"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDie ausgewählten Lagerkisten existierten nicht!",
-				""}));
+						"&cDie ausgewählten Lagerkisten existierten nicht!",
+						"&eThe selected storage boxes did not exist!"}));
 		languageKeys.put("Interact.Base.ScDcDontExist"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDie Verteilerkiste der ausgewählten Lagerkiste existiert nicht!",
-				""}));
+						"&cDie Verteilerkiste der ausgewählten Lagerkiste existiert nicht!",
+						"&cThe distribution box of the selected storage box does not exist!"}));
 		languageKeys.put("Interact.CopyPaste.TooManyToCopy"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDu bist dabei ein Lagersystem mit zu vielen Lagerkisten zu kopieren. Bitte wähle ein kleineres Lagersystem dafür aus.",
-				""}));
+						"&cDu bist dabei ein Lagersystem mit zu vielen Lagerkisten zu kopieren. Bitte wähle ein kleineres Lagersystem dafür aus.",
+						"&cYou are copying a storage system with too many storage boxes. Please choose a smaller storage system for it."}));
 		languageKeys.put("Interact.CopyPaste.CopyAndPasteTaskRun"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&eDer Kopiervorgang start nun. Je nach Größe des Lagersystems wird dies einige Momente dauern.",
-				""}));
+						"&eDer Kopiervorgang start nun. Je nach Größe des Lagersystems wird dies einige Momente dauern.",
+						"&eThe copy process will now start. Depending on the size of the storage system, this will take a few moments."}));
 		languageKeys.put("Interact.CopyPaste.CopyAndPasteTaskRunFailed"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDer Kopiervorgang ist fehlgeschlagen! Siehe Console!",
-				""}));
+						"&cDer Kopiervorgang ist fehlgeschlagen! Siehe Konsole!",
+						"&cThe copy operation has failed! See console!"}));
 		languageKeys.put("Interact.CopyPaste.CopyAndPasteTaskRunSuccess"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&eDer Kopiervorgang ist erfolgreich beendet! Kopiert wurde ein Lagersystem von &f%count% &eLagerkisten!",
-				""}));
-		
+						"&eDer Kopiervorgang ist erfolgreich beendet! Kopiert wurde ein Lagersystem von &f%count% &eLagerkisten!",
+						"&eThe copying process has been completed successfully! Copied was a storage system from &f%count% &estoragechests!"}));
 		languageKeys.put("Interact.Reposition.NoPermission"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDu hast nicht das Recht um diese Kiste zu versetzten!",
-				""}));
+						"&cDu hast nicht das Recht um diese Kiste zu versetzten!",
+						"&cYou do not have the right to move this box!"}));
 		languageKeys.put("Interact.Reposition.DcIsReposition"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&eDie Verteilerkiste &f%dcid% - %dcname% &ewurde auf ihre neue Position versetzt!",
-				""}));
+						"&eDie Verteilerkiste &f%dcid% - %dcname% &ewurde auf ihre neue Position versetzt!",
+						"&eThe distributionchest &f%dcid% - %dcname% &has been moved to its new position!"}));
 		languageKeys.put("Interact.Reposition.ScIsReposition"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&eDie Lagerkiste &f%scid% - %scname% &ewurde auf ihre neue Position versetzt!",
-				""}));
+						"&eDie Lagerkiste &f%scid% - %scname% &ewurde auf ihre neue Position versetzt!",
+						"&eThe storagechest &f%scid% - %scname% &has been moved to its new position!"}));
 		languageKeys.put("Interact.Option.NoPermission"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDu hast nicht das Recht die Einstellungen aufzurufen!",
-				""}));
+						"&cDu hast nicht das Recht die Einstellungen aufzurufen!",
+						"&cYou do not have the right to access the settings!"}));
 		languageKeys.put("Interact.Select.NoPermission"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDu hast nicht das Recht diese Kiste auszuwählen!",
-				""}));
-		
+						"&cDu hast nicht das Recht diese Kiste auszuwählen!",
+						"&cYou do not have the right to choose this box!"}));
 		languageKeys.put("Gui.Base.GuiNotExist"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&cDas Gui der Yaml-Datei &f%file%.yml &cexistiert nicht!",
-				""}));
+						"&cDas Gui der Yaml-Datei &f%file%.yml &cexistiert nicht!",
+						"&cThe gui of the yaml file &f%file%.yml &cexists not!"}));
 		languageKeys.put("Gui.Base.DcTitle"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&eVK &f%id%&e-&f%name%",
-				"&eDC &f%id%&e-&f%name%"}));
+						"&eVK &f%id%&e-&f%name%",
+						"&eDC &f%id%&e-&f%name%"}));
 		languageKeys.put("Gui.Base.ScTitle"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&eLK &f%id%&e-&f%name%",
-				"&eSC &f%id%&e-&f%name%"}));
+						"&eLK &f%id%&e-&f%name%",
+						"&eSC &f%id%&e-&f%name%"}));
 		languageKeys.put("Gui.Dc.Chestname"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&eKlicke hier um den Befehlsvorschlag zum ändern des Kistennamens zu bekommen.",
-				"&eClick here to get the command suggestion to change the box name."}));
+						"&eKlicke hier um den Befehlsvorschlag zum ändern des Kistennamens zu bekommen.",
+						"&eClick here to get the command suggestion to change the box name."}));
 		languageKeys.put("Gui.Sc.Chestname"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"&eKlicke hier um den Befehlsvorschlag zum ändern des Kistennamens zu bekommen.",
-				"&eClick here to get the command suggestion to change the box name."}));
+						"&eKlicke hier um den Befehlsvorschlag zum ändern des Kistennamens zu bekommen.",
+						"&eClick here to get the command suggestion to change the box name."}));
+		languageKeys.put("Sign.LWC.NotAccess"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cDu hast wegen LWC keinen Zugriff auf dieses Schild!",
+						"&cYou don't have access to this sign because of LWC!"}));
+		languageKeys.put("Sign.SWITCH.SetSWITCH"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eDie Verteilerkiste &f%id% - %name% &eist nun nicht mehr auf eine Priorität eingestellt.",
+						"&eThe distributionchest &f%id% - %name% &eis now no longer set to a priority."}));
+		languageKeys.put("Sign.SWITCH.SetASC"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eDie Verteilerkiste &f%id% - %name% &efolgt der Priorität nun aufsteigend.",
+						"eThe distributionchest &f%id% - %name% &enow follows the priority in ascending order."}));
+		languageKeys.put("Sign.SWITCH.SetDESC"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eDie Verteilerkiste &f%id% - %name% &efolgt der Priorität nun absteigend.",
+						"eThe distributionchest &f%id% - %name% &enow follows the priority in descending order."}));
+		languageKeys.put("Sign.DISTRIBUTE.Start"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eDie Verteilerkiste &f%id% - %name% &estartet nun die Verteilung, sofern sie nicht schon vorher gestartet wurde.",
+						"eThe distributionchest &f%id% - %name% &enow starts the distribution, if it has not been started before."}));
+		languageKeys.put("Sign.PLACE.SetPLACE"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eDie Verteilerkiste &f%id% - %name% &eist nun auf die Priorität &f%prio% &eeingestellt.",
+						"&eThe distributionchest &f%id% - %name% &eis now set to the priority &f%prio%&e."}));
 		languageKeys.put(""
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"",
-				""}));
-		languageKeys.put(""
-				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-				"",
-				""}));
+						"",
+						""}));
 		/*languageKeys.put(""
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 				"",

@@ -2,6 +2,7 @@ package main.java.me.avankziar.spigot.ash.eventhandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,6 +38,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class InteractSubHandler
 {	
+	private LinkedHashMap<Integer, Long> chestAnimationCooldown = new LinkedHashMap<>();
+	
 	public void simplifiedHandling(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
 	{
 		ItemStack isInHand = player.getInventory().getItemInMainHand();
@@ -224,6 +227,13 @@ public class InteractSubHandler
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.DcDontExist")));
 				return;
 			}
+			if(chestAnimationCooldown.containsKey(dc.getId()))
+			{
+				if(chestAnimationCooldown.get(dc.getId()) > System.currentTimeMillis())
+				{
+					return;
+				}
+			}
 			if(!PermissionHandler.canViewIFSOrVisual(player, dc))
 			{
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
@@ -232,6 +242,13 @@ public class InteractSubHandler
 			ArrayList<StorageChest> sclist = ConvertHandler.convertListIII(plugin.getMysqlHandler().getList(Type.STORAGECHEST,
 					"`id`", false, user.getNumberScForParticel(), PluginSettings.settings.getStorageChestAmountWhereShowParticels(),
 					"`distributionchestid` = ?", dc.getId()));
+			if(chestAnimationCooldown.containsKey(dc.getId()))
+			{
+				chestAnimationCooldown.replace(dc.getId(), System.currentTimeMillis()+sclist.size()*4000);
+			} else
+			{
+				chestAnimationCooldown.put(dc.getId(), System.currentTimeMillis()+sclist.size()*4000);
+			}
 			for(StorageChest sc : sclist)
 			{
 				new ChestAnimation(ChestHandler.getLocationStorageChest(sc)).startSingleChestAnimation();

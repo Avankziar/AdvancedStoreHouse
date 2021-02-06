@@ -90,6 +90,7 @@ import main.java.me.avankziar.spigot.ash.eventhandler.InventoryCloseHandler;
 import main.java.me.avankziar.spigot.ash.listener.BlockBreakListener;
 import main.java.me.avankziar.spigot.ash.listener.JoinQuitListener;
 import main.java.me.avankziar.spigot.ash.listener.PlayerCommandPreprocessListener;
+import main.java.me.avankziar.spigot.ash.listener.SignChangeListener;
 import main.java.me.avankziar.spigot.ash.metrics.Metrics;
 
 public class AdvancedStoreHouse extends JavaPlugin
@@ -425,6 +426,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		pm.registerEvents(new JoinQuitListener(plugin), plugin);
 		pm.registerEvents(new BlockBreakListener(plugin), plugin);
 		pm.registerEvents(new PlayerCommandPreprocessListener(cc), plugin);
+		pm.registerEvents(new SignChangeListener(), plugin);
 		pm.registerEvents(new InteractHandler(plugin), plugin);
 		pm.registerEvents(new InventoryClickHandler(plugin), plugin);
 		pm.registerEvents(new InventoryCloseHandler(plugin), plugin);
@@ -562,6 +564,16 @@ public class AdvancedStoreHouse extends JavaPlugin
 		}
 	 
 		return commandMap;
+	}
+	
+	public boolean existHook(String externPluginName)
+	{
+		if(plugin.getServer().getPluginManager().getPlugin(externPluginName) == null
+				|| !plugin.getServer().getPluginManager().getPlugin(externPluginName).isEnabled())
+		{
+			return false;
+		}
+		return true;
 	}
 	
 	public void setupBstats()
