@@ -14,15 +14,20 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.KeyHandler;
+import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.DistributionChest.PriorityType;
+import main.java.me.avankziar.general.objects.ItemFilterSet;
 import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.assistance.ItemGenerator;
+import main.java.me.avankziar.spigot.ash.assistance.Utility;
+import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler.Type;
 import main.java.me.avankziar.spigot.ash.database.YamlManager.GuiType;
 import net.md_5.bungee.api.chat.ClickEvent.Action;
@@ -90,6 +95,7 @@ public class OptionGuiHandler
 		 * Slot 28 Automatische Verteilung ein oder ausschalten
 		 * Slot 34 Priorität setzten (Taschenrechner like)
 		 * Slot 46 Random ein- auschalten
+		 * Slot 52 Mitglieder
 		 */
 		YamlConfiguration yml = plugin.getYamlHandler().getGui(type.toString());
 		if(yml == null)
@@ -116,6 +122,13 @@ public class OptionGuiHandler
 			{
 				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, true);
 				inventory.setItem(slot, is);
+			} else if(slot == 46)
+			{
+				if(player.hasPermission(Utility.PERMBYPASSRANDOM))
+				{
+					ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, true);
+					inventory.setItem(slot, is);
+				}				
 			} else
 			{
 				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, false);
@@ -239,15 +252,25 @@ public class OptionGuiHandler
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 46:
-			if(dc.isDistributeRandom())
+			if(player.hasPermission(Utility.PERMBYPASSRANDOM))
 			{
-				dc.setDistributeRandom(false);
-			} else
-			{
-				dc.setDistributeRandom(true);
+				if(dc.isDistributeRandom())
+				{
+					dc.setDistributeRandom(false);
+				} else
+				{
+					dc.setDistributeRandom(true);
+				}
+				AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
+				openDcGuiMain(player, user, dc, event.getClickedInventory());
 			}
-			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
-			openDcGuiMain(player, user, dc, event.getClickedInventory());
+			break;
+		case 52:
+			player.closeInventory();
+			player.spigot().sendMessage(ChatApi.clickEvent(
+					AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Gui.Dc.Member"),
+					Action.SUGGEST_COMMAND, 
+					PluginSettings.settings.getCommands().get(KeyHandler.DC_MEMBER)));
 			break;
 		}
 	}
@@ -359,8 +382,10 @@ public class OptionGuiHandler
 		 * Slot 38 Durability Numpad
 		 * Slot 33 Repair Option
 		 * Slot 42 Repaircost Numpad
-		 * Slot 40 Enchantment Option
-		 * Slot 49 Enchantments GUI
+		 * Slot 39 Enchantment Option
+		 * Slot 48 Material Option
+		 * Slot 41 FilterSet der Kiste aufrufen
+		 * Slot 50 ItemFilterSet überschreiben
 		 */
 		YamlConfiguration yml = plugin.getYamlHandler().getGui(type.toString());
 		if(yml == null)
@@ -502,7 +527,7 @@ public class OptionGuiHandler
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
-		case 41:
+		case 48:
 			if(sc.isOptionMaterial())
 			{
 				sc.setOptionMaterial(false);
@@ -512,6 +537,22 @@ public class OptionGuiHandler
 			}
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiMain(player, user, sc, event.getClickedInventory());
+			break;
+		case 41:
+			player.closeInventory();
+			openStorageChestItemFilterSet(AdvancedStoreHouse.getPlugin(), player, user, sc.getId());
+			break;
+		case 50:
+			ItemFilterSet ifs = user.getItemFilterSet();
+			if(ifs == null || ifs.getContents() == null)
+			{
+				player.sendMessage(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Gui.Sc.IFSIsNull"));
+				player.closeInventory();
+				return;
+			}
+			sc.setContents(ifs.getContents());
+			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(MysqlHandler.Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
+			player.sendMessage(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Gui.Sc.IFSIsOverriden"));
 			break;
 		}
 	}
@@ -971,5 +1012,50 @@ public class OptionGuiHandler
 			return 0;
 		}
 		return i;
+	}
+	
+	public void openStorageChestItemFilterSet(AdvancedStoreHouse plugin, Player player, PluginUser user,
+			int storagechestID)
+			throws IOException
+	{
+		StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST, 
+				"`id` = ?",	storagechestID);
+		if(sc == null)
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.ScDontExist")));
+			return;
+		}
+		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", sc.getDistributionChestID()))
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.ScDcDontExist")));
+			return;
+		}
+		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+				"`id` = ?", sc.getDistributionChestID());
+		String name = "/";
+		String id = "/";
+		if(dc != null)
+		{
+			if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
+					&& !player.hasPermission(Utility.PERMBYPASSSELECT))
+			{
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
+				return;
+			}
+			name = dc.getChestName();
+			id = ""+dc.getId();
+		}
+		user.setMode(PluginUser.Mode.UPDATESTORAGEITEMFILTERSET);
+		user.setStorageChestID(sc.getId());
+		PluginUserHandler.addUser(user);
+		Inventory inv = Bukkit.createInventory(null, 6*9, 
+				plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
+				.replace("%p%", String.valueOf(sc.getPriorityNumber()))
+				.replace("%name%", name)
+				.replace("%dcid%", id)
+				.replace("%id%", String.valueOf(sc.getId())));
+		inv.setContents(sc.getContents());
+		player.openInventory(inv);
+		return;
 	}
 }

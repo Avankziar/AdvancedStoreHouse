@@ -28,8 +28,7 @@ public class PlayerCommandPreprocessListener implements Listener
 		{
 			return;
 		}
-		if(user.getMode() == PluginUser.Mode.NONE
-				|| user.getMode() == PluginUser.Mode.CREATEDISTRIBUTIONCHEST
+		if(user.getMode() == PluginUser.Mode.CREATEDISTRIBUTIONCHEST
 				|| user.getMode() == PluginUser.Mode.CREATESTORAGE
 				|| user.getMode() == PluginUser.Mode.CREATEITEMFILTERSET
 				|| user.getMode() == PluginUser.Mode.CHANGEITEMFILTERSET

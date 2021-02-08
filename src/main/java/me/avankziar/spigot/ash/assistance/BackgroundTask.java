@@ -23,6 +23,7 @@ import main.java.me.avankziar.general.handler.TimeHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.PluginSettings;
+import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 
@@ -44,7 +45,7 @@ public class BackgroundTask
 		{
 			runTaskAutoDistribution();
 		}
-		runTaskVoid();
+		runTaskPreVoid();
 	}
 	
 	private static void debug(String s)
@@ -269,8 +270,65 @@ public class BackgroundTask
 		}.runTaskTimer(plugin, 0L, BackgroundTask.schedularTicksPerDc);
 	}
 	
-	public void runTaskVoid()
+	public void runTaskPreVoid()
 	{
-		//ADDME Void und so
+		new BukkitRunnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				ArrayList<StorageChest> voidchest = null;
+				try
+				{
+					voidchest = ConvertHandler.convertListIII(
+							plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST,
+							"`id`", false, "`server` = ? AND `optionvoid` = ?", PluginSettings.settings.getServer(), true));
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+				if(voidchest == null)
+				{
+					return;
+				}
+				runTaskVoid(voidchest);
+			}
+		}.runTaskTimer(plugin, 0L, PluginSettings.settings.getVoidChestRun()*20L);
+	}
+	
+	public void runTaskVoid(final ArrayList<StorageChest> voidchest)
+	{
+		new BukkitRunnable()
+		{
+			final int chestPerTick = PluginSettings.settings.getVoidChestsPerTick()*2;
+			int lastindex = 0;
+			@Override
+			public void run()
+			{
+				for(int i = 0; i < chestPerTick; i++)
+				{
+					int ii = i+lastindex;
+					if(ii >= voidchest.size())
+					{
+						cancel();
+						return;
+					}
+					StorageChest sc = voidchest.get(ii);
+					Block b = new Location(Bukkit.getWorld(sc.getWorld()), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ()).getBlock();
+					if(b == null || b.getState() == null || !(b.getState() instanceof Container))
+					{
+						continue;
+					}
+					Inventory inv = ((Container)b.getState()).getInventory();
+					if(inv == null)
+					{
+						continue;
+					}
+					inv.clear();
+				}
+				lastindex += 10;
+			}
+		}.runTaskTimer(plugin, 0L, 2L);
 	}
 }

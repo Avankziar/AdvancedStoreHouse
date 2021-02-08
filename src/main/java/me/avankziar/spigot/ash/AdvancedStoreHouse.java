@@ -47,14 +47,12 @@ import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Delete;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Info;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_List;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Member;
-import main.java.me.avankziar.spigot.ash.cmd.ash._ARGDistributionChest_Position;
-import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Random;
+import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_OpenOption;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Search;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Select;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Switch;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Transfer;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGEndStorage;
-import main.java.me.avankziar.spigot.ash.cmd.ash.ARGGui;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGItemFilterSet;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGItemFilterSet_Create;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGItemFilterSet_Delete;
@@ -63,7 +61,6 @@ import main.java.me.avankziar.spigot.ash.cmd.ash.ARGItemFilterSet_Name;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGItemFilterSet_Select;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGItemFilterSet_Update;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGMode;
-import main.java.me.avankziar.spigot.ash.cmd.ash.ARGOverride;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGPlayerInfo;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGPriority;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest;
@@ -71,11 +68,9 @@ import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Create;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Delete;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Info;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_List;
-import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_OpenItemFilter;
-import main.java.me.avankziar.spigot.ash.cmd.ash._ARGStorageChest_Position;
+import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_OpenOption;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Search;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Select;
-import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Update;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentConstructor;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentModule;
 import main.java.me.avankziar.spigot.ash.cmd.tree.BaseConstructor;
@@ -260,6 +255,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		
 		ArgumentConstructor blockinfo = new ArgumentConstructor(baseCommandI+"_blockinfo", 0, 0, 0, false, null);
 		ArgumentConstructor cancel = new ArgumentConstructor(baseCommandI+"_cancel", 0, 0, 0, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.CANCEL, cancel.getCommandString());
 		
 		ArgumentConstructor debug_im = new ArgumentConstructor(baseCommandI+"_debug_itemmeta", 1, 1, 1, false, null);
 		ArgumentConstructor debug = new ArgumentConstructor(baseCommandI+"_debug", 0, 0, 0, false, null, debug_im);
@@ -272,33 +268,39 @@ public class AdvancedStoreHouse extends JavaPlugin
 		PluginSettings.settings.getCommands().put(KeyHandler.DC_CHESTNAME, dc_chestname.getCommandString());
 		ArgumentConstructor dc_create = new ArgumentConstructor(baseCommandI+"_dc_create", 1, 2, 2, false, null);
 		ArgumentConstructor dc_delete = new ArgumentConstructor(baseCommandI+"_dc_delete", 1, 1, 1, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.DC_DELETE, dc_delete.getCommandString());
 		ArgumentConstructor dc_info = new ArgumentConstructor(baseCommandI+"_dc_info", 1, 1, 1, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.DC_INFO, dc_info.getCommandString());
 		ArgumentConstructor dc_list = new ArgumentConstructor(baseCommandI+"_dc_list", 1, 1, 3, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.DC_LIST, dc_list.getCommandString());
 		ArgumentConstructor dc_member = new ArgumentConstructor(baseCommandI+"_dc_member", 1, 2, 2, false, null);
-		ArgumentConstructor dc_position = new ArgumentConstructor(baseCommandI+"_dc_position", 1, 1, 1, false, null);
-		ArgumentConstructor dc_random = new ArgumentConstructor(baseCommandI+"_dc_random", 1, 1, 1, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.DC_MEMBER, dc_member.getCommandString());
+		ArgumentConstructor dc_openoption = new ArgumentConstructor(baseCommandI+"_dc_openoption", 1, 1, 2, false, null);
 		ArgumentConstructor dc_select = new ArgumentConstructor(baseCommandI+"_dc_select", 1, 2, 3, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.DC_DELETE, dc_select.getCommandString());
 		ArgumentConstructor dc_search = new ArgumentConstructor(baseCommandI+"_dc_search", 1, 1, 1, false, null);
 		ArgumentConstructor dc_switch = new ArgumentConstructor(baseCommandI+"_dc_switch", 1, 1, 1, false, null);
 		ArgumentConstructor dc_transfer = new ArgumentConstructor(baseCommandI+"_dc_transfer", 1, 2, 2, false, playerMapII);
 		ArgumentConstructor dc = new ArgumentConstructor(baseCommandI+"_dc", 0, 0, 0, false, null,
-				dc_autodistr, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member, dc_position, 
-				dc_random, dc_select, dc_search, dc_switch, dc_transfer);
+				dc_autodistr, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member, 
+				dc_openoption, dc_select, dc_search, dc_switch, dc_transfer);
 		
 		ArgumentConstructor endstorage = new ArgumentConstructor(baseCommandI+"_endstorage", 0, 0, 0, false, null);
-		ArgumentConstructor gui = new ArgumentConstructor(baseCommandI+"_gui", 0, 0, 0, false, null);
 		
 		ArgumentConstructor ifs_create = new ArgumentConstructor(baseCommandI+"_itemfilterset_create", 1, 2, 2, false, null);
 		ArgumentConstructor ifs_delete = new ArgumentConstructor(baseCommandI+"_itemfilterset_delete", 1, 1, 1, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.IFS_DELETE, ifs_delete.getCommandString());
 		ArgumentConstructor ifs_list = new ArgumentConstructor(baseCommandI+"_itemfilterset_list", 1, 1, 3, false, null);//TODO
+		PluginSettings.settings.getCommands().put(KeyHandler.IFS_LIST, ifs_list.getCommandString());
 		ArgumentConstructor ifs_name = new ArgumentConstructor(baseCommandI+"_itemfilterset_name", 1, 2, 2, false, null);
 		ArgumentConstructor ifs_select = new ArgumentConstructor(baseCommandI+"_itemfilterset_select", 1, 2, 3, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.IFS_SELECT, ifs_select.getCommandString());
 		ArgumentConstructor ifs_update = new ArgumentConstructor(baseCommandI+"_itemfilterset_update", 1, 1, 2, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.IFS_UPDATE, ifs_update.getCommandString());
 		ArgumentConstructor itemfilterset = new ArgumentConstructor(baseCommandI+"_itemfilterset", 0, 0, 0, false, null,
 				ifs_create, ifs_delete, ifs_list, ifs_name, ifs_select, ifs_update);
 		
 		ArgumentConstructor mode = new ArgumentConstructor(baseCommandI+"_mode", 0, 1, 1, false, lhmmode);
-		ArgumentConstructor override = new ArgumentConstructor(baseCommandI+"_override", 0, 0, 0, false, null);
 		ArgumentConstructor playerinfo = new ArgumentConstructor(baseCommandI+"_playerinfo", 0, 0, 1, false, null); //TODO
 		ArgumentConstructor priority = new ArgumentConstructor(baseCommandI+"_priority", 0, 1, 1, false, null);
 	
@@ -306,19 +308,21 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor sc_chestname = new ArgumentConstructor(baseCommandI+"_sc_chestname", 1, 2, 2, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.SC_CHESTNAME, sc_chestname.getCommandString());
 		ArgumentConstructor sc_delete = new ArgumentConstructor(baseCommandI+"_sc_delete", 1, 1, 1, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.SC_DELETE, sc_delete.getCommandString());
 		ArgumentConstructor sc_info = new ArgumentConstructor(baseCommandI+"_sc_info", 1, 1, 1, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.SC_INFO, sc_info.getCommandString());
 		ArgumentConstructor sc_list = new ArgumentConstructor(baseCommandI+"_sc_list", 1, 1, 3, false, null);
-		ArgumentConstructor sc_openitemfilter = new ArgumentConstructor(baseCommandI+"_sc_openitemfilter", 1, 1, 1, false, null);
-		ArgumentConstructor sc_position = new ArgumentConstructor(baseCommandI+"_sc_position", 1, 1, 1, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.SC_LIST, sc_list.getCommandString());
+		ArgumentConstructor sc_openoption = new ArgumentConstructor(baseCommandI+"_sc_openoption", 1, 1, 2, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.SC_OPENOPTION, sc_openoption.getCommandString());
 		ArgumentConstructor sc_select = new ArgumentConstructor(baseCommandI+"_sc_select", 1, 2, 2, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.SC_SELECT, sc_select.getCommandString());
 		ArgumentConstructor sc_search = new ArgumentConstructor(baseCommandI+"_sc_search", 1, 1, 1, false, null);
-		ArgumentConstructor sc_update = new ArgumentConstructor(baseCommandI+"_sc_update", 1, 1, 1, false, null);
 		ArgumentConstructor sc = new ArgumentConstructor(baseCommandI+"_sc", 0, 0, 0, false, null,
-				sc_create, sc_chestname, sc_delete, sc_info, sc_list, sc_openitemfilter, sc_position, sc_select, sc_search, sc_update);
+				sc_create, sc_chestname, sc_delete, sc_info, sc_list, sc_openoption, sc_select, sc_search);
 		
 		CommandConstructor ash = new CommandConstructor(baseCommandI, false,
-				autodistributioninfo, blockinfo, cancel, debug, delete, dc, endstorage, gui, itemfilterset, mode, override, playerinfo, priority, sc);
+				autodistributioninfo, blockinfo, cancel, debug, delete, dc, endstorage, itemfilterset, mode, playerinfo, priority, sc);
 		
 		cc = ash;
 		
@@ -331,11 +335,11 @@ public class AdvancedStoreHouse extends JavaPlugin
 				debug, debug_im,
 				delete,
 				dc, dc_autodistr, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member,
-				dc_position, dc_random, dc_select, dc_search, dc_switch, dc_transfer,
-				endstorage, gui,
+				dc_openoption, dc_select, dc_search, dc_switch, dc_transfer,
+				endstorage,
 				itemfilterset, ifs_create, ifs_delete, ifs_list, ifs_name, ifs_select, ifs_update,
-				mode, override, playerinfo, priority,
-				sc, sc_create, sc_delete, sc_info, sc_list, sc_openitemfilter, sc_position, sc_select, sc_search, sc_update);
+				mode, playerinfo, priority,
+				sc, sc_create, sc_delete, sc_info, sc_list, sc_openoption, sc_select, sc_search);
 		
 		new ARGAutomaticDistributionInfo(plugin, autodistributioninfo);
 		new ARGBlockInfo(plugin, blockinfo);
@@ -355,15 +359,13 @@ public class AdvancedStoreHouse extends JavaPlugin
 		new ARGDistributionChest_Info(plugin, dc_info);
 		new ARGDistributionChest_List(plugin, dc_list);
 		new ARGDistributionChest_Member(plugin, dc_member);
-		new _ARGDistributionChest_Position(plugin, dc_position);
-		new ARGDistributionChest_Random(plugin, dc_random);
+		new ARGDistributionChest_OpenOption(plugin, dc_openoption);
 		new ARGDistributionChest_Select(plugin, dc_select);
 		new ARGDistributionChest_Search(plugin, dc_search);
 		new ARGDistributionChest_Switch(plugin, dc_switch);
 		new ARGDistributionChest_Transfer(plugin, dc_transfer);
 		
 		new ARGEndStorage(plugin, endstorage);
-		new ARGGui(plugin, gui);
 		
 		new ARGItemFilterSet(plugin, itemfilterset);
 		new ARGItemFilterSet_Create(plugin, ifs_create);
@@ -374,7 +376,6 @@ public class AdvancedStoreHouse extends JavaPlugin
 		new ARGItemFilterSet_Update(plugin, ifs_update);
 		
 		new ARGMode(plugin, mode);
-		new ARGOverride(plugin, override);
 		new ARGPlayerInfo(plugin, playerinfo);
 		new ARGPriority(plugin, priority);
 		
@@ -383,11 +384,9 @@ public class AdvancedStoreHouse extends JavaPlugin
 		new ARGStorageChest_Delete(plugin, sc_delete);
 		new ARGStorageChest_Info(plugin, sc_info);
 		new ARGStorageChest_List(plugin, sc_list);
-		new ARGStorageChest_OpenItemFilter(plugin, sc_openitemfilter);
-		new _ARGStorageChest_Position(plugin, sc_position);
+		new ARGStorageChest_OpenOption(plugin, sc_openoption);
 		new ARGStorageChest_Select(plugin, sc_select);
 		new ARGStorageChest_Search(plugin, sc_search);
-		new ARGStorageChest_Update(plugin, sc_update);
 	}
 	
 	public boolean reload()

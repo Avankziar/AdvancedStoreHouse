@@ -88,10 +88,10 @@ public class Utility
 		PERMBYPASSTRANSFER = plugin.getYamlHandler().getCom().getString("Bypass.Transfer", "ash.bypass.transfer");
 		PERMBYPASSRANDOM = plugin.getYamlHandler().getCom().getString("Bypass.Random", "ash.bypass.random");
 		
-		PERMBYPASSREPOSITION = ""; //ADDME
-		PERMBYPASSOPENOPTION = "";
-		PERMBYPASSIFSORVISUAL = "";
-		PERMBYPASSCOPYANDPASTE = "";
+		PERMBYPASSREPOSITION = plugin.getYamlHandler().getCom().getString("Bypass.Reposition", "ash.bypass.reposition");
+		PERMBYPASSOPENOPTION = plugin.getYamlHandler().getCom().getString("Bypass.OpenOption", "ash.bypass.openoption");
+		PERMBYPASSIFSORVISUAL = plugin.getYamlHandler().getCom().getString("Bypass.IFSOrVisual", "ash.bypass.ifsorvisual");
+		PERMBYPASSCOPYANDPASTE = plugin.getYamlHandler().getCom().getString("Bypass.CopyAndPaste", "ash.bypass.copyandpaste");
 	}
 	
 	public String getPrefix()

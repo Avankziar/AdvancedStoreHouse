@@ -10,10 +10,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import main.java.me.avankziar.general.handler.ConvertHandler;
+import main.java.me.avankziar.general.handler.KeyHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.MatchApi;
+import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
@@ -88,12 +90,7 @@ public class ARGStorageChest_List extends ArgumentModule
 		ArrayList<StorageChest> dcList = ConvertHandler.convertListIII(
 				plugin.getMysqlHandler().getList(MysqlHandler.Type.STORAGECHEST, "`id`",
 						true, start, quantity, "`owner_uuid` = ?", otheruuid));
-		if(dcList == null)
-		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.Empty")));
-			return;
-		}
-		if(dcList.isEmpty())
+		if(dcList == null || dcList.isEmpty())
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.Empty")));
 			return;
@@ -137,33 +134,31 @@ public class ARGStorageChest_List extends ArgumentModule
 			{
 				player.spigot().sendMessage(ChatApi.clickEvent("&c"+name+"&f:",
 						ClickEvent.Action.RUN_COMMAND, 
-						plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandRun")
-						.replace("%name%", name)));
+						PluginSettings.settings.getCommands().get(KeyHandler.DC_SELECT)+name));
 				bclist.add(ChatApi.tc("  "));
 				for(StorageChest sc : scarray)
 				{
 					TextComponent x = ChatApi.clickEvent("&6"+sc.getId()+"&f:",
 							ClickEvent.Action.RUN_COMMAND, 
-							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRun")
-							.replace("%id%", String.valueOf(sc.getId())));
+							PluginSettings.settings.getCommands().get(KeyHandler.SC_SELECT)+sc.getId());
 					bclist.add(x);
 					TextComponent y = ChatApi.apiChat("&eⓘ",
 							ClickEvent.Action.RUN_COMMAND,
-							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunInfo"),
+							PluginSettings.settings.getCommands().get(KeyHandler.SC_INFO),
 							HoverEvent.Action.SHOW_TEXT,
 							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.InfoHover")
 							+plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 					bclist.add(y);
 					TextComponent z = ChatApi.apiChat("&aⓄ",
 							ClickEvent.Action.RUN_COMMAND,
-							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunOpen"),
+							PluginSettings.settings.getCommands().get(KeyHandler.SC_OPENOPTION),
 							HoverEvent.Action.SHOW_TEXT, 
 							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.OpenHover")
 							+plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 					bclist.add(z);
 					TextComponent alpha = ChatApi.apiChat("&c✖",
 							ClickEvent.Action.SUGGEST_COMMAND,
-							plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunDelete"),
+							PluginSettings.settings.getCommands().get(KeyHandler.SC_DELETE),
 							HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 					bclist.add(alpha);
 					bclist.add(ChatApi.tctl(" &1| "));
@@ -183,32 +178,31 @@ public class ARGStorageChest_List extends ArgumentModule
 		player.spigot().sendMessage(ChatApi.clickEvent(
 				plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.LostChests")+"&f:",
 				ClickEvent.Action.RUN_COMMAND, 
-				plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandRun")));
+				PluginSettings.settings.getCommands().get(KeyHandler.DC_SELECT)));
 		if(scarray != null)
 		{
 			for(StorageChest sc : scarray)
 			{
 				TextComponent x = ChatApi.clickEvent("  &6"+sc.getId()+"&f:",
-						ClickEvent.Action.RUN_COMMAND, plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRun")
-						.replace("%id%", String.valueOf(sc.getId())));
+						ClickEvent.Action.RUN_COMMAND, PluginSettings.settings.getCommands().get(KeyHandler.SC_SELECT+sc.getId()));
 				bclist.add(x);
 				TextComponent y = ChatApi.apiChat("&eⓘ",
 						ClickEvent.Action.RUN_COMMAND,
-						plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunInfo"),
+						PluginSettings.settings.getCommands().get(KeyHandler.SC_INFO),
 						HoverEvent.Action.SHOW_TEXT, 
 						plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.InfoHover")
 						+plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 				bclist.add(y);
 				TextComponent z = ChatApi.apiChat("&aⓄ",
 						ClickEvent.Action.RUN_COMMAND,
-						plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunOpen"),
+						PluginSettings.settings.getCommands().get(KeyHandler.SC_OPENOPTION),
 						HoverEvent.Action.SHOW_TEXT, 
 						plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.OpenHover")
 						+plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 				bclist.add(z);
 				TextComponent alpha = ChatApi.apiChat("&e✖",
 						ClickEvent.Action.SUGGEST_COMMAND,
-						plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRunDelete"),
+						PluginSettings.settings.getCommands().get(KeyHandler.SC_DELETE),
 						HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 				bclist.add(alpha);
 				bclist.add(ChatApi.tctl(" &1| "));
@@ -218,7 +212,7 @@ public class ARGStorageChest_List extends ArgumentModule
 			player.spigot().sendMessage(tc);
 		}
 		plugin.getCommandHelper().pastNextPage(player, "CmdAsh.BaseInfo", page, lastpage,
-				plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandString"), otherplayer);
+				PluginSettings.settings.getCommands().get(KeyHandler.SC_LIST), otherplayer);
 		return;
 	}
 }

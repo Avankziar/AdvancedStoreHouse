@@ -175,12 +175,9 @@ public class ChestHandler
 		{
 			return false;
 		}
-		for(String member : dc.getMemberList())
+		if(dc.getMemberList().contains(player.getUniqueId().toString()))
 		{
-			if(member.equals(player.getUniqueId().toString()))
-			{
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}

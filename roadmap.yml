@@ -27,7 +27,7 @@ Build 4 ========================================================================
   - +Physikalische Verteilung
   - +Button Verteilung
   - +Automatische Verteilung
-- Das Plugin soll intern es blocken, weitere Lagersystem auf bereits existierende Lagerkisten zu setzten wenn es NICHT die Mitglieder des orginalen Lagersystem ist.
+- +Das Plugin soll intern es blocken, weitere Lagersystem auf bereits existierende Lagerkisten zu setzten wenn es NICHT die Mitglieder des orginalen Lagersystem ist.
 - +Über ein Schild per LWC so handhaben, dass nur LWC Mitglieder die Priorität des Lagersystem Switchen können.
 - +Über ein Schild per LWC so handhaben, die Prioritäten zuweisen können um somit NUR Lagerkisten mit der exakten Prio anzusprechen.
 - +Schild funktionen
@@ -45,6 +45,8 @@ Build 4 ========================================================================
 - +Interne Überholung auf den jetztigen Standart
 - Alle Kisten in der Welt des ausführenden Spielers, den Server updaten.
 - +Shulkerkisten komplett rausnehmen.
+- +6 Befehl entfernt: /ash gui; /ash distributionchest random; /ash override; /ash storagechest update, sowie positionsänderungsbefehle
+- +/ash distributionchest openoption, /ash storagechest openoption hinzugefügt
 
 - Mysql Colum hinzufügen:
   Dc: prioritytype, prioritynumber

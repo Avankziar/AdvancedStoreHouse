@@ -9,18 +9,21 @@ import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
+import main.java.me.avankziar.general.objects.MatchApi;
 import main.java.me.avankziar.general.objects.PluginUser;
+import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentConstructor;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentModule;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
+import main.java.me.avankziar.spigot.ash.eventhandler.OptionGuiHandler;
 
-public class ARGDistributionChest_Random extends ArgumentModule
+public class ARGStorageChest_OpenOption extends ArgumentModule
 {
 	private AdvancedStoreHouse plugin;
 	
-	public ARGDistributionChest_Random(AdvancedStoreHouse plugin, ArgumentConstructor argumentConstructor)
+	public ARGStorageChest_OpenOption(AdvancedStoreHouse plugin, ArgumentConstructor argumentConstructor)
 	{
 		super(plugin, argumentConstructor);
 		this.plugin = plugin;
@@ -34,34 +37,40 @@ public class ARGDistributionChest_Random extends ArgumentModule
 		if(user == null)
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
-				.replace("%cmd%", "/ash distributionchest info")));
+				.replace("%cmd%", "/ash distributionchest member")));
 			return;
 		}
-		int id = user.getDistributionChestID();
-		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
+		StorageChest sc = null;
+		if(args.length == 3)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.DChestDontExist")));
+			int id = user.getStorageChestID();
+			sc = (StorageChest) plugin.getMysqlHandler().getData(
+					MysqlHandler.Type.STORAGECHEST, "`id` = ?", id);
+			
+		} else if(args.length == 4 && MatchApi.isInteger(args[3]))
+		{
+			sc = (StorageChest) plugin.getMysqlHandler().getData(
+					MysqlHandler.Type.STORAGECHEST, "`id` = ?", Integer.parseInt(args[3]));
+		} else if(args.length == 4)
+		{
+			sc = (StorageChest) plugin.getMysqlHandler().getData(
+					MysqlHandler.Type.STORAGECHEST, "`owner_uuid` = ? AND `chestname` = ?", 
+					player.getUniqueId().toString(), args[3]);
+		}
+		if(sc == null)
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SChestDontExist")));
 			return;
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
-				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id);
+				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", sc.getDistributionChestID());
 		if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
-				&& !player.hasPermission(Utility.PERMBYPASSRANDOM))
+				&& !player.hasPermission(Utility.PERMBYPASSINFO))
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 			return;
 		}
-		
-		if(dc.isDistributeRandom())
-		{
-			dc.setDistributeRandom(false);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Random.Deactive")));
-		} else
-		{
-			dc.setDistributeRandom(true);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Random.Active")));
-		}
-		plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", id);
+		new OptionGuiHandler().openScGuiMain(player, user, sc, null);
 		return;
 	}
 }

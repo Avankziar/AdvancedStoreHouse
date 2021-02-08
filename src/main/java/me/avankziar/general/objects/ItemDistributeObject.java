@@ -228,19 +228,6 @@ public class ItemDistributeObject
 					} else
 					{
 						debug("distribution not Removed Items set back");
-						/*//FIXME Junk
-						 * Must not be used! Because is be distributed from a event
-						if(inventory instanceof DoubleChestInventory)
-						{
-							debug("distribution Removed in DCI");
-							DoubleChestInventory dcinv = (DoubleChestInventory) inventory;
-							dcinv.getLeftSide().setContents(cloneInvL);
-							dcinv.getRightSide().setContents(cloneInvR);
-						} else
-						{
-							debug("distribution Removed in else");
-							inventory.setContents(cloneInvL);
-						}*/
 						cancel();
 						break;
 					}

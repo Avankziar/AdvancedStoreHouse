@@ -8,17 +8,12 @@ public class PluginUser
 	public enum Mode
 	{
 		CONSTRUCT, //Wenn man nur bauen will.
-		NONE, //Zwischen ding
 		BLOCKINFO, //Durch shift+Rechtsklick werden alle Infos zu dem Block angezeigt.
 		CREATEDISTRIBUTIONCHEST, //Man hat den Cmd /ash create genutzt
 		CREATESTORAGE, //Man hat eine Verteilerkiste erstellt und will nun Lagerkisten erstellen
-		UPDATESTORAGE, //Ein Mode durch ein befehl getriggert, um existierende Lagerkisten durch den Zwischenspeicher zu verändern.
 		UPDATESTORAGEITEMFILTERSET, //Das eigentliche Update der Gui nach NONE
 		CREATEITEMFILTERSET, //Erstellen von individuelle ItemFilterSet
-		CHANGEITEMFILTERSET, //Ändern von individuellen ItemFilterSet
-		
-		DISTRIBUTIONCHESTGUI, //Das main Gui für Verteilerkisten
-		
+		CHANGEITEMFILTERSET, //Ändern von individuellen ItemFilterSet		
 		OPTIONGUI, //Das Gui für Sc und Dc, per PDC wird darin unterschieden.
 		
 		;
@@ -38,7 +33,6 @@ public class PluginUser
 	private int storageChestID;
 	private int priority;
 	private boolean endStorage;
-	private boolean override;
 	private ItemFilterSet itemFilterSet;
 	private Location compassLocation;
 	private Boolean canDistributionChestBreak;
@@ -57,7 +51,6 @@ public class PluginUser
 		setStorageChestID(0);
 		setPriority(0);
 		setEndStorage(false);
-		setOverride(false);
 		setItemFilterSet(new ItemFilterSet(0, "0", uuid, Bukkit.createInventory(null, 9*6).getContents()));
 		setCompassLocation(null);
 		setCanDistributionChestBreak(false);
@@ -152,16 +145,6 @@ public class PluginUser
 	public void setEndStorage(boolean endStorage)
 	{
 		this.endStorage = endStorage;
-	}
-
-	public boolean isOverride()
-	{
-		return override;
-	}
-
-	public void setOverride(boolean override)
-	{
-		this.override = override;
 	}
 
 	public String getDistributionChestName()

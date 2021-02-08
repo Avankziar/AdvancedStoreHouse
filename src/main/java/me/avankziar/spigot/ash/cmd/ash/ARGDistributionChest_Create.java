@@ -3,9 +3,11 @@ package main.java.me.avankziar.spigot.ash.cmd.ash;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import main.java.me.avankziar.general.handler.KeyHandler;
 import main.java.me.avankziar.general.handler.PermissionHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
+import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
@@ -53,7 +55,8 @@ public class ARGDistributionChest_Create extends ArgumentModule
 		PluginUserHandler.addUser(user);
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.Init")));
 		player.spigot().sendMessage(
-				ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Cancel.SetCancel")));
+				ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Cancel.SetCancel")
+						.replace("%cmd%", PluginSettings.settings.getCommands().get(KeyHandler.CANCEL).replace(" ", "+"))));
 		return;
 	}
 }

@@ -25,6 +25,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.ConvertHandler;
 import main.java.me.avankziar.general.handler.DistributionHandler;
+import main.java.me.avankziar.general.handler.KeyHandler;
 import main.java.me.avankziar.general.handler.PermissionHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
@@ -137,8 +138,7 @@ public class InteractHandler implements Listener
 		}
 		if(event.getAction() != Action.RIGHT_CLICK_BLOCK)
 		{
-			debug(event.getPlayer(), "Action != Right_Click_Block");
-			//PluginUserHandler.cancelAction(user, user.getMode());
+			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
 		}
 		if(isSign(event.getClickedBlock().getType()))
@@ -169,8 +169,7 @@ public class InteractHandler implements Listener
 		{
 		default:
 			return;
-		case CONSTRUCT: //Fallthrough
-		case NONE:
+		case CONSTRUCT:
 			irch.simplifiedHandling(event, player, user);
 			return;
 		case BLOCKINFO:
@@ -181,9 +180,6 @@ public class InteractHandler implements Listener
 			return;
 		case CREATESTORAGE:
 			createStorageChest(event, player, user);
-			return;
-		case UPDATESTORAGE:
-			updateStorageChest(event, player, user);
 			return;
 		case UPDATESTORAGEITEMFILTERSET:
 			irch.checkIfDistributionChest(event, player, user);
@@ -273,11 +269,13 @@ public class InteractHandler implements Listener
 				loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 		player.spigot().sendMessage(ChatApi.generateTextComponent(
 				plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SetupDChest")
+				.replace("%cmd%", PluginSettings.settings.getCommands().get(KeyHandler.DC_INFO).replace(" ", "+"))
 				.replace("%dc%", dc.getChestName())));
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.FutherInstruction")
 				.replace("%dc%", dc.getChestName())));
 		player.spigot().sendMessage(
-				ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Cancel.SetCancel")));
+				ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Cancel.SetCancel")
+						.replace("%cmd%", PluginSettings.settings.getCommands().get(KeyHandler.CANCEL).replace(" ", "+"))));
 		user.setDistributionChestID(dc.getId());
 		user.setMode(PluginUser.Mode.CREATESTORAGE);
 		PluginUserHandler.addUser(user);
@@ -416,6 +414,7 @@ public class InteractHandler implements Listener
 			PluginUserHandler.addUser(user);
 			player.spigot().sendMessage(
 					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SetupSChest")
+							.replace("%cmd%", PluginSettings.settings.getCommands().get(KeyHandler.SC_INFO).replace(" ", "+"))
 							.replace("%sc%", String.valueOf(last))));
 			Inventory gui = Bukkit.createInventory(null, 6*9, 
 					plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
@@ -435,6 +434,7 @@ public class InteractHandler implements Listener
 			PluginUserHandler.addUser(user);
 			player.spigot().sendMessage(
 					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SetupSChestIFS")
+							.replace("%cmd%", PluginSettings.settings.getCommands().get(KeyHandler.SC_INFO).replace(" ", "+"))
 							.replace("%sc%", String.valueOf(last))));
 		} else if(inHand == Material.valueOf
 				(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Simple.CreateDirectWithChestContents")))
@@ -447,6 +447,7 @@ public class InteractHandler implements Listener
 			PluginUserHandler.addUser(user);
 			player.spigot().sendMessage(
 					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SetupSChestInventory")
+							.replace("%cmd%", PluginSettings.settings.getCommands().get(KeyHandler.SC_INFO).replace(" ", "+"))
 							.replace("%sc%", String.valueOf(last))));
 		}
 		return;
@@ -462,107 +463,6 @@ public class InteractHandler implements Listener
 			ia[i] = is;
 		}
 		return ia;
-	}
-	
-	private void updateStorageChest(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
-	{
-		debug(event.getPlayer(), "=> Begin Methode updateStorageChest");
-		if(plugin.getUtility().isNOTStoragechest(event.getClickedBlock().getState()))
-		{
-			debug(event.getPlayer(), "!(ClickedBlock.State instanceof Chest && Barrel)");
-			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
-			return;
-		}
-		String server = plugin.getYamlHandler().getConfig().getString("Servername");
-		Location loc = event.getClickedBlock().getLocation();
-		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-				"`distributionchestid` = ? AND"
-				+ " `server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				user.getDistributionChestID(),
-				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
-		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Update.StorageChestDontExist")
-					.replace("%dc%", String.valueOf(user.getDistributionChestID()))));
-			return;
-		}
-		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", user.getDistributionChestID()))
-		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.DistributionChestDontExist")
-					.replace("%dc%", String.valueOf(user.getDistributionChestID()))));
-			player.spigot().sendMessage(
-					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Update.MayDelete")));
-			return;
-		}
-		StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST,
-				" `server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
-				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", sc.getDistributionChestID());
-		if(dc != null)
-		{
-			if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
-					&& !player.hasPermission(Utility.PERMBYPASSSELECT))
-			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
-				return;
-			}
-		}
-		
-		event.setCancelled(true);
-		int i = 0;
-		if(user.isOverride())
-		{
-			if(user.getDistributionChestID() != 0)
-			{
-				if(user.getDistributionChestID() == dc.getId())
-				{
-					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Update.SameSelectedDC")));
-				} else
-				{
-					DistributionChest newdc = (DistributionChest) plugin.getMysqlHandler().getData(
-							MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", user.getDistributionChestID());
-					if(!ChestHandler.isMember(player, newdc) && !newdc.getOwneruuid().equals(player.getUniqueId().toString())
-							&& !player.hasPermission(Utility.PERMBYPASSSELECT))
-					{
-						player.sendMessage(ChatApi.tl(
-								plugin.getYamlHandler().getLang().getString("CmdAsh.Update.NotOwnerOrMemberSelectedDC")));
-						return;
-					}
-					i++;
-					sc.setDistributionChestID(user.getDistributionChestID());
-					debug(event.getPlayer(), "sc override");
-				}
-			} else
-			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Update.NoSelectedDC")));
-			}
-		}
-		if(user.getItemFilterSet() != null)
-		{
-			if(ChestHandler.isContentEmpty(user.getItemFilterSet().getContents()))
-			{
-				i++;
-				sc.setContents(user.getItemFilterSet().getContents());
-				debug(event.getPlayer(), "sc setContent");
-			}
-		}
-		if(sc.isEndstorage() != user.isEndStorage())
-		{
-			i++;
-			sc.setEndstorage(user.isEndStorage());
-			debug(event.getPlayer(), "sc set as endstorage");
-		}
-		if(sc.getPriorityNumber() != user.getPriority())
-		{
-			i++;
-			sc.setPriorityNumber(user.getPriority());
-			debug(event.getPlayer(), "sc set prio "+user.getPriority());
-		}
-		plugin.getMysqlHandler().updateData(MysqlHandler.Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
-		player.spigot().sendMessage(ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Update.IsUpdated")
-				.replace("%sc%", String.valueOf(sc.getId()))
-				.replace("%i%", String.valueOf(i))));
-		return;
 	}
 	
 	@SuppressWarnings("deprecation")

@@ -23,6 +23,9 @@ public class PluginSettings
 	private int delayedChainTicks;
 	private int chestsPerTick;
 	
+	private int voidChestRun;
+	private int voidChestsPerTick;
+	
 	private int storageChestAmountWhereShowParticels;
 	
 	private LinkedHashMap<String, String> commands = new LinkedHashMap<>(); //To save commandstrings
@@ -33,6 +36,7 @@ public class PluginSettings
 			boolean automaticDistribution, List<String> serverRestartTime, int minimumTickPerDistributionChest,
 			long directPauseValue, long indirectPauseValue,
 			int delayedTicks, int delayChainChest, int delayedChainTicks, int chestsPerTick,
+			int voidChestRun, int voidChestsPerTick,
 			int storageChestAmountWhereShowParticels)
 	{
 		setServer(server);
@@ -48,6 +52,9 @@ public class PluginSettings
 		setDelayChainChest(delayChainChest);
 		setDelayedTicks(delayedChainTicks);
 		setChestsPerTick(chestsPerTick);
+		
+		setVoidChestRun(voidChestRun);
+		setVoidChestsPerTick(voidChestsPerTick);
 		
 		setStorageChestAmountWhereShowParticels(storageChestAmountWhereShowParticels);
 	}
@@ -68,10 +75,14 @@ public class PluginSettings
 		int delayedChainTicks = plugin.getYamlHandler().getConfig().getInt("DelayedChainTicks", 10);
 		int chestsPerTick = plugin.getYamlHandler().getConfig().getInt("ChestsPerTick", 10);
 		
+		int voidChestRun = plugin.getYamlHandler().getConfig().getInt("VoidChestRun", 300);
+		int voidChestsPerTick = plugin.getYamlHandler().getConfig().getInt("VoidChestsPerTick", 10);
+		
 		int storageChestAmountWhereShowParticels = plugin.getYamlHandler().getConfig().getInt("StorageChestAmountWhereShowParticels", 10);
 		settings = new PluginSettings(server, mysql, lwc,
 				automaticDistribution, serverRestartTime, minimumTickPerDistributionChest, directPauseValue, indirectPauseValue,
 				delayedTicks, delayChainChest, delayedChainTicks, chestsPerTick,
+				voidChestRun, voidChestsPerTick,
 				storageChestAmountWhereShowParticels);
 	}
 
@@ -213,6 +224,26 @@ public class PluginSettings
 	public void setLwc(boolean lwc)
 	{
 		this.lwc = lwc;
+	}
+
+	public int getVoidChestRun()
+	{
+		return voidChestRun;
+	}
+
+	public void setVoidChestRun(int voidChestRun)
+	{
+		this.voidChestRun = voidChestRun;
+	}
+
+	public int getVoidChestsPerTick()
+	{
+		return voidChestsPerTick;
+	}
+
+	public void setVoidChestsPerTick(int voidChestsPerTick)
+	{
+		this.voidChestsPerTick = voidChestsPerTick;
 	}
 
 }

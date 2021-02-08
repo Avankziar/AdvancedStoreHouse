@@ -9,19 +9,20 @@ import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
+import main.java.me.avankziar.general.objects.MatchApi;
 import main.java.me.avankziar.general.objects.PluginUser;
-import main.java.me.avankziar.general.objects.PluginUser.Mode;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentConstructor;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentModule;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
+import main.java.me.avankziar.spigot.ash.eventhandler.OptionGuiHandler;
 
-public class ARGStorageChest_Create extends ArgumentModule
+public class ARGDistributionChest_OpenOption extends ArgumentModule
 {
 	private AdvancedStoreHouse plugin;
 	
-	public ARGStorageChest_Create(AdvancedStoreHouse plugin, ArgumentConstructor argumentConstructor)
+	public ARGDistributionChest_OpenOption(AdvancedStoreHouse plugin, ArgumentConstructor argumentConstructor)
 	{
 		super(plugin, argumentConstructor);
 		this.plugin = plugin;
@@ -35,28 +36,37 @@ public class ARGStorageChest_Create extends ArgumentModule
 		if(user == null)
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DatabaseError")
-				.replace("%cmd%", "/ash storagechest create")));
+				.replace("%cmd%", "/ash distributionchest member")));
 			return;
 		}
-		int id = user.getDistributionChestID();
-		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
+		DistributionChest dc = null;
+		if(args.length == 3)
+		{
+			int id = user.getDistributionChestID();
+			dc = (DistributionChest) plugin.getMysqlHandler().getData(
+					MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id);
+		} else if(args.length == 4 && MatchApi.isInteger(args[3]))
+		{
+			dc = (DistributionChest) plugin.getMysqlHandler().getData(
+					MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", Integer.parseInt(args[3]));
+		} else if(args.length == 4)
+		{
+			dc = (DistributionChest) plugin.getMysqlHandler().getData(
+					MysqlHandler.Type.DISTRIBUTIONCHEST, "`owner_uuid` = ? AND `chestname` = ?", 
+					player.getUniqueId().toString(), args[3]);
+		}
+		if(dc == null)
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.DChestDontExist")));
 			return;
 		}
-		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
-				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id);
 		if(!ChestHandler.isMember(player, dc) && !dc.getOwneruuid().equals(player.getUniqueId().toString())
-				&& !player.hasPermission(Utility.PERMBYPASSSELECT))
+				&& !player.hasPermission(Utility.PERMBYPASSINFO))
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 			return;
 		}
-		user.setDistributionChestID(dc.getId());
-		user.setMode(Mode.CREATESTORAGE);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChest.CreateActive")
-				.replace("%id%", String.valueOf(id))));
-		PluginUserHandler.addUser(user);
+		new OptionGuiHandler().openDcGuiMain(player, user, dc, null);
 		return;
 	}
 }

@@ -9,10 +9,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import main.java.me.avankziar.general.handler.ConvertHandler;
+import main.java.me.avankziar.general.handler.KeyHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.MatchApi;
+import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
@@ -108,17 +110,16 @@ public class ARGDistributionChest_List extends ArgumentModule
 		{
 			TextComponent x = ChatApi.clickEvent("&6"+dc.getChestName()+"&f:",
 					ClickEvent.Action.RUN_COMMAND,
-					plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandRun")
-					.replace("%name%", String.valueOf(dc.getChestName()) +" "+ otherplayer));
+					PluginSettings.settings.getCommands().get(KeyHandler.DC_SELECT)+dc.getChestName() +" "+ otherplayer);
 			bclist.add(x);
 			TextComponent y = ChatApi.apiChat("&eⓘ",
 					ClickEvent.Action.RUN_COMMAND,
-					plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandRunInfo"),
+					PluginSettings.settings.getCommands().get(KeyHandler.DC_INFO),
 					HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 			bclist.add(y);
 			TextComponent z = ChatApi.apiChat("&c✖",
 					ClickEvent.Action.SUGGEST_COMMAND,
-					plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandRunDelete"),
+					PluginSettings.settings.getCommands().get(KeyHandler.DC_DELETE),
 					HoverEvent.Action.SHOW_TEXT, plugin.getYamlHandler().getLang().getString("BeforeSelect"));
 			bclist.add(z);
 			bclist.add(ChatApi.tctl(" &1| "));
@@ -129,7 +130,7 @@ public class ARGDistributionChest_List extends ArgumentModule
 				.replace("%player%", otherplayer)));
 		player.spigot().sendMessage(tc);
 		plugin.getCommandHelper().pastNextPage(player, "CmdAsh.BaseInfo", page, lastpage,
-				plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandString"), otherplayer);
+				PluginSettings.settings.getCommands().get(KeyHandler.DC_LIST), otherplayer);
 		return;
 	}
 }

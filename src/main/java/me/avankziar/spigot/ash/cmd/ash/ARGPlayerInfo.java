@@ -84,8 +84,6 @@ public class ARGPlayerInfo extends ArgumentModule
 				+user.getPriority()));
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.SearchType")
 				+user.getSearchType()));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.Override")
-				+user.isOverride()));
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.EndStorage")
 				+user.isEndStorage()));
 		return;
@@ -107,16 +105,10 @@ public class ARGPlayerInfo extends ArgumentModule
 			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.CREATEITEMFILTERSET");
 		case CREATESTORAGE:
 			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.CREATESTORAGE");
-		case NONE:
-			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.NONE");
-		case POSITIONUPDATEDISTRIBUTION:
-			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.POSITIONUPDATEDISTRIBUTION");
-		case POSITIONUPDATESTORAGE: 
-			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.POSITIONUPDATESTORAGE");
-		case UPDATESTORAGE:
-			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.UPDATESTORAGE");
 		case UPDATESTORAGEITEMFILTERSET:
 			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.UPDATESTORAGEITEMFILTERSET");
+		case OPTIONGUI:
+			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.OPTIONGUI");
 		}
 		return "";
 	}

@@ -209,23 +209,32 @@ public class YamlManager
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				10}));
 		
+		//The value set, how many seconds counted before, the a new runnable check how many void chest exists
+		configKeys.put("VoidChestRun"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				300}));
+		//the value set, how many voidchest per tick in a loop is processed
+		configKeys.put("VoidChestsPerTick"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				10}));
+		
 		//FIXME Werden die 3 nachfolgenden Werte korrekt verarbeitet?
-				configKeys.put("maximumDistributionChest"
-						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-						500}));
-				configKeys.put("maximumStorageChestPerDistributionChest"
-						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-						500}));
-				configKeys.put("maximumItemFilterSet"
-						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-						500}));
-				configKeys.put("BlockBreakDistributionChestDeleteLinkedStorageChest"
-						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-						true}));
-				//The sphere radius to interact and trigger Distributionchests. Attention! To high number cann occur lags.
-				configKeys.put("ButtonPlateInteractRadius"
-						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-						3}));
+		configKeys.put("maximumDistributionChest"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				500}));
+		configKeys.put("maximumStorageChestPerDistributionChest"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				500}));
+		configKeys.put("maximumItemFilterSet"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				500}));
+		configKeys.put("BlockBreakDistributionChestDeleteLinkedStorageChest"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				true}));
+		//The sphere radius to interact and trigger Distributionchests. Attention! To high number cann occur lags.
+		configKeys.put("ButtonPlateInteractRadius"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				3}));
 		/*
 		 * Set the diplayed Amount Chest in the "list" command (/ash distributionchest|storagechest list)
 		 * This is maded, because it happend by some server, that the player, which perform the command was kicked without errors
@@ -268,7 +277,7 @@ public class YamlManager
 		configKeys.put("StorageChestAmountWhereShowParticels"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				25}));
-		configKeys.put("GuiList" //ADDME more guitype
+		configKeys.put("GuiList"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"DC_MAIN", "DC_NUMPAD",
 				"SC_MAIN", "SC_PRIORITY_NUMPAD", "SC_DURABILITY_NUMPAD", "SC_REPAIR_NUMPAD"}));
@@ -289,8 +298,7 @@ public class YamlManager
 		argumentInput("ash_automaticdistributioninfo", "automaticdistributioninfo", "ash.cmd.automaticdistributioninfo",
 				"/ash automaticdistributioninfo", "/ash automaticdistributioninfo ", 
 				"&c/ash automaticdistributioninfo &f| Zeigt alle Info zum Automatischen Verteilen an.",
-				"&c/ash automaticdistributioninfo &f| Displays all info about the automatic distribution."); 
-		//FIXME Alle fehlende Einträge müssen übersetzt werden. Aber erst nach dem die GUIS eingebaut wurden.
+				"&c/ash automaticdistributioninfo &f| Displays all info about the automatic distribution.");
 		argumentInput("ash_blockinfo", "blockinfo", "ash.cmd.blockinfo",
 				"/ash blockinfo", "/ash blockinfo ", 
 				"&c/ash blockinfo &f| Zeigt mit shift+Rechtsklick alle Blocksinfo vom Lagersystem.",
@@ -347,15 +355,10 @@ public class YamlManager
 				"/ash distributionchest member <playername>", "/ash distributionchest member ", 
 				"&c/ash distributionchest member <Spielername> &f| Fügt einen Spieler der Mitgliedsliste hinzu oder entfernt ihn.",
 				"&c/ash distributionchest member <playername> &f| Add or remove a player from the member list.");
-		//REMOVEME position cmd is not needed
-		argumentInput("ash_dc_position", "position", "ash.cmd.distributionchest.position",
-				"/ash distributionchest position", "/ash distributionchest position ", 
-				"&c/ash distributionchest position &f| Setzt den Spieler in den Positionswechselmodus für Verteilerkisten.", 
-				"&c/ash distributionchest position &f| Put the player in distributionchest position change mode");
-		argumentInput("ash_dc_random", "random", "ash.cmd.distributionchest.random",
-				"/ash distributionchest random", "/ash distributionchest random ", 
-				"&c/ash distributionchest random &f| Aktiviert oder deaktiviert den Randommodus.", 
-				"&c/ash distributionchest random &f| Activated or deactivated the random mode.");
+		argumentInput("ash_dc_openoption", "openoption", "ash.cmd.distributionchest.opennoption",
+				"/ash distributionchest openoption [ID/Chestname]", "/ash distributionchest opennoption ", 
+				"&c/ash distributionchest openoption [ID/Chestname] &f| Öffnet das Options Menu der Verteilerkiste.",
+				"&c/ash distributionchest openoption [ID/Chestname] &f| Opens the Options menu of the distribution chest.");
 		argumentInput("ash_dc_select", "select", "ash.cmd.distributionchest.select",
 				"/ash distributionchest select <Name> [PlayerName]", "/ash distributionchest select ", 
 				"&c/ash distributionchest select <ID> &f| Wählt eine Verteilerkiste aus.", 
@@ -376,10 +379,6 @@ public class YamlManager
 				"/ash endstorage", "/ash endstorage ", 
 				"&c/ash endstorage &f| Toggelt die Lagerkiste zu einer Endlagerkiste.", 
 				"&c/ash endstorage &f| Toggles the storage crate to a final storage crate");
-		argumentInput("ash_gui", "gui", "ash.cmd.gui",
-				"/ash gui", "/ash gui ", 
-				"&c/ash gui &f| Toggelt zwischen den Baumodus und dem Gui-Öffnungsmodus.", 
-				"&c/ash gui &f| Toggles between build mode and gui open mode.");
 		argumentInput("ash_itemfilterset", "itemfilterset", "ash.cmd.itemfilterset",
 				"/ash itemfilterset", "/ash itemfilterset ", 
 				"&c/ash itemfilterset &f| ZwischenBefehl.", 
@@ -412,10 +411,6 @@ public class YamlManager
 				"/ash mode <Modus>", "/ash mode ", 
 				"&c/ash mode <Modus> &f| Versetzt dich in einen spezifischen Modus.", 
 				"&c/ash mode <Mode> &f| Puts you in a specific mode.");
-		argumentInput("ash_override", "override", "ash.cmd.override",
-				"/ash override", "/ash override ", 
-				"&c/ash override &f| Toggelt den Änderungsmodus.", 
-				"&c/ash override &f| Toggles the change mode.");
 		argumentInput("ash_playerinfo", "playerinfo", "ash.cmd.playerinfo",
 				"/ash playerinfo [Player]", "/ash playerinfo ", 
 				"&c/ash playerinfo [Spielername] &f| Zeigt alle Infos von dir oder dem angegebenen Spieler an.", 
@@ -452,19 +447,14 @@ public class YamlManager
 				"/ash storagechest openitemfilter", "/ash storagechest openitemfilter ", 
 				"&c/ash storagechest openitemfilter <ID> &f| Öffnet das ItemfilterSet der Lagerkiste.", 
 				"&c/ash storagechest openitemfilter <ID> &f| Opens the item filter set of the storage crate.");
-		//REMOVEME position cmd is not needed
-		argumentInput("ash_sc_position", "position", "ash.cmd.storagechest.position",
-				"/ash storagechest position", "/ash storagechest position ", 
-				"&c/ash storagechest position &f| Setzt den Spieler in den Positionswechselmodus für Lagerkisten.", 
-				"&c/ash storagechest position &f| Puts the player in storagechest position change mode.");
+		argumentInput("ash_sc_openoption", "openoption", "ash.cmd.storagechest.opennoption",
+				"/ash storagechest openoption [ID/Chestname]", "/ash storagechest opennoption ", 
+				"&c/ash storagechest openoption [ID/Chestname] &f| Öffnet das Options Menu der Lagerkiste.",
+				"&c/ash storagechest openoption [ID/Chestname] &f| Opens the Options menu of the storage chest.");
 		argumentInput("ash_sc_select", "select", "ash.cmd.storagechest.select",
 				"/ash storagechest select <id>", "/ash storagechest select ", 
 				"&c/ash storagechest select <ID> &f| Wählt eine Lagerkiste aus.", 
 				"&c/ash storagechest select <ID> &f| Selects a storage crate.");
-		argumentInput("ash_sc_update", "update", "ash.cmd.storagechest.update",
-				"/ash storagechest update", "/ash storagechest update ", 
-				"&c/ash storagechest search &f| Sucht die ausgewählte Lagerkiste.", 
-				"&c/ash storagechest search &f| Searches for the selected storage crate.");
 		argumentInput("ash_sc_search", "search", "ash.cmd.storagechest.search",
 				"/ash storagechest search", "/ash storagechest search ", 
 				"&c/ash storagechest update &f| Toggelt den Updatemodus für die Lagerkisten.", 
@@ -513,6 +503,18 @@ public class YamlManager
 		commandsKeys.put(path+"Random"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"ash.bypass.random"}));
+		commandsKeys.put(path+"Reposition"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"ash.bypass.reposition"}));
+		commandsKeys.put(path+"OpenOption"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"ash.bypass.openoption"}));
+		commandsKeys.put(path+"IFSOrVisual"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"ash.bypass.ifsorvisual"}));
+		commandsKeys.put(path+"CopyAndPaste"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"ash.bypass.copyandpaste"}));
 		path = "Custom.";
 		commandsKeys.put(path+"DistributionChest"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
@@ -573,7 +575,7 @@ public class YamlManager
 	}
 	
 	public void initLanguage() //INFO:Languages
-	{		
+	{
 		languageKeys.put("NoPermission", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDu hast dafür keine Rechte!",
@@ -724,8 +726,8 @@ public class YamlManager
 						"&cAvailable storage boxes: "}));
 		languageKeys.put("CmdAsh.Cancel.SetCancel", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eZum+Abbrechen+des+Vorgangs+klicke+hier+oder+gib+&f/ash+cancel+&eein!~click@RUN_COMMAND@/ash+cancel",
-						"&eTo+Cancel+click+here+or+give+&f/ash+cancel+&on!~click@RUN_COMMAND@/ash+cancel"}));
+						"&eZum+Abbrechen+des+Vorgangs+klicke+hier+oder+gib+&f%cmd%+&eein!~click@RUN_COMMAND@%cmd%",
+						"&eTo+Cancel+click+here+or+give+&f%cmd%+&on!~click@RUN_COMMAND@%cmd%"}));
 		languageKeys.put("CmdAsh.Cancel.IsCancel",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cVorgang abgebrochen!",
@@ -733,7 +735,7 @@ public class YamlManager
 		languageKeys.put("CmdAsh.CanBreakDChest.Active",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eDu kannst nun Verteilerkisten abbauen. &cSei also vorsichtig!",
-						"&eDu kannst nun Verteilerkisten abbauen. &cSei also vorsichtig!"}));
+						"&eYou can now dismantle distribution chests. &cSo be careful!"}));
 		languageKeys.put("CmdAsh.CanBreakDChest.Deactive",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eDu kannst nun keine Verteilerkisten mehr abbauen!",
@@ -756,8 +758,8 @@ public class YamlManager
 						"&cYou have already created too many storage boxes! Delete one first to create another one!"}));
 		languageKeys.put("CmdAsh.Create.SetupDChest",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&aVerteilerkiste+&f%dc%+&aerstellt!+&eFür+weitere+Informationen+klicke+hier~click@RUN_COMMAND@/ash+distributionchest+info+%dc%",
-						"&aDistributionbox+&f%dc%+&created!+&eFor+more+information+click+here~click@RUN_COMMAND@/ash+distributionchest+info+%dc%"}));
+						"&aVerteilerkiste+&f%dc%+&aerstellt!+&eFür+weitere+Informationen+klicke+hier~click@RUN_COMMAND@%cmd%+%dc%",
+						"&aDistributionbox+&f%dc%+&created!+&eFor+more+information+click+here~click@RUN_COMMAND@%cmd%+%dc%"}));
 		languageKeys.put("CmdAsh.Create.FutherInstruction", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eSofern keine speziellen Einstellungen vorgenommen werden sollen, so ist das Erstellen von Lagerkisten für die Verteilerkiste &f%dc% &emöglich.",
@@ -776,20 +778,20 @@ public class YamlManager
 						"&cThe distribution box this storage box belongs to no longer exists!"}));
 		languageKeys.put("CmdAsh.Create.SetupSChest",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&aLagerkiste+&f%sc%+&aerstellt!+&eFür+weitere+Informationen+klicke+hier~click@RUN_COMMAND@/ash+storagechest+info",
-						"&aStoragebox+&f%sc%+&created!+&eFor+more+information+click+here~click@RUN_COMMAND@/ash+storagechest+info"}));
+						"&aLagerkiste+&f%sc%+&aerstellt!+&eFür+weitere+Informationen+klicke+hier~click@RUN_COMMAND@%cmd%",
+						"&aStoragebox+&f%sc%+&created!+&eFor+more+information+click+here~click@RUN_COMMAND@%cmd%"}));
 		languageKeys.put("CmdAsh.Create.SetupSChestIFS",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&aLagerkiste+&f%sc%+mit+ItemFilterSet+&aerstellt!+&eFür+weitere+Informationen+klicke+hier~click@RUN_COMMAND@/ash+storagechest+info",
-						"&aStoragebox+&f%sc%+with+ItemFilterSet+&acreated!+&eFor+more+information+click+here~click@RUN_COMMAND@/ash+storagechest+info"}));
+						"&aLagerkiste+&f%sc%+mit+ItemFilterSet+&aerstellt!+&eFür+weitere+Informationen+klicke+hier~click@RUN_COMMAND@%cmd%",
+						"&aStoragebox+&f%sc%+with+ItemFilterSet+&acreated!+&eFor+more+information+click+here~click@RUN_COMMAND@%cmd%"}));
 		languageKeys.put("CmdAsh.Create.SetupSChestInventory",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&aLagerkiste+&f%sc%+mit+Kisteninventar+&aerstellt!+&eFür+weitere+Informationen+klicke+hier~click@RUN_COMMAND@/ash+storagechest+info",
-						"&aStoragebox+&f%sc%+with+chestinventory+&acreated!+&eFor+more+information+click+here~click@RUN_COMMAND@/ash+storagechest+info"}));
+						"&aLagerkiste+&f%sc%+mit+Kisteninventar+&aerstellt!+&eFür+weitere+Informationen+klicke+hier~click@RUN_COMMAND@%cmd%",
+						"&aStoragebox+&f%sc%+with+chestinventory+&acreated!+&eFor+more+information+click+here~click@RUN_COMMAND@%cmd%"}));
 		languageKeys.put("CmdAsh.Create.UpdateStorageChest", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eLagerkiste+Update!+Klicke+hier+für+weitere+Informationen~click@RUN_COMMAND@/ash+storagechest+info",
-						"&eStorageBox+Update!+click+here+for+more+information~click@RUN_COMMAND@/ash+storagechest+info"}));
+						"&eLagerkiste+Update!+Klicke+hier+für+weitere+Informationen~click@RUN_COMMAND@%cmd%",
+						"&eStorageBox+Update!+click+here+for+more+information~click@RUN_COMMAND@%cmd%"}));
 		languageKeys.put("CmdAsh.Create.SChestDontBeSameAsDChest",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDie Lagerkiste kann nicht gleichzeitig die Verteilerkiste, des gleichen Lagersystems sein!",
@@ -842,22 +844,6 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&e=====&7[&6Verteilerkiste Liste von &f%player%&7]&e=====",
 						"&e=====&7[&6DistributionChestList of &f%player%&7]&e======"}));
-		languageKeys.put("CmdAsh.DistributionChestList.CommandRun", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash distributionchest select %name%",
-						"/ash distributionchest select %name%"}));
-		languageKeys.put("CmdAsh.DistributionChestList.CommandRunInfo",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash distributionchest info",
-						"/ash distributionchest info"}));
-		languageKeys.put("CmdAsh.DistributionChestList.CommandRunDelete", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash distributionchest delete",
-						"/ash distributionchest delete"}));
-		languageKeys.put("CmdAsh.DistributionChestList.CommandString", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash distributionchest list",
-						"/ash distributionchest list"}));
 		languageKeys.put("CmdAsh.DistributionChestName.SetName",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eVerteilerkiste &f%oldname% &ewurde in &f%newname% &eumbenannt.",
@@ -994,26 +980,10 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&e=====&7[&6ItemFilterSet Liste von &f%player%&7]&e=====",
 						"&e=====&7[&6ItemFilterSet list from &f%player%&7]&e====="}));
-		languageKeys.put("CmdAsh.ItemFilterSetList.CommandRun",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash itemfilterset select %id% %uuid%",
-						"/ash itemfilterset select %id% %uuid%"}));
 		languageKeys.put("CmdAsh.ItemFilterSetList.LineOne", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eAnzahl an Items im Filter: &f%amount%",
 						"&eNumber of items in filter: &f%amount%"}));
-		languageKeys.put("CmdAsh.ItemFilterSetList.CommandString",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash itemfilterset list ",
-						"/ash itemfilterset list "}));
-		languageKeys.put("CmdAsh.ItemFilterSetList.CommandRunOpen",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash itemfilterset update",
-						"/ash itemfilterset update"}));
-		languageKeys.put("CmdAsh.ItemFilterSetList.CommandRunDelete",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash itemfilterset delete",
-						"/ash itemfilterset delete"}));
 		languageKeys.put("CmdAsh.ItemFilterSetList.OpenHover", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eÖffnet das ItemFilterSet.~!~",
@@ -1034,14 +1004,6 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cLagerkiste mit der ID &f%id% &cexistiert nicht!",
 						"&cStorage box with the ID &f%id% &cdoes not &cexist!"}));
-		languageKeys.put("CmdAsh.Override.Deactive", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eÄnderung ist nun im Zwischenspeicher nicht mehr aktiv!",
-						"&eChangeMode is now no longer active in the cache!"}));
-		languageKeys.put("CmdAsh.Override.Active",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eÄnderung ist nun im Zwischenspeicher aktiv!",
-						"&eChangeMode is now active in the cache!"}));
 		languageKeys.put("CmdAsh.PlayerInfo.Headline",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&e=====&7[&6Zwischenspeicher von &f%name%&7]&e=====",
@@ -1070,10 +1032,6 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cSuchtyp: &f",
 						"&cSearch type: &f"}));
-		languageKeys.put("CmdAsh.PlayerInfo.Override", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cÄnderungsmodus aktiv: &f",
-						"&cChange mode active: &f"}));
 		languageKeys.put("CmdAsh.PlayerInfo.EndStorage", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cEndlagerkistenmodus aktiv: &f",
@@ -1102,22 +1060,10 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"Lagerkistenerstellungsmodus (Du bist gerade dabei Lagerkisten für eine Verteilerkiste zu erstellen)",
 						"Storage box creation mode (you are creating storage boxes for a distribution box)"}));
-		languageKeys.put("CmdAsh.PlayerInfo.NONE",
+		languageKeys.put("CmdAsh.PlayerInfo.OPTIONGUI", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"ItemFilterSet von Lagerkisten Aufrufenmodus (Du kannst per Shift + Rechtsklick ItemFilterSets von Lagerkisten öffnen)",
-						"ItemFilterSet from stockboxes Call up mode (you can open ItemFilterSets from stockboxes by Shift + right click)"}));
-		languageKeys.put("CmdAsh.PlayerInfo.POSITIONUPDATEDISTRIBUTION",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"Positionswechselmodus (Du bist dabei eine Verteilerkiste umzupositionieren)",
-						"Position change mode (you are repositioning a distribution box)"}));
-		languageKeys.put("CmdAsh.PlayerInfo.POSITIONUPDATESTORAGE", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"Positionswechselmodus (Du bist dabei eine Lagerkiste umzupositionieren)",
-						"Position change mode (you are repositioning a storage crate)"}));
-		languageKeys.put("CmdAsh.PlayerInfo.UPDATESTORAGE", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"Lagerkistenaktualisierungsmodus (Du bist dabei eine Lagerkiste nach neuen Werten [Priorität etc.] zu aktualisieren)",
-						"Storage box update mode (you are about to update a storage box according to new values [priority etc.])"}));
+						"OptionGui (Du schaust gerade in die Optionen einer Kiste)",
+						"OptionGui (You are currently looking at the options of a box part)"}));
 		languageKeys.put("CmdAsh.PlayerInfo.UPDATESTORAGEITEMFILTERSET",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"ItemFilterSet Aktualisierungsmodus (Du bist dabei, ItemFilterSet von Lagerkisten zu aktualisieren)",
@@ -1126,40 +1072,6 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&ePositionswechselmodus ist deaktiviert!",
 						"&ePosition change mode is deactivated!"}));
-		//REMOVEME position cmd is not needed
-		languageKeys.put("CmdAsh.Position.DChest", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&ePositionswechselmodus für Verteilerkisten ist aktiviert!",
-						"&ePosition change mode for distribution boxes is activated!"}));
-		languageKeys.put("CmdAsh.Position.SChest",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&ePositionswechselmodus für Lagerkisten ist aktiviert!",
-						"&ePosition change mode for storage crates is activated!"}));
-		languageKeys.put("CmdAsh.Position.NoSelectedChest", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDu hast weder eine Verteilerkiste, noch eine Lagerkiste ausgewählt! &eKlicke+hier+um+eine+Kiste+auszuwählen~click@SUGGEST_COMMAND@/ash+distributionchest+select+<ID>",
-						"&cYou have neither selected a distribution box nor a storage box! &eClick+here+to+select+a+box~click@SUGGEST_COMMAND@/ash+distributionchest+select+<ID>"}));
-		languageKeys.put("CmdAsh.Position.DistributionChestNotExist", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDie gewählte Verteilerkiste existiert nicht!",
-						"&cThe selected distribution box does not exist!"}));
-		languageKeys.put("CmdAsh.Position.SameStorageChest", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDie ausgewählte LagerkistenID stimmt mit der ausgewählt Lagerkisten-Position überein! Bitte wechsel den Ort oder die ausgewählte LagerkistenID!",
-						"&cThe selected storage box ID matches the selected storage box position! Please change the location or the selected storage crate ID!"}));
-		languageKeys.put("CmdAsh.Position.SameDistributionChest",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDie ausgewählte VerteilerkistenID stimmt mit der ausgewählt Verteilerkisten-Position überein! Bitte wechsel den Ort oder die ausgewählte VerteilerkistenID!",
-						"&cThe selected distribution box ID matches the selected distribution box position! Please change the location or the selected distribution crate ID!"}));
-		languageKeys.put("CmdAsh.Position.IsUpdated", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cPosition der Kiste aktualisiert!",
-						"&cPosition of the crate updated!"}));
-		languageKeys.put("CmdAsh.Position.MayChange", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eBitte denkt daran die Aktion nun abzubrechen oder eine andere Verteiler-/Lagerkiste auszuwählen.",
-						"&ePlease remember to cancel the action now or select another distribution/storage box"}));
-		//position end
 		languageKeys.put("CmdAsh.Priority.Set",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&ePriorität auf &f%priority% &egesetzt!",
@@ -1183,7 +1095,7 @@ public class YamlManager
 		languageKeys.put("CmdAsh.Search.SelectScsHeadline", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&e===&aAuswählbare Lagerkisten&e===",
-						""}));
+						"&e===&aSelectable storage chests&e==="}));
 		languageKeys.put("CmdAsh.Search.SelectDcDontExist", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDie ausgewählte Verteilerkiste existiert nicht!",
@@ -1204,50 +1116,18 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eLagerkiste &f%oldname% &ewurde in &f%newname% &eumbenannt.",
 						"&eStorageChest% &f%oldname% &has been &renamed to &f%newname% &e."}));
-		languageKeys.put("CmdAsh.StorageChest.CreateDeactive", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eErstellungsmodus für Lagerkisten deaktiviert!",
-						"&eCreation mode for storage boxes disabled!"}));
 		languageKeys.put("CmdAsh.StorageChest.CreateActive",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eErstellungsmodus für Lagerkisten aktiviert! Verlinkte VerteilerkistenID: &f%id%",
 						"&eCreation mode for storage boxes enabled! Linked distribution boxesID: &f%id%"}));
-		languageKeys.put("CmdAsh.StorageChest.UpdateDeactive",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eUpdatemodus für Lagerkisten deaktiviert!",
-						"&eUpdate mode for storage boxes disabled!"}));
-		languageKeys.put("CmdAsh.StorageChest.UpdateActive", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eUpdatemodus für Lagerkisten aktiviert! Beachte, dass eventuelle Zusatzteinstellungen wie &fÄnderungmodus, ItemFilterSet, Priorität und Endlager &eauch eingestellt werden sollten.",
-						"&eUpdate mode for storage crates enabled! Please note that possible additional settings like &change mode, ItemFilterSet, priority and final storage should &also be set."}));
 		languageKeys.put("CmdAsh.StorageChestList.Empty", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDu hast keine Lagerkisten!",
-						"&cYou dont have any storage boxes!"}));
+						"&cYou dont have any storagechests!"}));
 		languageKeys.put("CmdAsh.StorageChestList.Headline", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&e=====&7[&6Lagerkiste Liste von &f%player%&7]&e=====",
 						"&e=====&7[&6StorageChestList from &f%player%&7]&e====="}));
-		languageKeys.put("CmdAsh.StorageChestList.CommandRun", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash storagechest select %id%",
-						"/ash storagechest select %id%"}));
-		languageKeys.put("CmdAsh.StorageChestList.CommandString",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash storagechest list",
-						"/ash storagechest list"}));
-		languageKeys.put("CmdAsh.StorageChestList.CommandRunInfo",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash storagechest info",
-						"/ash storagechest info"}));
-		languageKeys.put("CmdAsh.StorageChestList.CommandRunOpen", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash storagechest openitemfilter",
-						"/ash storagechest openitemfilter"}));
-		languageKeys.put("CmdAsh.StorageChestList.CommandRunDelete", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"/ash storagechest delete",
-						"/ash storagechest delete"}));
 		languageKeys.put("CmdAsh.StorageChestList.LostChests", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cNicht verlinke Lagerkisten&f:",
@@ -1258,8 +1138,8 @@ public class YamlManager
 						"&eShows all information about the storage crate.~!~"}));
 		languageKeys.put("CmdAsh.StorageChestList.OpenHover", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eÖffnet das ItemFilterSet der Lagerkiste.~!~",
-						"&eOpens the ItemFilterSet of the storage crate.~!~"}));
+						"&eÖffnet das Optionsmenu der Lagerkiste.~!~",
+						"&eOpens the optionmenu of the storagechest.~!~"}));
 		languageKeys.put("CmdAsh.Select.DChestDontExist", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDie Verteilerkiste existiert nicht!",
@@ -1292,30 +1172,6 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDie Lagerkiste mit der gewählten Verteilerkiste existiert nicht!",
 						"&cThe storage box with the selected distribution box does not exist!"}));
-		languageKeys.put("CmdAsh.Update.MayDelete", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDie gewählte Verteilerkiste existiert nicht mehr. Falls+Lagerkiste+gelöscht+werden+soll+klicke+hier!~click@SUGGEST_COMMAND@/ash+delete+s+%sc% Oder+wähle+eine+andere+Verteilerkiste+aus+und+klicke+hier+für+den+Änderungs-Modus~click@RUN_COMMAND@/ash+override~hover@SHOW_TEXT@&eÄnderungsmodus+bedeutet,+dass+die+Lagerkiste+nicht+nur+normal+geupdatet+wird,~!~&esonder+auch,+dass+die+Verteilerkiste+überschrieben+wird!~!~&cSofern+es+nicht+mehr+gebraucht+wird,+unbedingt+deaktivieren!",
-						"&cThe selected distribution box no longer exists. If+storage box+delete+should+click+here! ~click@SUGGEST_COMMAND@/ash+delete+s+%sc% Or+select+an+other+distribution+box+off+and+click+here+for+the+change-mode~click@RUN_COMMAND@/ash+override~hover@SHOW_TEXT@&change-mode+means,+that+the+storage+box+will+not+only+normally+be+updated,~!~&special+also,+that+the+distribution+box+is+overridden+overridden!~!~&cSofar+it+is+no+longer+needed+to+deactivate!"}));
-		languageKeys.put("CmdAsh.Update.IsUpdated", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&aLagerkiste ist aktualisiert! Aktualisierungsanzahl: %i% | Klicke+hier+für+weitere+Informationen~click@RUN_COMMAND@/ash+info+s+%sc%",
-						"&aStorage box is updated! Update count: %i% | click+here+for+more+information~click@RUN_COMMAND@/ash+info+s+%sc%"}));
-		languageKeys.put("CmdAsh.Update.MayDeleteNone", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cLagerkiste+löschen?+Klicke+hier!~click@SUGGEST_COMMAND@/ash+delete+s+%sc% &cOder+wähle+eine+andere+Verteilerkiste+aus~click@RUN_COMMAND@/ash+distributionchest+select+<ID> und+klicke+hier+für+den+ÄnderungsModus~click@RUN_COMMAND@/ash+override~hover@SHOW_TEXT@&eÄnderungmodus+bedeutet,+dass+die+Lagerkiste+nicht+nur+normal+geupdatet+wird,~!~&esonder+auch,+dass+die+Verteilerkiste+überschrieben+wird!~!~&cSofern+es+nicht+mehr+gebraucht+wird,+unbedingt+deaktivieren!",
-						"&cStorage box+delete?+click+here! ~click@SUGGEST_COMMAND@/ash+delete+s+%sc% &cOder+select+an+other+distributionbox+click@RUN_COMMAND@/ash+distributionchest+select+<ID> and+click+here+for+the+changemode~click@RUN_COMMAND@/ash+override~hover@SHOW_TEXT@&changemode+means+that+the+storage+box+not+just+normally+updated+ ~&special+also,+that+the+distribution+box+is+overridden+overridden!~!~&cSofar+it+is+no+longer+needed+to+deactivate!"}));
-		languageKeys.put("CmdAsh.Update.NoSelectedDC", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDu hast den Änderungsmodus aktiv, jedoch keine Andere Verteilerkiste ausgewählt!",
-						"&cYou have activated the change mode, but have not selected another distribution box!"}));
-		languageKeys.put("CmdAsh.Update.SameSelectedDC", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDu hast den Änderungsmodus aktiv, jedoch hast du die gleiche Verteilerkiste ausgewählt, mit welcher die Lagerkiste schon verlinkt ist",
-						"&cYou have activated the change mode, but you have selected the same distribution box to which the storage box is already linked"}));
-		languageKeys.put("CmdAsh.Update.NotOwnerOrMemberSelectedDC", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDu hast den Änderungsmodus aktiv, jedoch bist du weder der Eigentümer oder Mitglied der neuen Verteilerkiste, welche du mit der Lagerkiste verlinken willst.",
-						"&cYou have change mode active, but you are neither the owner nor member of the new distribution box you want to link to the storage box."}));
 		
 		languageKeys.put("Interact.Base.DcNotSelected"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
@@ -1393,10 +1249,22 @@ public class YamlManager
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eKlicke hier um den Befehlsvorschlag zum ändern des Kistennamens zu bekommen.",
 						"&eClick here to get the command suggestion to change the box name."}));
+		languageKeys.put("Gui.Dc.Member"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eKlicke hier um den Befehlsvorschlag zum hinzufügen oder entfernen eine Mitglieds zu bekommen.",
+						"&eClick here to get the command suggestion to add or remove a member."}));
 		languageKeys.put("Gui.Sc.Chestname"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eKlicke hier um den Befehlsvorschlag zum ändern des Kistennamens zu bekommen.",
 						"&eClick here to get the command suggestion to change the box name."}));
+		languageKeys.put("Gui.Sc.IFSIsNull"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cDein ItemFilterSet is nicht vorhanden! Bitte wähle zuerst eins aus!",
+						"&cYour ItemFilterSet is not available! Please choose one first!"}));
+		languageKeys.put("Gui.Sc.IFSIsOverriden"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eDu hast das ItemFilterSet der Lagerkiste mit deinem überschrieben!",
+						"&eYou have overwritten the ItemFilterSet of the storagechest with yours!"}));
 		languageKeys.put("Sign.LWC.NotAccess"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDu hast wegen LWC keinen Zugriff auf dieses Schild!",
@@ -1614,6 +1482,13 @@ public class YamlManager
 				"&eIf you click here, you will activate",
 				"&eor deactivate the random distribution."
 				});
+		setSlot(GuiType.DC_MAIN, 52, Material.FILLED_MAP,
+				null,
+				"&eMitglieder hinzufügen oder entfernen.",
+				"&eAdd or remove members.", 
+				null,
+				null,
+				null);
 		//INFO DC_NUMPAD
 		setSlot(GuiType.DC_NUMPAD, 4, Material.BOOKSHELF,
 				null,
@@ -1851,10 +1726,24 @@ public class YamlManager
 				null,
 				null,
 				null);
-		setSlot(GuiType.SC_MAIN, 41, Material.FILLED_MAP,
+		setSlot(GuiType.SC_MAIN, 48, Material.CRAFTING_TABLE,
 				null,
 				"&eMaterial-Option ein- oder ausschalten.",
 				"&eMaterial option toggle.", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_MAIN, 41, Material.FILLED_MAP,
+				null,
+				"&eÖffne den ItemFilterSet der Kiste.",
+				"&eOpen the ItemFilterSet of the chest.", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_MAIN, 50, Material.MAP,
+				null,
+				"&eFilter mit deinem ItemFilterSet überschreiben.",
+				"&eOverwrite filter with your ItemFilterSet.", 
 				null,
 				null,
 				null);
