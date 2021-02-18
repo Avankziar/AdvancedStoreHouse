@@ -1,4 +1,4 @@
-main: main.java.me.avankziar.spigot.advancedstorehouse.AdvancedStoreHouse
+main: main.java.me.avankziar.spigot.ash.AdvancedStoreHouse
 name: AdvancedStoreHouse
 version: 4
 load: STARTUP
@@ -6,6 +6,7 @@ api-version: 1.16
 description: a Storage System Plugin
 author: Avankziar
 softdepend: [Vault, LWC]
+website: https://www.spigotmc.org/resources/advanced-economy-plus.79828/
 commands:
   ash:
     description: base command

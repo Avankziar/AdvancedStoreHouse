@@ -121,6 +121,14 @@ public class AdvancedStoreHouse extends JavaPlugin
 		plugin = this;
 		log = getLogger();
 		
+		//https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=ASH
+		log.info("  █████╗ ███████╗██╗  ██╗ | API-Version: "+plugin.getDescription().getAPIVersion());
+		log.info(" ██╔══██╗██╔════╝██║  ██║ | Author: "+plugin.getDescription().getAuthors().toString());
+		log.info(" ███████║███████╗███████║ | Plugin Website: "+plugin.getDescription().getWebsite());
+		log.info(" ██╔══██║╚════██║██╔══██║ | Depend Plugins: "+plugin.getDescription().getDepend().toString());
+		log.info(" ██║  ██║███████║██║  ██║ | SoftDepend Plugins: "+plugin.getDescription().getSoftDepend().toString());
+		log.info(" ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ | LoadBefore: "+plugin.getDescription().getLoadBefore().toString());
+		
 		editorplayers = new ArrayList<>();
 		commandTree = new ArrayList<>();
 		argumentMap = new LinkedHashMap<>();

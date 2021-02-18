@@ -142,7 +142,7 @@ public class MysqlSetup
 		        		+ " prioritytype text,"
 		        		+ " prioritynumber int,"
 		        		+ " automaticdistribution boolean,"
-		        		+ " random boolean, "
+		        		+ " random boolean,"
 		        		+ " server text,"
 		        		+ " world text,"
 		        		+ " blockx int,"
@@ -197,10 +197,10 @@ public class MysqlSetup
 		        		+ " optionvoid boolean,"
 		        		+ " optiondurability boolean,"
 		        		+ " durabilitytype text,"
-		        		+ " durability int"
+		        		+ " durability int,"
 		        		+ " optionrepair boolean,"
 		        		+ " repairtype text,"
-		        		+ " repaircost int"
+		        		+ " repaircost int,"
 		        		+ " optionenchantments boolean,"
 		        		+ " optionmaterial boolean);";
 		        query = conn.prepareStatement(data);

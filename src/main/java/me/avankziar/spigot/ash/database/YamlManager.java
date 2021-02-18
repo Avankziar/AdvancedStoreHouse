@@ -24,6 +24,7 @@ public class YamlManager
 		initConfig();
 		initCommands();
 		initLanguage();
+		initGuis();
 	}
 	
 	public ISO639_2B getLanguageType()

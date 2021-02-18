@@ -82,7 +82,7 @@ public class YamlHandler
 		}
 		
 		//Initialisierung der config.yml
-		config = new File(plugin.getDataFolder(), "default.yml");
+		config = new File(plugin.getDataFolder(), "config.yml");
 		if(!config.exists()) 
 		{
 			AdvancedStoreHouse.log.info("Create config.yml...");
@@ -215,11 +215,6 @@ public class YamlHandler
 				{
 					e.printStackTrace();
 				}
-			}
-			
-			if(gui.containsKey(g))
-			{
-				gui.remove(g);
 			}
 			YamlConfiguration gyaml = new YamlConfiguration();
 			//Laden der Datei
