@@ -278,6 +278,33 @@ public class YamlManager
 		configKeys.put("StorageChestAmountWhereShowParticels"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				25}));
+		configKeys.put("AnimationPerTick"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				25}));
+		configKeys.put("AnimationLenght"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				10000}));
+		configKeys.put("AnimationAdditionalCooldown"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				10000}));
+		configKeys.put("AnimationParticleDistributionChest"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"WATER_DROP"}));
+		configKeys.put("AnimationParticleStorageChest"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"FLAME"}));
+		configKeys.put("GUISound"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"BLOCK_ANCIENT_DEBRIS_HIT"}));
+		configKeys.put("SIGN.Identifier"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"[ASH]"}));
+		configKeys.put("SIGN.SWITCH"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"SWITCH"}));
+		configKeys.put("SIGN.DISTRIBUTE"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"DISTRIBUTE"}));
 		configKeys.put("GuiList"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"DC_MAIN", "DC_NUMPAD",
@@ -324,10 +351,6 @@ public class YamlManager
 				"/ash distributionchest", "/ash distributionchest ", 
 				"&c/ash distributionchest &f| Zwischenbefehl.",
 				"&c/ash distributionchest &f| Intermediate command.");
-		argumentInput("ash_dc_autodistr", "automaticdistribution", "ash.cmd.distributionchest.automaticdistribution",
-				"/ash distributionchest automaticdistribution", "/ash distributionchest automaticdistribution ", 
-				"&c/ash distributionchest automaticdistribution &f| Toggelt, ob der Schedular die Kiste absaugen und die Items verteilen kann.",
-				"&c/ash distributionchest automaticdistribution &f| Toggles whether the scheduler can suck the crate and distribute the items");
 		argumentInput("ash_dc_breaking", "breaking", "ash.cmd.distributionchest.breaking",
 				"/ash distributionchest breaking", "/ash distributionchest breaking ", 
 				"&c/ash distributionchest breaking &f| Toggelt, ob du Verteilerkisten abbauen möchtest.",
@@ -341,7 +364,7 @@ public class YamlManager
 				"&c/ash distributionchest create <Name> &f| Beginnt die Erstellung einer Verteilerkiste.",
 				"&c/ash distributionchest create <Name> &f| Starts the creation of a distribution box");
 		argumentInput("ash_dc_delete", "delete", "ash.cmd.distributionchest.delete",
-				"/ash distributionchest delete [true/false(DeleteAllLinkedStorageChest)]", " /ash distributionchest delete ", 
+				"/ash distributionchest delete [true/false(DeleteAllLinkedStorageChest)]", "/ash distributionchest delete ", 
 				"&c/ash distributionchest delete &f| Löscht die vorher ausgewählte Verteilerkiste.", 
 				"&c/ash distributionchest delete &f| Deletes the previously selected distribution box");
 		argumentInput("ash_dc_info", "info", "ash.cmd.distributionchest.info",
@@ -801,6 +824,10 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eDiese Kiste beinhalten schon eine Lagerkiste eines anderen Lagersystems, wo du keinen Zugriff hast. Somit kannst du keine Lagerkiste eines Anderen Lagersystem dort einrichten!",
 						"&eThis box already contains a storage box of another storage system, where you have no access. So you can't set up a storage box of another storage system there!"}));
+		languageKeys.put("CmdAsh.Create.IsNotChestOrBarrel",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cEs können nur Kisten und Fäßer als Lagerkisten regestriert werden!",
+						"&cOnly chests and barrels can be registered as storage crates!"}));
 		languageKeys.put("CmdAsh.Delete.IsDeleted", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eVerteiler- und Lagerkisten welche sich auf dem Server &f%server% &eund in der Welt &f%world% &esich befanden, wurden gelöscht!",
@@ -829,14 +856,6 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cBitte nutze den Befehl, mit einem weiteren Argument aus der Tabliste!",
 						"&cPlease use the command, with another argument from the tab list!"}));
-		languageKeys.put("CmdAsh.DistributionChestAutomaticDistribution.Deactive",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eVerteilerkiste &f%name% &ewird nun nicht mehr automatisch geleert!",
-						"&eDistributionChest &f%name% &is now no longer automatically emptied!"}));
-		languageKeys.put("CmdAsh.DistributionChestAutomaticDistribution.Active",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eVerteilerkiste &f%name% &ewird nun automatisch geleert!",
-						"&eDistribution tray &f%name% &is now emptied automatically!"}));
 		languageKeys.put("CmdAsh.DistributionChestList.Empty", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDu hast keine Verteilerkisten!",
@@ -865,22 +884,13 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eBei Verteilerkiste &f%name% &ewurden die Prioritäten nun zu &babsteigend &e(Größter Wert zuerst) gewechselt.",
 						"&eFor distribution box &f%name% &the priorities have now been changed to &descending &e(Highest value first)"}));
-		languageKeys.put("CmdAsh.EndStorage.Deactive",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eEndlager ist nun im Zwischenspeicher nicht mehr aktiv!",
-						"&eEndStorage is now inactive in the cache!"}));
-		languageKeys.put("CmdAsh.EndStorage.Active",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eEndlager ist nun im Zwischenspeicher aktiv!",
-						"&eEndstorage is now active in the cache!"}));
-		languageKeys.put("CmdAsh.Gui.Deactive", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eBaumodus ist deaktiviert. GUIs werden nun bei registierten Lagerkisten mit Shift + Rechtsklick angezeigt.",
-						"&eConstruction mode is deactivated. GUIs are now displayed for registered storage boxes with Shift + right click"}));
+
+		//REMOVEME (wird die noch irgendwo benutzt?
 		languageKeys.put("CmdAsh.Gui.Active", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eBaumodus ist aktiviert. GUIs werden nun nicht mehr angezeigt.",
 						"&eConstruction mode is activated. GUIs are now no longer displayed."}));
+		
 		languageKeys.put("CmdAsh.Info.HeadlineD", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&e=====&7[&6Verteilerkiste &f%id% &6| &f%name%&7]&e=====",
@@ -907,12 +917,12 @@ public class YamlManager
 						"&cNumber of linked repository boxes: &f"}));
 		languageKeys.put("CmdAsh.Info.HeadlineS", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&e=====&7[&6Lagerkiste &f%id%&7]&e=====",
-						"&e=====&7[&6Storage box &f%id%&7]&e====="}));
+						"&e=====&7[&6Lagerkiste &f%id% | %name%&7]&e=====",
+						"&e=====&7[&6Storage box &f%id% | %name%&7]&e====="}));
 		languageKeys.put("CmdAsh.Info.DChestName", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cVerteilerkiste: &f%id% &e| &f%name%",
-						"&cJunction box: &f%id% &e| &f%name%"}));
+						"&cDistributionchest: &f%id% &e| &f%name%"}));
 		languageKeys.put("CmdAsh.Info.AutoDistribution", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cAutomatische Verteilung: &f%auto%",
@@ -921,6 +931,18 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cNutzt absteigende Priorität: &f%nprio%",
 						"&cUses descending priority: &f%nprio%"}));
+		languageKeys.put("CmdAsh.Info.PriorityType", 
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cPrioritättyp: &f%priotype%",
+						"&cPrioritytype: &f%priotype%"}));
+		languageKeys.put("CmdAsh.Info.PriorityNumber", 
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cPrioritätnummber: &f%prion%",
+						"&cPrioritynumber: &f%prion%"}));
+		languageKeys.put("CmdAsh.Info.Random", 
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cNutzt zufällige Verteilung: &f%random%",
+						"&cUses random distribution: &f%random%"}));
 		languageKeys.put("CmdAsh.Info.Priority", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cPriorität: &f%prio%",
@@ -929,6 +951,46 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cist Endlagerkiste: &f%end%",
 						"&cist final storage box: &f%end%"}));
+		languageKeys.put("CmdAsh.Info.OptionDurability",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cNutzt Option Haltbarkeit: &f%opdur%",
+						"&cUses option durability: &f%opdur%"}));
+		languageKeys.put("CmdAsh.Info.DurabilityType",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cHaltbarkeittyp: &f%durtype%",
+						"&cDurabilitytype: &f%durtype%"}));
+		languageKeys.put("CmdAsh.Info.DurabilityValue",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cHaltbarkeitswert: &f%dur%",
+						"&cDurabilityvalue: &f%dur%"}));
+		languageKeys.put("CmdAsh.Info.OptionRepair",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cNutzt Option Reparatur: &f%oprepair%",
+						"&cUses option repair: &f%oprepair%"}));
+		languageKeys.put("CmdAsh.Info.RepairType",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cReparaturtyp: &f%repairtype%",
+						"&cRepairtype: &f%repairtype%"}));
+		languageKeys.put("CmdAsh.Info.RepairCost",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cReparaturkosten: &f%repaircost%",
+						"&cRepaircost: &f%repaircost%"}));
+		languageKeys.put("CmdAsh.Info.OptionEnchantment",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cNutzt Option Verzauberung: &f%opench%",
+						"&cUses option enchantment: &f%opench%"}));
+		languageKeys.put("CmdAsh.Info.OptionMaterial",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cNutzt Option Material: &f%opmat%",
+						"&cUses option material: &f%opmat%"}));
+		languageKeys.put("CmdAsh.Info.OptionVoid",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cNutzt Option Void: &f%opvoid%",
+						"&cUses option void: &f%opvoid%"}));
+		languageKeys.put("CmdAsh.ItemFilterSet.InventoryName",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eItemFilter: &r%name%",
+						"&eItemFilter: &r%name%"}));
 		languageKeys.put("CmdAsh.InventoyClick.ItemExist", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cItem existiert schon als ItemFilter!",
@@ -1155,7 +1217,7 @@ public class YamlManager
 						"&eDistribution box &f%iddc% &e| &f%name% &elect!"}));
 		languageKeys.put("CmdAsh.Select.SelectSChest", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eLagerkiste &f%idsc% &eder Verteilerkiste &f%iddc% &e| &f%name% &eausgewählt!",
+						"&eLagerkiste &f%idsc% &e| &f%namesc% &eder Verteilerkiste &f%iddc% &e| &f%namedc% &eausgewählt!",
 						"&eStorage crate &f%idsc% &the distribution crate &f%iddc% &e| &f%name% &e| &f%name% &elect!"}));
 		languageKeys.put("CmdAsh.Select.SelectSChestWithOutD", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
@@ -1338,11 +1400,10 @@ public class YamlManager
 						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 						enchantments}));
 			}
-			if(lore == null)
+			if(lore != null)
 			{
 				gui.put(slot+".Lore"
-						, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						lore}));
+						, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, lore));
 			}
 			guiKeys.replace(type.toString(), gui);
 		} else
@@ -1373,11 +1434,10 @@ public class YamlManager
 						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 						enchantments}));
 			}
-			if(lore == null)
+			if(lore != null)
 			{
 				gui.put(slot+".Lore"
-						, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						lore}));
+						, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, lore));
 			}
 			guiKeys.put(type.toString(), gui);
 		}
@@ -1392,27 +1452,29 @@ public class YamlManager
 				null,//Itemflag
 				null,//Ench
 				new String[] {
-				"&eErstellungsdatum &f%creationdate%",
-				"&ePrioritättyp &f%type%",
-				"&ePrioritätzustand &f%status%",
-				"&ePrioritätzahl &f%number%",
-				"&eIst in der Automatischen Verteilung &f%automaticdistribution%",
-				"&eVerteilt zufallig &f%random%",
-				"&eMitglieder &f%member%",
-				"&eLocation &f%location%",
-				"&eAnzahl Lagerkisten &f%storagechestamount%",
-				"&eAnzahl Endlagerkisten &f%storagechestendamount%",
+				"&eErstellungsdatum: &f%creationdate%",
+				"&ePrioritättyp: &f%type%",
+				"&ePrioritätsortierung: &f%status%",
+				"&ePrioritätzahl: &f%number%",
+				"&eIst in der Automatischen Verteilung: &f%automaticdistribution%",
+				"&eVerteilt zufallig: &f%random%",
+				"&eMitglieder: &f%member%",
+				"&eOrt: &f%locationone%",
+				"&eKoordinaten: &f%locationtwo%",
+				"&eAnzahl Lagerkisten: &f%storagechestamount%",
+				"&eAnzahl Endlagerkisten: &f%storagechestendamount%",
 				
-				"&eCreationdate &f%creationdate%",
-				"&ePrioritytype &f%type%",
-				"&ePrioritystate &f%state%",
-				"&ePrioritynumber &f%number%",
-				"&eIs in the Automatic distribution &f%automaticdistribution%",
-				"&eDistrubute random &f%random%",
-				"&eMember &f%member%",
-				"&eLocation &f%location%",
-				"&eAmount Storagechest &f%storagechestamount%",
-				"&eAmount Endstoragechest &f%storagechestendamount%"
+				"&eCreationdate: &f%creationdate%",
+				"&ePrioritytype: &f%type%",
+				"&ePrioritystate: &f%state%",
+				"&ePrioritynumber: &f%number%",
+				"&eIs in the Automatic distribution: &f%automaticdistribution%",
+				"&eDistrubute random: &f%random%",
+				"&eMember: &f%member%",
+				"&eLocation: &f%locationone%",
+				"&eCoordinates: &f%locationtwo%",
+				"&eAmount Storagechest: &f%storagechestamount%",
+				"&eAmount Endstoragechest: &f%storagechestendamount%"
 				});
 		setSlot(GuiType.DC_MAIN, 10, Material.BOOK,
 				null,
@@ -1423,15 +1485,19 @@ public class YamlManager
 				null);
 		setSlot(GuiType.DC_MAIN, 16, Material.CRIMSON_SIGN,
 				null,
-				"&ePrioritätzustand switchen",
-				"&ePrioritystate switch", 
+				"&ePrioritätsortierung switchen",
+				"&ePrioritysorting switch", 
 				null,
 				null,
 				new String[] {
-				"&eKlicke hier um den Prioritätenzustand zu switchen.",
-				"&ePer Klick wechselt es zu auf- oder absteigend (false/true)",
-				"&eClick here to switch the priority state.",
-				"&eBy click it changes to ascending or descending (false/true)"
+				"&eKlicke hier um den Prioritätensortierung",
+				"&ezu switchen.",
+				"&ePer Klick wechselt es zu &aauf&e- oder",
+				"&cabsteigend &e(false &c↘ &e/true &a↗&e)",
+				"&eClick here to switch the",
+				"&eprioritysorting.",
+				"&eBy click it changes to &aascending",
+				"&eor &cdescending &e(false &c↘ &e/true &a↗&e)"
 				});
 		setSlot(GuiType.DC_MAIN, 25, Material.OAK_SIGN,
 				null,
@@ -1440,12 +1506,17 @@ public class YamlManager
 				null,
 				null,
 				new String[] {
-				"&eKliche hier um zwischen dem Typ SWITCH und PLACE zu wechseln.",
-				"&eSWITCH bedeutet, dass nach der Kistenpriorität geht.",
-				"&ePLACE bedeutet, dass nur Kiste MIT dieser exakten Priorität angesteuert werden.",
-				"&eClick here to switch between SWITCH and PLACE type.",
-				"&eSWITCH means that goes after the box priority.",
-				"&ePLACE means that only boxes WITH this exact priority are controlled."
+				"&eKliche hier um zwischen dem Typ SWITCH &7(&b↔&7)",
+				"&eund PLACE &7(&d»۝«&7) &ezu wechseln.",
+				"&eSWITCH &7(&b↔&7) &ebedeutet, dass nach der Kistenprioritätsortierung geht.",
+				"&ePLACE &7(&d»۝«&7) &ebedeutet, dass nur Kiste MIT dieser exakten",
+				"&ePriorität angesteuert werden.",
+				
+				"&eClick here to switch between SWITCH&7(&b↔&7)",
+				"&eand PLACE &7(&d»۝«&7) &etype.",
+				"&eSWITCH &7(&b↔&7) &emeans that goes after the chest-priority-sorting.",
+				"&ePLACE &7(&d»۝«&7) &emeans that only boxes WITH this",
+				"&eexact priority are controlled."
 				});
 		setSlot(GuiType.DC_MAIN, 34, Material.JUNGLE_SAPLING,
 				null,
@@ -1500,10 +1571,10 @@ public class YamlManager
 				new String[] {
 				"&eKlicke auf das Numpad zum eingeben der exakten Zahl.",
 				"&eKlicke auf >&fC&e< um die Zahl auf 0 zu resetten.",
-				"&eAktuelle Prioritätzahl: %prioritynumber%",
+				"&eAktuelle Prioritätzahl: &b%prioritynumber%",
 				"&eClick on the numpad to enter the exact number.",
 				"&eClick >&fC&e< to reset the number to 0.",
-				"&eCurrent priority number: %prioritynumber%"
+				"&eCurrent priority number: &b%prioritynumber%"
 				});
 		setSlot(GuiType.DC_NUMPAD, 13, Material.PLAYER_HEAD, //C
 				"http://textures.minecraft.net/texture/abe983ec478024ec6fd046fcdfa4842676939551b47350447c77c13af18e6f",
@@ -1599,36 +1670,44 @@ public class YamlManager
 		//INFO SC_MAIN
 		setSlot(GuiType.SC_MAIN, 4, Material.BOOKSHELF,
 				null,
-				"&eLagerkistekiste &f%id% &e- &f%name%",
+				"&eLagerkiste &f%id% &e- &f%name%",
 				"&eStoragechest &f%id% &e- &f%name%",
 				null,
 				null,
 				new String[] {
-				"&eEigentümer &f%owner%",
-				"&eErstellungsdatum &f%creationdate%",
-				"&eVerteilerkisten ID &f%distributionchestid%",
-				"&ePrioritätzahl &f%priority%",
-				"&eIst Endlagerkiste &f%isendstorage%",
-				"&eVoidkiste &f%isvoid%",
-				"&eSortierung Haltbarkeit &f%isdurability%",
-				"&eHaltbarkeit &f%durability%",
-				"&eSortierung Reparaturkosten &f%isrepair%",
-				"&eReparaturkosten &f%repaircost% &e%",
-				"&eSortierung Verzauberung &f%isenchantment%",
-				"&eLocation &f%location%",
+				"&eEigentümer: &f%owner%",
+				"&eErstellungsdatum: &f%creationdate%",
+				"&eVerteilerkisten ID: &f%distributionchestid%",
+				"&ePrioritätzahl: &f%priority%",
+				"&eIst Endlagerkiste: &f%isendstorage%",
+				"&eOption Void: &f%isvoid%",
+				"&eOption Material: &f%material%",
+				"&eOption Haltbarkeit: &f%isdurability%",
+				"&eHaltbarkeitstyp: &f%durabilitytype%",
+				"&eHaltbarkeit: &f%durability% &b%",
+				"&eOption Reparaturkosten: &f%isrepair%",
+				"&eReparaturtyp: &f%repairtype%",
+				"&eReparaturkosten: &f%repaircost% &blvl",
+				"&eOption Verzauberung: &f%isenchantment%",
+				"&eOrt: &f%locationone%",
+				"&eKoordinaten: &f%locationtwo%",
 				
-				"&eOwner &f%owner%",
-				"&eCreationdate &f%creationdate%",
-				"&eDistributionchest ID &f%distributionchestid%",
-				"&ePrioritynumber &f%priority%",
-				"&eIs endstoragechest &f%isendstorage%",
-				"&eVoidchest &f%isvoid%",
-				"&eSorting durability &f%isdurability%",
-				"&eDurability &f%durability%",
-				"&eSorting repaircost &f%isrepair%",
-				"&eRepaircost &f%repaircost% &e%",
-				"&eSorting enchantments &f%isenchantment%",
-				"&eLocation &f%location%"
+				"&eOwner: &f%owner%",
+				"&eCreationdate: &f%creationdate%",
+				"&eDistributionchest ID: &f%distributionchestid%",
+				"&ePrioritynumber: &f%priority%",
+				"&eIs endstoragechest: &f%isendstorage%",
+				"&eOption Void: &f%isvoid%",
+				"&eOption material: &f%material%",
+				"&eOption durability: &f%isdurability%",
+				"&eDurabilitytype: &f%durabilitytype%",
+				"&eDurability: &f%durability% &b%",
+				"&eOption repaircost: &f%isrepair%",
+				"&eRepairtype: &f%repairtype%",
+				"&eRepaircost: &f%repaircost% &blvl",
+				"&eOption enchantments: &f%isenchantment%",
+				"&eLocation: &f%locationone%",
+				"&eCoordinates: &f%locationtwo%"
 				});
 		setSlot(GuiType.SC_MAIN, 11, Material.BOOK,
 				null,
@@ -1663,15 +1742,20 @@ public class YamlManager
 				});
 		setSlot(GuiType.SC_MAIN, 15, Material.BUCKET,
 				null,
-				"&eVoid-Option ein- oder ausschalten.",
-				"&eVoid option toggle", 
+				"&eVoid-Option &a✔ &eoder &c✖&e.",
+				"&eVoid option &a✔ &eor &c✖&e.", 
 				null,
 				null,
-				null);
+				new String[] {
+				"&eWenn du hier klickst, schaltest du",
+				"&edie automatische Löschung ein oder aus.",
+				"&eIf you click here, you will activate",
+				"&eor deactivate the automatic delete."
+				});
 		setSlot(GuiType.SC_MAIN, 19, Material.SMITHING_TABLE,
 				null,
-				"&eHaltbarkeit-Option ein- oder ausschalten.",
-				"&eDurability option toggle.", 
+				"&eHaltbarkeit-Option &a✔ &eoder &c✖&e.",
+				"&eDurability option &a✔ &eor &c✖&e.", 
 				null,
 				null,
 				null);
@@ -1681,7 +1765,11 @@ public class YamlManager
 				"&eDurabilitytype switch.", 
 				null,
 				null,
-				null);
+				new String[] {
+				"&eZwischen &fkleiner als &7(&a<&7)",
+				"&eund &fgrößer als &7(&c>&7) &ewechseln.",
+				"&eBetween &fless than &7(&a<&7)",
+				"&eand &flarger than &7(&c<&7) &eswitching."});
 		setSlot(GuiType.SC_MAIN, 37, Material.WOODEN_SHOVEL,
 				null,
 				"&eHaltbarkeitswert setzen.",
@@ -1696,8 +1784,8 @@ public class YamlManager
 				});
 		setSlot(GuiType.SC_MAIN, 25, Material.ANVIL,
 				null,
-				"&eReparatur-Option ein- oder ausschalten.",
-				"&eReparation option toggle.", 
+				"&eReparatur-Option &a✔ &eoder &c✖&e.",
+				"&eReparation option &a✔ &eor &c✖&e.", 
 				null,
 				null,
 				null);
@@ -1707,7 +1795,11 @@ public class YamlManager
 				"&eReparationtype switch.", 
 				null,
 				null,
-				null);
+				new String[] {
+				"&eZwischen &fkleiner als &7(&a<&7)",
+				"&eund &fgrößer als &7(&c>&7) &ewechseln.",
+				"&eBetween &fless than &7(&a<&7)",
+				"&eand &flarger than &7(&c<&7) &eswitching."});
 		setSlot(GuiType.SC_MAIN, 43, Material.DAMAGED_ANVIL,
 				null,
 				"&eReparaturwert setzen.",
@@ -1722,15 +1814,15 @@ public class YamlManager
 				});
 		setSlot(GuiType.SC_MAIN, 39, Material.ENCHANTING_TABLE,
 				null,
-				"&eVerzauberungsoption ein- oder ausschalten.",
-				"&eEnchantment option toggle.", 
+				"&eVerzauberungsoption &a✔ &eoder &c✖&e.",
+				"&eEnchantment option &a✔ &eor &c✖&e.", 
 				null,
 				null,
 				null);
 		setSlot(GuiType.SC_MAIN, 48, Material.CRAFTING_TABLE,
 				null,
-				"&eMaterial-Option ein- oder ausschalten.",
-				"&eMaterial option toggle.", 
+				"&eMaterial-Option &a✔ &eoder &c✖&e.",
+				"&eMaterial option &a✔ &eor &c✖&e.", 
 				null,
 				null,
 				null);
@@ -1758,10 +1850,10 @@ public class YamlManager
 				new String[] {
 				"&eKlicke auf das Numpad zum eingeben der exakten Zahl.",
 				"&eKlicke auf >&fC&e< um die Zahl auf 0 zu resetten.",
-				"&eAktuelle Prioritätzahl: %priority%",
+				"&eAktuelle Prioritätzahl: &b%priority%",
 				"&eClick on the numpad to enter the exact number.",
 				"&eClick >&fC&e< to reset the number to 0.",
-				"&eCurrent priority number: %priority%"
+				"&eCurrent priority number: &b%priority%"
 				});
 		setSlot(GuiType.SC_PRIORITY_NUMPAD, 13, Material.PLAYER_HEAD, //C
 				"http://textures.minecraft.net/texture/abe983ec478024ec6fd046fcdfa4842676939551b47350447c77c13af18e6f",
@@ -1864,10 +1956,10 @@ public class YamlManager
 				new String[] {
 				"&eKlicke auf das Numpad zum eingeben der exakten Zahl.",
 				"&eKlicke auf >&fC&e< um die Zahl auf 0 zu resetten.",
-				"&eAktuelle Haltbarkeitprozent: %durability%",
+				"&eAktuelle Haltbarkeitprozent: &b%durability%",
 				"&eClick on the numpad to enter the exact number.",
 				"&eClick >&fC&e< to reset the number to 0.",
-				"&eCurrent durabiliypercent: %durability%"
+				"&eCurrent durabiliypercent: &v%durability%"
 				});
 		setSlot(GuiType.SC_DURABILITY_NUMPAD, 13, Material.PLAYER_HEAD, //C
 				"http://textures.minecraft.net/texture/abe983ec478024ec6fd046fcdfa4842676939551b47350447c77c13af18e6f",
@@ -1963,10 +2055,10 @@ public class YamlManager
 				new String[] {
 				"&eKlicke auf das Numpad zum eingeben der exakten Zahl.",
 				"&eKlicke auf >&fC&e< um die Zahl auf 0 zu resetten.",
-				"&eAktuelle Reparaturpunkte: %repaircost%",
+				"&eAktuelle Reparaturpunkte: &b%repaircost%",
 				"&eClick on the numpad to enter the exact number.",
 				"&eClick >&fC&e< to reset the number to 0.",
-				"&eCurrent repairpoints: %repaircost%"
+				"&eCurrent repairpoints: &b%repaircost%"
 				});
 		setSlot(GuiType.SC_REPAIR_NUMPAD, 13, Material.PLAYER_HEAD, //C
 				"http://textures.minecraft.net/texture/abe983ec478024ec6fd046fcdfa4842676939551b47350447c77c13af18e6f",

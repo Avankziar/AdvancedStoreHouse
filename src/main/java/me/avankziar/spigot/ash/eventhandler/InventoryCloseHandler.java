@@ -2,11 +2,15 @@ package main.java.me.avankziar.spigot.ash.eventhandler;
 
 import java.io.IOException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
 import main.java.me.avankziar.general.handler.DistributionHandler;
@@ -35,7 +39,17 @@ public class InventoryCloseHandler implements Listener
 		boolean bo = false;
 		if(bo)
 		{
-			player.spigot().sendMessage(ChatApi.tctl(s));
+			System.out.println(s);
+			if(player == null)
+			{
+				for(Player players : Bukkit.getOnlinePlayers())
+				{
+					players.spigot().sendMessage(ChatApi.tctl(s));
+				}
+			} else
+			{
+				player.spigot().sendMessage(ChatApi.tctl(s));
+			}
 		}
 	}
 	
@@ -63,6 +77,10 @@ public class InventoryCloseHandler implements Listener
 		case CREATESTORAGE:
 			updateStorageChest(event, player, user); //Update des ItemStack[]
 			return;
+		case OPTIONGUI:
+			user.setMode(Mode.CONSTRUCT);
+			PluginUserHandler.addUser(user);
+			return;
 		case UPDATESTORAGEITEMFILTERSET:
 			updateStorageChest(event, player, user); //Update des ItemStack[]
 			return;
@@ -75,21 +93,57 @@ public class InventoryCloseHandler implements Listener
 		}
 	}
 	
+	//REMOVEME
+	@EventHandler (priority = EventPriority.HIGHEST)
+	public void onMove(InventoryMoveItemEvent event)
+	{
+		if(event.getSource() != null && event.getSource().getType() == InventoryType.HOPPER)
+		{
+			return;
+		}
+		if(event.getDestination() != null && event.getDestination().getType() == InventoryType.HOPPER)
+		{
+			return;
+		}
+		debug(null,"IMIE fires!");
+		debug(null,"IMIE isCancelled: "+event.isCancelled());
+		debug(null,"IMIE ISType: "+event.getItem().getType().toString());
+		debug(null,"IMIE Source null ? "+(event.getSource() == null));
+		debug(null,"IMIE Source: "+(event.getSource().getType().toString()));
+		debug(null,"IMIE Source: "+(event.getSource().toString()));
+		debug(null,"IMIE Destination null ? "+(event.getDestination() == null));
+		debug(null,"IMIE Destination: "+(event.getDestination().toString()));
+		debug(null,"IMIE Destination: "+(event.getDestination().getType().toString()));
+		//debug(null,"IMIE Result: ");
+	}
+	
 	//Wenn nur rechtsklickt auf kisten gemacht wurden. Verteilung start
 	private void distributionStart(InventoryCloseEvent event, Player player, PluginUser user) throws IOException
 	{
-		debug(player, "=> Begin Methode distributionStart");
 		Location loc = event.getInventory().getLocation();
 		if(loc == null)
 		{
 			return;
 		}
+		if(event.getInventory() == null 
+				|| event.getView().getTopInventory() == null 
+				|| event.getView().getTopInventory().getType() != InventoryType.CHEST)
+		{
+			return;
+		}
+		debug(player, "=> Begin Methode distributionStart");
 		DistributionHandler.distributeStartVersionPhysical(PluginSettings.settings.getServer(), loc, event.getInventory());
 	}
 	
 	//Nur eine Update für den ItemFilterSet der Lagerkiste
 	private void updateStorageChest(InventoryCloseEvent event, Player player, PluginUser user) throws IOException
 	{
+		if(event.getInventory() == null 
+				|| event.getView().getTopInventory() == null 
+				|| event.getView().getTopInventory().getType() != InventoryType.CHEST)
+		{
+			return;
+		}
 		debug(player, "=> Begin Methode createStorageChest (Inventory)");
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST, "`id` = ?", user.getStorageChestID()))
 		{

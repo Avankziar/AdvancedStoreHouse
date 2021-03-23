@@ -25,103 +25,104 @@ public class ChestAnimation
 		this.chestLocation = chestLocation;
 	}
 	
-	public void startSingleChestAnimation()
+	public void startSingleChestAnimation(int animationLenght, Particle particle)
 	{
 		new BukkitRunnable()
 		{
-			int frames = 0;
+			long end = System.currentTimeMillis()+animationLenght;
 			@Override
 			public void run()
 			{
-				if(frames == 40)
+				if(System.currentTimeMillis() > end)
 				{
 					cancel();
+					return;
 				}
 				//Unten Unten Links
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation,
+				chestLocation.getWorld().spawnParticle(particle, chestLocation,
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(0, 0, 0.5),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(0, 0, 0.5),
                         1,
                         0, 0, 0,
                         0);
 				//Unten Unten Rechts
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(0, 0, 1),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(0, 0, 1),
                         1,
                         0, 0, 0,
                         0);
 				//Unten Oben Links
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(0.5, 0, 0),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(0.5, 0, 0),
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(1, 0, 0),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(1, 0, 0),
                         1,
                         0, 0, 0,
                         0);
 				//Unten Oben Rechts
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(0.5, 0, 1),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(0.5, 0, 1),
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(1, 0, 0.5),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(1, 0, 0.5),
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(1, 0, 1),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(1, 0, 1),
                         1,
                         0, 0, 0,
                         0);
 				//Oben Unten Links
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(0, 0.5, 0),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(0, 0.5, 0),
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(0, 1, 0),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(0, 1, 0),
                         1,
                         0, 0, 0,
                         0);
 				//Oben Unten Rechts
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(0, 0.5, 1),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(0, 0.5, 1),
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(0, 1, 0.5),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(0, 1, 0.5),
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(0, 1, 1),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(0, 1, 1),
                         1,
                         0, 0, 0,
                         0);
 				//Oben Oben Links
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(0.5, 1, 0),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(0.5, 1, 0),
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(1, 0.5, 0),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(1, 0.5, 0),
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(1, 1, 0),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(1, 1, 0),
                         1,
                         0, 0, 0,
                         0);
 				//Oben Oben Rechts
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(0.5, 1, 1),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(0.5, 1, 1),
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(1, 0.5, 1),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(1, 0.5, 1),
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(1, 1, 0.5),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(1, 1, 0.5),
                         1,
                         0, 0, 0,
                         0);
-				chestLocation.getWorld().spawnParticle(Particle.FLAME, chestLocation.clone().add(1, 1, 1),
+				chestLocation.getWorld().spawnParticle(particle, chestLocation.clone().add(1, 1, 1),
                         1,
                         0, 0, 0,
                         0);

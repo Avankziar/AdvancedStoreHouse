@@ -4,16 +4,8 @@ import java.io.IOException;
 
 import org.bukkit.Location;
 import org.bukkit.block.Barrel;
-import org.bukkit.block.BlastFurnace;
 import org.bukkit.block.Block;
-import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Dropper;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Hopper;
-import org.bukkit.block.ShulkerBox;
-import org.bukkit.block.Smoker;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -61,16 +53,7 @@ public class BlockBreakListener implements Listener
 			return;
 		}
 		if(!(block.getState() instanceof Chest)
-				&& !(block.getState() instanceof ShulkerBox)
-				&& !(block.getState() instanceof Barrel)
-				&& !(block.getState() instanceof Furnace)
-				&& !(block.getState() instanceof BlastFurnace)
-				&& !(block.getState() instanceof Smoker)
-				&& !(block.getState() instanceof Hopper)
-				&& !(block.getState() instanceof Dropper)
-				&& !(block.getState() instanceof Dispenser)
-				&& !(block.getState() instanceof BrewingStand)
-				)
+				&& !(block.getState() instanceof Barrel))
 		{
 			//debug(event.getPlayer(), "BlockBreak !instanceof Chest...");
 			return;

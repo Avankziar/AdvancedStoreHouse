@@ -24,8 +24,10 @@ import org.bukkit.persistence.PersistentDataType;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
+import main.java.me.avankziar.general.handler.TimeHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
+import main.java.me.avankziar.general.objects.DistributionChest.PriorityType;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
@@ -65,7 +67,7 @@ public class ItemGenerator
 		if(sc != null)
 		{
 			name = itm.getString(ID+".Name")
-					.replace("%chestname%", sc.getChestName())
+					.replace("%name%", sc.getChestName())
 					.replace("%id%", String.valueOf(sc.getId()));
 		}
 		im.setDisplayName(ChatApi.tl(name));
@@ -103,10 +105,10 @@ public class ItemGenerator
 				desc = (ArrayList<String>) replace(itm.getStringList(ID+".Lore"), dc, sc);
 			} else
 			{
-				desc = (ArrayList<String>) itm.getStringList(ID+".Lore");
+				desc = (ArrayList<String>) color(itm.getStringList(ID+".Lore"));
 			}
 		}
-		im.setLore(color(desc));
+		im.setLore(desc);
 		
 		NamespacedKey gt = new NamespacedKey(AdvancedStoreHouse.getPlugin(), "guitype");
 		PersistentDataContainer pdc = im.getPersistentDataContainer();
@@ -122,7 +124,7 @@ public class ItemGenerator
 		ArrayList<String> desc = new ArrayList<String>();
 		for(String s : lore)
 		{
-			s = replace(s, dc, sc);
+			s = ChatApi.tl(replace(s, dc, sc));
 			desc.add(s);
 		}
 		return desc;
@@ -149,14 +151,15 @@ public class ItemGenerator
 			st = s
 			.replace("%name%", dc.getChestName())
 			.replace("%id%", String.valueOf(dc.getId()))
-			.replace("%creationdate%", String.valueOf(dc.getCreationDate()))
-			.replace("%prioritytype%", dc.getPriorityType().toString())
-			.replace("%prioritynumber%", String.valueOf(dc.getPriorityNumber()))
-			.replace("%normalpriority%", String.valueOf(dc.isNormalPriority()))
-			.replace("%automaticdistribution%", String.valueOf(dc.isAutomaticDistribution()))
-			.replace("%randomdistribution%", String.valueOf(dc.isDistributeRandom()))
+			.replace("%creationdate%", TimeHandler.getTime(dc.getCreationDate()))
+			.replace("%type%", getType(dc.getPriorityType()))
+			.replace("%status%", getSort(dc.isNormalPriority()))
+			.replace("%number%", String.valueOf(dc.getPriorityNumber()))
+			.replace("%automaticdistribution%", getColor(dc.isAutomaticDistribution()))
+			.replace("%random%", getColor(dc.isDistributeRandom()))
 			.replace("%member%", "["+String.join(" ", list)+"]")
-			.replace("%location%", dc.getServer()+"-"+dc.getWorld()+"-"+dc.getBlockX()+"|"+dc.getBlockY()+"|"+dc.getBlockZ()+"|")
+			.replace("%locationone%", dc.getServer()+"&b>>&r"+dc.getWorld())
+			.replace("%locationtwo%", "&r"+dc.getBlockX()+"&7|&r"+dc.getBlockY()+"&7|&r"+dc.getBlockZ())
 			.replace("%storagechestamount%", String.valueOf(storagechestamount))
 			.replace("%storagechestendamount%", String.valueOf(storagechestamountend));
 		}
@@ -166,17 +169,21 @@ public class ItemGenerator
 			.replace("%name%", sc.getChestName())
 			.replace("%id%", String.valueOf(sc.getId()))
 			.replace("%owner%", Utility.convertUUIDToName(sc.getOwneruuid()))
-			.replace("%creationdate%", String.valueOf(sc.getCreationDate()))
+			.replace("%creationdate%", TimeHandler.getTime(sc.getCreationDate()))
 			.replace("%distributionchestid%", String.valueOf(sc.getDistributionChestID()))
+			.replace("%material%", getColor(sc.isOptionMaterial()))
 			.replace("%priority%", String.valueOf(sc.getPriorityNumber()))
-			.replace("%isendstorage%", String.valueOf(sc.isEndstorage()))
-			.replace("%isvoid%", String.valueOf(sc.isOptionVoid()))
-			.replace("%isdurability%", String.valueOf(sc.isOptionDurability()))
+			.replace("%isendstorage%", getColor(sc.isEndstorage()))
+			.replace("%isvoid%", getColor(sc.isOptionVoid()))
+			.replace("%isdurability%", getColor(sc.isOptionDurability()))
+			.replace("%durabilitytype%", getThan(sc.getDurabilityType()))
 			.replace("%durability%", String.valueOf(sc.getDurability()))
-			.replace("%isenchantment%", String.valueOf(sc.isOptionEnchantment()))
-			.replace("%isrepair%", String.valueOf(sc.isOptionRepair()))
+			.replace("%isenchantment%", getColor(sc.isOptionEnchantment()))
+			.replace("%isrepair%", getColor(sc.isOptionRepair()))
+			.replace("%repairtype%", getThan(sc.getRepairType()))
 			.replace("%repaircost%", String.valueOf(sc.getRepairCost()))
-			.replace("%location%", sc.getServer()+"-"+sc.getWorld()+"-"+sc.getBlockX()+"|"+sc.getBlockY()+"|"+sc.getBlockZ()+"|");
+			.replace("%locationone%", sc.getServer()+"&b>>&r"+sc.getWorld())
+			.replace("%locationtwo%", "&r"+sc.getBlockX()+"&7|&r"+sc.getBlockY()+"&7|&r"+sc.getBlockZ());
 		}
 		return st;
 	}
@@ -206,6 +213,52 @@ public class ItemGenerator
         skull.setItemMeta(skullMeta);
         return skull;
     }
+	
+	private static String getColor(boolean boo)
+	{
+		if(boo)
+		{
+			return "&a✔";
+		} else
+		{
+			return "&c✖";
+		}
+	}
+	
+	private static String getSort(boolean boo)
+	{
+		if(boo)
+		{
+			return "&a↗";
+		} else
+		{
+			return "&c↘";
+		}
+	}
+	
+	private static String getType(PriorityType pt)
+	{
+		switch(pt)
+		{
+		case PLACE:
+			return "&d»۝«";
+		case SWITCH:
+			return "&b↔";
+		}
+		return "&c〒";
+	}
+	
+	private static String getThan(StorageChest.Type type)
+	{
+		switch(type)
+		{
+		case LARGERTHAN:
+			return "&c>";
+		case LESSTHAN:
+			return "&a<";
+		}
+		return "&c〒";
+	}
 	
 	private static List<String> color(List<String> lore)
 	{

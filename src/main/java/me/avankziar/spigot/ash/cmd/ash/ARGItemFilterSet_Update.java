@@ -46,7 +46,8 @@ public class ARGItemFilterSet_Update extends ArgumentModule
 		}
 		ItemFilterSet ifs = user.getItemFilterSet();
 		ItemFilterSet newifs = null;
-		if(!ifs.getOwneruuid().equals(user.getUUID()) && !player.hasPermission(Utility.PERMBYPASSITEMFILTERSETUPDATE))
+		if(!ifs.getOwneruuid().equals(user.getUUID()) && !player.hasPermission(Utility.PERMBYPASSITEMFILTERSETUPDATE)
+				)
 		{
 			int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.ITEMFILTERSET, "`owner_uuid` = ?", user.getUUID());
 			if(!PermissionHandler.canCreate(player, Utility.PERMBYPASSITEMFILTERSET, Utility.PERMCOUNTITEMFILTERSET,
@@ -60,12 +61,17 @@ public class ARGItemFilterSet_Update extends ArgumentModule
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetUpdate.NewOne")));
 			newifs.setID(((ItemFilterSet) plugin.getMysqlHandler().getData(MysqlHandler.Type.ITEMFILTERSET,
 					"`itemfiltersetname` = ? AND `owner_uuid` = ?", newifs.getName(), user.getUUID())).getID());
+			user.setItemFilterSet(newifs);
+			user.setMode(PluginUser.Mode.CREATEITEMFILTERSET);
+		} else
+		{
+			user.setMode(PluginUser.Mode.CHANGEITEMFILTERSET);
 		}
-		user.setMode(PluginUser.Mode.CHANGEITEMFILTERSET);
-		user.setItemFilterSet(newifs);
 		PluginUserHandler.addUser(user);
-		Inventory inv = Bukkit.createInventory(null, 6*9, "ItemFilter: "+ifs.getName()+"_Copy");
-		inv.setContents(newifs.getContents());
+		Inventory inv = Bukkit.createInventory(null, 6*9, 
+				ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSet.InventoryName")
+						.replace("%name%", user.getItemFilterSet().getName())));
+		inv.setContents(user.getItemFilterSet().getContents());
 		player.openInventory(inv);
 		return;
 	}

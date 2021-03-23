@@ -88,6 +88,14 @@ public class ARGDistributionChest_Info extends ArgumentModule
 				.replace("%auto%", String.valueOf(dc.isAutomaticDistribution()))));
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.NormalPriority")
 				.replace("%nprio%",  String.valueOf(dc.isNormalPriority()))));
+		
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.PriorityType")
+				.replace("%priotype%",  String.valueOf(dc.getPriorityType()))));
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.PriorityNumber")
+				.replace("%prion%",  String.valueOf(dc.getPriorityNumber()))));
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Random")
+				.replace("%random%",  String.valueOf(dc.isDistributeRandom()))));
+		
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.SChestAmount")+storagechestamount));
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.SChestAmountEnd")+storagechestamountend));
 		return;

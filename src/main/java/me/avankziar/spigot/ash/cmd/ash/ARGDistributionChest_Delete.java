@@ -61,7 +61,7 @@ public class ARGDistributionChest_Delete extends ArgumentModule
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.DChestDeleted")
 				.replace("%name%", dc.getChestName())
 				.replace("%id%", String.valueOf(dc.getId()))));
-		int count = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST, 
+		final int count = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST, 
 				"`distributionchestid` = ?", dc.getId());
 		plugin.getMysqlHandler().deleteData(MysqlHandler.Type.STORAGECHEST, "`distributionchestid` = ?", dc.getId());
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.LinkedSChestDeleted")

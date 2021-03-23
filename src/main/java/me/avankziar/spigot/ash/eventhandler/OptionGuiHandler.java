@@ -3,7 +3,10 @@ package main.java.me.avankziar.spigot.ash.eventhandler;
 import java.io.IOException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -20,6 +23,7 @@ import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.DistributionChest.PriorityType;
+import main.java.me.avankziar.general.objects.PluginUser.Mode;
 import main.java.me.avankziar.general.objects.ItemFilterSet;
 import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
@@ -112,10 +116,12 @@ public class OptionGuiHandler
 							.replace("%id%", String.valueOf(dc.getId()))
 							.replace("%name%", dc.getChestName())));
 		}
+		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
 			if(yml.getString(slot+".Name") == null)
 			{
+				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
@@ -135,9 +141,17 @@ public class OptionGuiHandler
 				inventory.setItem(slot, is);
 			}
 		}
-		if(player.getOpenInventory() == null)
+		user.setMode(Mode.OPTIONGUI);
+		PluginUserHandler.addUser(user);
+		if(inv == null)
 		{
-			player.openInventory(inv);
+			player.openInventory(inventory);
+		} else
+		{
+			for(int slot = 0; slot < 54; slot++)
+			{
+				inv.setItem(slot, inventory.getItem(slot));
+			}
 		}
 	}
 	
@@ -176,10 +190,12 @@ public class OptionGuiHandler
 							.replace("%id%", String.valueOf(dc.getId()))
 							.replace("%name%", dc.getChestName())));
 		}
+		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
 			if(yml.getString(slot+".Name") == null)
 			{
+				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
@@ -192,9 +208,15 @@ public class OptionGuiHandler
 				inventory.setItem(slot, is);
 			}
 		}
-		if(player.getOpenInventory() == null)
+		if(inv == null)
 		{
-			player.openInventory(inv);
+			player.openInventory(inventory);
+		} else
+		{
+			for(int slot = 0; slot < 54; slot++)
+			{
+				inv.setItem(slot, inventory.getItem(slot));
+			}
 		}
 	}
 	
@@ -204,11 +226,13 @@ public class OptionGuiHandler
 				Type.DISTRIBUTIONCHEST, "`id` = ?", user.getDistributionChestID());
 		event.setCancelled(true);
 		event.setResult(Result.DENY);
+		final Location loc = player.getLocation();
 		switch(slot)
 		{
 		default:
 			break;
 		case 10:
+			guiSound(loc);
 			player.closeInventory();
 			player.spigot().sendMessage(ChatApi.clickEvent(
 					AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Gui.Dc.Chestname"),
@@ -216,6 +240,7 @@ public class OptionGuiHandler
 					PluginSettings.settings.getCommands().get(KeyHandler.DC_CHESTNAME)));
 			break;
 		case 16:
+			guiSound(loc);
 			if(dc.isNormalPriority())
 			{
 				dc.setNormalPriority(false);
@@ -227,6 +252,7 @@ public class OptionGuiHandler
 			openDcGuiMain(player, user, dc, event.getClickedInventory());
 			break;
 		case 25:
+			guiSound(loc);
 			if(dc.getPriorityType() == PriorityType.SWITCH)
 			{
 				dc.setPriorityType(PriorityType.PLACE);
@@ -238,6 +264,7 @@ public class OptionGuiHandler
 			openDcGuiMain(player, user, dc, event.getClickedInventory());
 			break;
 		case 28:
+			guiSound(loc);
 			if(dc.isAutomaticDistribution())
 			{
 				dc.setAutomaticDistribution(false);
@@ -249,9 +276,11 @@ public class OptionGuiHandler
 			openDcGuiMain(player, user, dc, event.getClickedInventory());
 			break;
 		case 34:
+			guiSound(loc);
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 46:
+			guiSound(loc);
 			if(player.hasPermission(Utility.PERMBYPASSRANDOM))
 			{
 				if(dc.isDistributeRandom())
@@ -266,6 +295,7 @@ public class OptionGuiHandler
 			}
 			break;
 		case 52:
+			guiSound(loc);
 			player.closeInventory();
 			player.spigot().sendMessage(ChatApi.clickEvent(
 					AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Gui.Dc.Member"),
@@ -279,6 +309,9 @@ public class OptionGuiHandler
 	{
 		final DistributionChest dc = (DistributionChest) AdvancedStoreHouse.getPlugin().getMysqlHandler().getData(
 				Type.DISTRIBUTIONCHEST, "`id` = ?", user.getDistributionChestID());
+		event.setCancelled(true);
+		event.setResult(Result.DENY);
+		final Location loc = player.getLocation();
 		/*
 		 * Slot 4 Alle Infos zur Dc Prioritätzahl
 		 * Slot 13 Num C
@@ -300,16 +333,19 @@ public class OptionGuiHandler
 		default:
 			break;
 		case 13:
+			guiSound(loc);
 			dc.setPriorityNumber(0);
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 14:
+			guiSound(loc);
 			dc.setPriorityNumber(dc.getPriorityNumber()*-1);
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 49:
+			guiSound(loc);
 			if(dc.getPriorityNumber() != 0)
 			{
 				dc.setPriorityNumber(addInt(dc.getPriorityNumber(), 0));
@@ -318,51 +354,61 @@ public class OptionGuiHandler
 			}
 			break;
 		case 39:
+			guiSound(loc);
 			dc.setPriorityNumber(addInt(dc.getPriorityNumber(), 1));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 40:
+			guiSound(loc);
 			dc.setPriorityNumber(addInt(dc.getPriorityNumber(), 2));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 41:
+			guiSound(loc);
 			dc.setPriorityNumber(addInt(dc.getPriorityNumber(), 3));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 30:
+			guiSound(loc);
 			dc.setPriorityNumber(addInt(dc.getPriorityNumber(), 4));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 31:
+			guiSound(loc);
 			dc.setPriorityNumber(addInt(dc.getPriorityNumber(), 5));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 32:
+			guiSound(loc);
 			dc.setPriorityNumber(addInt(dc.getPriorityNumber(), 6));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 21:
+			guiSound(loc);
 			dc.setPriorityNumber(addInt(dc.getPriorityNumber(), 7));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 22:
+			guiSound(loc);
 			dc.setPriorityNumber(addInt(dc.getPriorityNumber(), 8));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 23:
+			guiSound(loc);
 			dc.setPriorityNumber(addInt(dc.getPriorityNumber(), 9));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			openDcGuiNumPad(player, user, dc, event.getClickedInventory());
 			break;
 		case 53:
+			guiSound(loc);
 			openDcGuiMain(player, user, dc, event.getClickedInventory());
 			break;
 		}
@@ -402,10 +448,12 @@ public class OptionGuiHandler
 							.replace("%id%", String.valueOf(sc.getId()))
 							.replace("%name%", sc.getChestName())));
 		}
+		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
 			if(yml.getString(slot+".Name") == null)
 			{
+				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
@@ -418,9 +466,17 @@ public class OptionGuiHandler
 				inventory.setItem(slot, is);
 			}
 		}
-		if(player.getOpenInventory() == null)
+		user.setMode(Mode.OPTIONGUI);
+		PluginUserHandler.addUser(user);
+		if(inv == null)
 		{
-			player.openInventory(inv);
+			player.openInventory(inventory);
+		} else
+		{
+			for(int slot = 0; slot < 54; slot++)
+			{
+				inv.setItem(slot, inventory.getItem(slot));
+			}
 		}
 	}
 	
@@ -430,11 +486,13 @@ public class OptionGuiHandler
 				Type.STORAGECHEST, "`id` = ?", user.getStorageChestID());
 		event.setCancelled(true);
 		event.setResult(Result.DENY);
+		final Location loc = player.getLocation();
 		switch(slot)
 		{
 		default:
 			break;
 		case 11:
+			guiSound(loc);
 			player.closeInventory();
 			player.spigot().sendMessage(ChatApi.clickEvent(
 					AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Gui.Sc.Chestname"),
@@ -442,6 +500,7 @@ public class OptionGuiHandler
 					PluginSettings.settings.getCommands().get(KeyHandler.SC_CHESTNAME)));
 			break;
 		case 12:
+			guiSound(loc);
 			if(sc.isEndstorage())
 			{
 				sc.setEndstorage(false);
@@ -453,9 +512,11 @@ public class OptionGuiHandler
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		case 14:
+			guiSound(loc);
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 15:
+			guiSound(loc);
 			if(sc.isOptionVoid())
 			{
 				sc.setOptionVoid(false);
@@ -467,6 +528,7 @@ public class OptionGuiHandler
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		case 19:
+			guiSound(loc);
 			if(sc.isOptionDurability())
 			{
 				sc.setOptionDurability(false);
@@ -478,6 +540,7 @@ public class OptionGuiHandler
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		case 28:
+			guiSound(loc);
 			if(sc.getDurabilityType() == StorageChest.Type.LESSTHAN)
 			{
 				sc.setDurabilityType(StorageChest.Type.LARGERTHAN);
@@ -489,9 +552,11 @@ public class OptionGuiHandler
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		case 37:
+			guiSound(loc);
 			openScGuiDurabilityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 25:
+			guiSound(loc);
 			if(sc.isOptionRepair())
 			{
 				sc.setOptionRepair(false);
@@ -503,6 +568,7 @@ public class OptionGuiHandler
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		case 34:
+			guiSound(loc);
 			if(sc.getRepairType() == StorageChest.Type.LESSTHAN)
 			{
 				sc.setRepairType(StorageChest.Type.LARGERTHAN);
@@ -514,9 +580,11 @@ public class OptionGuiHandler
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		case 43:
+			guiSound(loc);
 			openScGuiRepairNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 39:
+			guiSound(loc);
 			if(sc.isOptionEnchantment())
 			{
 				sc.setOptionEnchantment(false);
@@ -528,6 +596,7 @@ public class OptionGuiHandler
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		case 48:
+			guiSound(loc);
 			if(sc.isOptionMaterial())
 			{
 				sc.setOptionMaterial(false);
@@ -539,10 +608,12 @@ public class OptionGuiHandler
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		case 41:
+			guiSound(loc);
 			player.closeInventory();
 			openStorageChestItemFilterSet(AdvancedStoreHouse.getPlugin(), player, user, sc.getId());
 			break;
 		case 50:
+			guiSound(loc);
 			ItemFilterSet ifs = user.getItemFilterSet();
 			if(ifs == null || ifs.getContents() == null)
 			{
@@ -584,18 +655,16 @@ public class OptionGuiHandler
 					.replace("%file%", type.toString())));
 			return;
 		}
-		Inventory inventory = inv;
-		if(inventory == null)
-		{
-			inventory = Bukkit.createInventory(null, 6*9, 
-					ChatApi.tl(plugin.getYamlHandler().getLang().getString("Gui.Base.ScTitle")
-							.replace("%id%", String.valueOf(sc.getId()))
-							.replace("%name%", sc.getChestName())));
-		}
+		Inventory inventory = Bukkit.createInventory(null, 6*9, 
+				ChatApi.tl(plugin.getYamlHandler().getLang().getString("Gui.Base.ScTitle")
+						.replace("%id%", String.valueOf(sc.getId()))
+						.replace("%name%", sc.getChestName())));
+		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
 			if(yml.getString(slot+".Name") == null)
 			{
+				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
@@ -608,9 +677,15 @@ public class OptionGuiHandler
 				inventory.setItem(slot, is);
 			}
 		}
-		if(player.getOpenInventory() == null)
+		if(inv == null)
 		{
-			player.openInventory(inv);
+			player.openInventory(inventory);
+		} else
+		{
+			for(int slot = 0; slot < 54; slot++)
+			{
+				inv.setItem(slot, inventory.getItem(slot));
+			}
 		}
 	}
 	
@@ -618,6 +693,9 @@ public class OptionGuiHandler
 	{
 		final StorageChest sc = (StorageChest) AdvancedStoreHouse.getPlugin().getMysqlHandler().getData(
 				Type.STORAGECHEST, "`id` = ?", user.getStorageChestID());
+		event.setCancelled(true);
+		event.setResult(Result.DENY);
+		final Location loc = player.getLocation();
 		/*
 		 * Slot 4 Alle Infos zur Dc Prioritätzahl
 		 * Slot 13 Num C
@@ -639,16 +717,19 @@ public class OptionGuiHandler
 		default:
 			break;
 		case 13:
+			guiSound(loc);
 			sc.setPriorityNumber(0);
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 14:
+			guiSound(loc);
 			sc.setPriorityNumber(sc.getPriorityNumber()*-1);
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 49:
+			guiSound(loc);
 			if(sc.getPriorityNumber() != 0)
 			{
 				sc.setPriorityNumber(addInt(sc.getPriorityNumber(), 0));
@@ -657,51 +738,61 @@ public class OptionGuiHandler
 			}
 			break;
 		case 39:
+			guiSound(loc);
 			sc.setPriorityNumber(addInt(sc.getPriorityNumber(), 1));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 40:
+			guiSound(loc);
 			sc.setPriorityNumber(addInt(sc.getPriorityNumber(), 2));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 41:
+			guiSound(loc);
 			sc.setPriorityNumber(addInt(sc.getPriorityNumber(), 3));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 30:
+			guiSound(loc);
 			sc.setPriorityNumber(addInt(sc.getPriorityNumber(), 4));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 31:
+			guiSound(loc);
 			sc.setPriorityNumber(addInt(sc.getPriorityNumber(), 5));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 32:
+			guiSound(loc);
 			sc.setPriorityNumber(addInt(sc.getPriorityNumber(), 6));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 21:
+			guiSound(loc);
 			sc.setPriorityNumber(addInt(sc.getPriorityNumber(), 7));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 22:
+			guiSound(loc);
 			sc.setPriorityNumber(addInt(sc.getPriorityNumber(), 8));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 23:
+			guiSound(loc);
 			sc.setPriorityNumber(addInt(sc.getPriorityNumber(), 9));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiPriorityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 53:
+			guiSound(loc);
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		}
@@ -741,10 +832,12 @@ public class OptionGuiHandler
 							.replace("%id%", String.valueOf(sc.getId()))
 							.replace("%name%", sc.getChestName())));
 		}
+		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
 			if(yml.getString(slot+".Name") == null)
 			{
+				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
@@ -757,9 +850,15 @@ public class OptionGuiHandler
 				inventory.setItem(slot, is);
 			}
 		}
-		if(player.getOpenInventory() == null)
+		if(inv == null)
 		{
-			player.openInventory(inv);
+			player.openInventory(inventory);
+		} else
+		{
+			for(int slot = 0; slot < 54; slot++)
+			{
+				inv.setItem(slot, inventory.getItem(slot));
+			}
 		}
 	}
 	
@@ -767,6 +866,9 @@ public class OptionGuiHandler
 	{
 		final StorageChest sc = (StorageChest) AdvancedStoreHouse.getPlugin().getMysqlHandler().getData(
 				Type.STORAGECHEST, "`id` = ?", user.getStorageChestID());
+		event.setCancelled(true);
+		event.setResult(Result.DENY);
+		final Location loc = player.getLocation();
 		/*
 		 * Slot 4 Alle Infos zur Sc Haltbarkeit
 		 * Slot 13 Num C
@@ -787,11 +889,13 @@ public class OptionGuiHandler
 		default:
 			break;
 		case 13:
+			guiSound(loc);
 			sc.setDurability(0);
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiDurabilityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 49:
+			guiSound(loc);
 			if(sc.getDurability() != 0)
 			{
 				sc.setDurability(addIntPercent(sc.getDurability(), 0));
@@ -800,31 +904,37 @@ public class OptionGuiHandler
 			}
 			break;
 		case 39:
+			guiSound(loc);
 			sc.setDurability(addIntPercent(sc.getDurability(), 1));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiDurabilityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 40:
+			guiSound(loc);
 			sc.setDurability(addIntPercent(sc.getDurability(), 2));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiDurabilityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 41:
+			guiSound(loc);
 			sc.setDurability(addIntPercent(sc.getDurability(), 3));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiDurabilityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 30:
+			guiSound(loc);
 			sc.setDurability(addIntPercent(sc.getDurability(), 4));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiDurabilityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 31:
+			guiSound(loc);
 			sc.setDurability(addIntPercent(sc.getDurability(), 5));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiDurabilityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 32:
+			guiSound(loc);
 			sc.setDurability(addIntPercent(sc.getDurability(), 6));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiDurabilityNumPad(player, user, sc, event.getClickedInventory());
@@ -835,16 +945,19 @@ public class OptionGuiHandler
 			openScGuiDurabilityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 22:
+			guiSound(loc);
 			sc.setDurability(addIntPercent(sc.getDurability(), 8));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiDurabilityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 23:
+			guiSound(loc);
 			sc.setDurability(addIntPercent(sc.getDurability(), 9));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiDurabilityNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 53:
+			guiSound(loc);
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		}
@@ -884,10 +997,12 @@ public class OptionGuiHandler
 							.replace("%id%", String.valueOf(sc.getId()))
 							.replace("%name%", sc.getChestName())));
 		}
+		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
 			if(yml.getString(slot+".Name") == null)
 			{
+				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
@@ -900,9 +1015,15 @@ public class OptionGuiHandler
 				inventory.setItem(slot, is);
 			}
 		}
-		if(player.getOpenInventory() == null)
+		if(inv == null)
 		{
-			player.openInventory(inv);
+			player.openInventory(inventory);
+		} else
+		{
+			for(int slot = 0; slot < 54; slot++)
+			{
+				inv.setItem(slot, inventory.getItem(slot));
+			}
 		}
 	}
 	
@@ -910,6 +1031,9 @@ public class OptionGuiHandler
 	{
 		final StorageChest sc = (StorageChest) AdvancedStoreHouse.getPlugin().getMysqlHandler().getData(
 				Type.STORAGECHEST, "`id` = ?", user.getStorageChestID());
+		event.setCancelled(true);
+		event.setResult(Result.DENY);
+		final Location loc = player.getLocation();
 		/*
 		 * Slot 4 Alle Infos zur Sc Haltbarkeit
 		 * Slot 13 Num C
@@ -930,11 +1054,13 @@ public class OptionGuiHandler
 		default:
 			break;
 		case 13:
+			guiSound(loc);
 			sc.setRepairCost(0);
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiRepairNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 49:
+			guiSound(loc);
 			if(sc.getRepairCost() != 0)
 			{
 				sc.setRepairCost(addInt(sc.getRepairCost(), 0));
@@ -943,51 +1069,61 @@ public class OptionGuiHandler
 			}
 			break;
 		case 39:
+			guiSound(loc);
 			sc.setRepairCost(addInt(sc.getRepairCost(), 1));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiRepairNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 40:
+			guiSound(loc);
 			sc.setRepairCost(addInt(sc.getRepairCost(), 2));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiRepairNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 41:
+			guiSound(loc);
 			sc.setRepairCost(addInt(sc.getRepairCost(), 3));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiRepairNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 30:
+			guiSound(loc);
 			sc.setRepairCost(addInt(sc.getRepairCost(), 4));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiRepairNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 31:
+			guiSound(loc);
 			sc.setRepairCost(addInt(sc.getRepairCost(), 5));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiRepairNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 32:
+			guiSound(loc);
 			sc.setRepairCost(addInt(sc.getRepairCost(), 6));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiRepairNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 21:
+			guiSound(loc);
 			sc.setRepairCost(addInt(sc.getRepairCost(), 7));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiRepairNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 22:
+			guiSound(loc);
 			sc.setRepairCost(addInt(sc.getRepairCost(), 8));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiRepairNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 23:
+			guiSound(loc);
 			sc.setRepairCost(addInt(sc.getRepairCost(), 9));
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			openScGuiRepairNumPad(player, user, sc, event.getClickedInventory());
 			break;
 		case 53:
+			guiSound(loc);
 			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		}
@@ -1012,6 +1148,14 @@ public class OptionGuiHandler
 			return 0;
 		}
 		return i;
+	}
+	
+	public void guiSound(Location loc)
+	{
+		loc.getWorld().playSound(loc,
+				Sound.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig()
+						.getString("GUISound", "BLOCK_ANCIENT_DEBRIS_HIT").toUpperCase()),
+				3.0F, 0.5F);
 	}
 	
 	public void openStorageChestItemFilterSet(AdvancedStoreHouse plugin, Player player, PluginUser user,
@@ -1049,11 +1193,11 @@ public class OptionGuiHandler
 		user.setStorageChestID(sc.getId());
 		PluginUserHandler.addUser(user);
 		Inventory inv = Bukkit.createInventory(null, 6*9, 
-				plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
+				ChatApi.tl(plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
 				.replace("%p%", String.valueOf(sc.getPriorityNumber()))
 				.replace("%name%", name)
 				.replace("%dcid%", id)
-				.replace("%id%", String.valueOf(sc.getId())));
+				.replace("%id%", String.valueOf(sc.getId()))));
 		inv.setContents(sc.getContents());
 		player.openInventory(inv);
 		return;

@@ -51,7 +51,7 @@ public class BackgroundTask
 	private static void debug(String s)
 	{
 		boolean bo = false;
-		if(bo)
+ 		if(bo)
 		{
 			AdvancedStoreHouse.log.info(s);
 			for(Player player : Bukkit.getOnlinePlayers())
@@ -110,7 +110,6 @@ public class BackgroundTask
 	{
 		new BukkitRunnable()
 		{
-			
 			@Override
 			public void run()
 			{
@@ -127,7 +126,7 @@ public class BackgroundTask
 					//plugin.getLogger().info("==> Neuer Zyklus der Verteilung beginnt! Milli: "+now);
 					//plugin.getLogger().info("=> Tatsächliche Zeit zwischen Zyklus: "+erg);
 					//plugin.getLogger().info("=> Errechnete Zeit zwischen Zyklus: "+BackgroundTask.schedularTotalTicks*20);
-					int dcamount = 1 + plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST,
+					int dcamount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST,
 							"`server` = ? AND `automaticdistribution` = ?", PluginSettings.settings.getServer(), true);
 					
 					long than = System.currentTimeMillis() + BackgroundTask.schedularTotalTicks * 20;
@@ -147,9 +146,18 @@ public class BackgroundTask
 					{
 						dcList = ConvertHandler.convertListII(
 								plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.DISTRIBUTIONCHEST,
-										"`id`", false, "`automaticdistribution` = ? AND `server` = ?", true, PluginSettings.settings.getServer()));
+										"`id`", false, "`automaticdistribution` = ? AND `server` = ?", true,
+										PluginSettings.settings.getServer()));
+						debug("Server: "+PluginSettings.settings.getServer());
 					} catch (IOException e) {}
-					long schedularTicksPerDc = ((scamount + indirectTickPause) / dcamount) + minTickPerDc;
+					long schedularTicksPerDc = 0;
+					if(dcamount <= 0)
+					{
+						schedularTicksPerDc = ((scamount + indirectTickPause)) + minTickPerDc;
+					} else
+					{
+						schedularTicksPerDc = ((scamount + indirectTickPause) / dcamount) + minTickPerDc;
+					}
 					debug("=> dclist: "+dcList.size()+" | scamount: "+scamount+" | indirectTickPause: "+indirectTickPause
 							+" | dcamount:"+dcamount+" | minTickPerDc: "+minTickPerDc);
 					BackgroundTask.schedularTicksPerDc = (schedularTicksPerDc*10)/25;
@@ -161,6 +169,11 @@ public class BackgroundTask
 	
 	private void runDistribution(final ArrayList<DistributionChest> dcList)
 	{
+		if(dcList.size() <= 0)
+		{
+			debug("AutoDistribution: List is empty");
+			return;
+		}
 		new BukkitRunnable()
 		{
 			int i = 0;
@@ -326,6 +339,7 @@ public class BackgroundTask
 						continue;
 					}
 					inv.clear();
+					debug("VoidChest "+sc.getId()+" | "+sc.getChestName()+" Inventory cleared");
 				}
 				lastindex += 10;
 			}

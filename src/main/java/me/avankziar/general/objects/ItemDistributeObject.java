@@ -74,7 +74,7 @@ public class ItemDistributeObject
 	
 	public void chestDistribute(AdvancedStoreHouse plugin, Inventory inventory, 
 			ArrayList<StorageChest> prioList, ArrayList<StorageChest> endList,
-			ItemStack[] cloneInvyL, ItemStack[] cloneInvyR, String server, boolean isRandom)
+			ItemStack[] cloneInvyL, ItemStack[] cloneInvyR, String server, boolean isRandom, String debug)
 	{
 		new BukkitRunnable()
 		{
@@ -98,7 +98,7 @@ public class ItemDistributeObject
 						StorageChest sc = prioList.get(i);
 						if(ChestHandler.isContentEmpty(cloneInvL) && ChestHandler.isContentEmpty(cloneInvR))
 						{
-							debug("distribution Content is Empty");
+							debug(debug+"distribution Content is Empty");
 							i = prioList.size();
 							continue;
 						}
@@ -106,19 +106,19 @@ public class ItemDistributeObject
 								sc.getBlockX(), sc.getBlockY(), sc.getBlockZ()).getBlock();
 						if(block == null)
 						{
-							debug("distribution block == null");
+							debug(debug+"distribution block == null");
 							i++;
 							continue;
 						}
 						if(block.getState() == null)
 						{
-							debug("distribution block.State == null");
+							debug(debug+"distribution block.State == null");
 							i++;
 							continue;
 						}
 						if(!(block.getState() instanceof Container))
 						{
-							debug("distribution not Container");
+							debug(debug+"distribution not Container");
 							i++;
 							continue;
 						}
@@ -134,7 +134,7 @@ public class ItemDistributeObject
 						{
 							if(ChestHandler.isDistributionChestOnCooldown(plugin, chaindc))
 							{
-								debug("StorageChest is Distributionchest and on cooldown!");
+								debug(debug+"StorageChest is Distributionchest and on cooldown!");
 								i++;
 								continue;
 							}
@@ -143,11 +143,11 @@ public class ItemDistributeObject
 						Inventory cinv = container.getInventory();
 						if(cinv == null)
 						{
-							debug("distribution cinv == null");
+							debug(debug+"distribution cinv == null");
 							i++;
 							continue;
 						}
-						debug("distribution Normal Storage start i = "+i); //0
+						debug(debug+"distribution Normal Storage start i = "+i);
 						cloneInvL = DistributionHandler.distribute(inventory, cinv, sc.getContents(), cloneInvL, false, isRandom,
 								sc.isOptionDurability(), sc.getDurabilityType(), sc.getDurability(),
 								sc.isOptionRepair(), sc.getRepairType(), sc.getRepairCost(),
@@ -162,7 +162,7 @@ public class ItemDistributeObject
 						lj = true;
 						if(ChestHandler.isContentEmpty(cloneInvL) && ChestHandler.isContentEmpty(cloneInvR))
 						{
-							debug("distribution Content is Empty");
+							debug(debug+"distribution Content is Empty");
 							setItemsLeft(cloneInvyL);
 							setItemsRight(cloneInvyR);
 							setFinish(true);
@@ -174,19 +174,19 @@ public class ItemDistributeObject
 								sc.getBlockX(), sc.getBlockY(), sc.getBlockZ()).getBlock();
 						if(block == null)
 						{
-							debug("distribution block == null");
+							debug(debug+"distribution block == null");
 							j++;
 							continue;
 						}
 						if(block.getState() == null)
 						{
-							debug("distribution block.State == null");
+							debug(debug+"distribution block.State == null");
 							j++;
 							continue;
 						}
 						if(!(block.getState() instanceof Container))
 						{
-							debug("distribution not Container");
+							debug(debug+"distribution not Container");
 							j++;
 							continue;
 						}
@@ -202,7 +202,7 @@ public class ItemDistributeObject
 						{
 							if(ChestHandler.isDistributionChestOnCooldown(plugin, chaindc))
 							{
-								debug("StorageChest is Distributionchest and on cooldown!");
+								debug(debug+"StorageChest is Distributionchest and on cooldown!");
 								i++;
 								continue;
 							}
@@ -211,23 +211,23 @@ public class ItemDistributeObject
 						Inventory cinv = container.getInventory();
 						if(cinv == null)
 						{
-							debug("distribution cinv == null");
+							debug(debug+"distribution cinv == null");
 							j++;
 							continue;
 						}
-						debug("distribution EndStorage start j = "+j);
-						cloneInvL = DistributionHandler.distribute(inventory, cinv, sc.getContents(), cloneInvL, false, isRandom,
+						debug(debug+"distribution EndStorage start j = "+j);
+						cloneInvL = DistributionHandler.distribute(inventory, cinv, sc.getContents(), cloneInvL, true, isRandom,
 								sc.isOptionDurability(), sc.getDurabilityType(), sc.getDurability(),
 								sc.isOptionRepair(), sc.getRepairType(), sc.getRepairCost(),
 								sc.isOptionEnchantment(), sc.isOptionMaterial());
-						cloneInvR = DistributionHandler.distribute(inventory, cinv, sc.getContents(), cloneInvR, false, isRandom,
+						cloneInvR = DistributionHandler.distribute(inventory, cinv, sc.getContents(), cloneInvR, true, isRandom,
 								sc.isOptionDurability(), sc.getDurabilityType(), sc.getDurability(),
 								sc.isOptionRepair(), sc.getRepairType(), sc.getRepairCost(),
 								sc.isOptionEnchantment(), sc.isOptionMaterial());
 						j++;
 					} else
 					{
-						debug("distribution not Removed Items set back");
+						debug(debug+"distribution not Removed Items set back");
 						cancel();
 						break;
 					}

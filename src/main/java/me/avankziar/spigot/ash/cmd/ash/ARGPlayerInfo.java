@@ -11,11 +11,13 @@ import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.PluginUser.Mode;
+import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentConstructor;
 import main.java.me.avankziar.spigot.ash.cmd.tree.ArgumentModule;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
+import main.java.me.avankziar.spigot.ash.database.MysqlHandler.Type;
 
 public class ARGPlayerInfo extends ArgumentModule
 {
@@ -61,17 +63,22 @@ public class ARGPlayerInfo extends ArgumentModule
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.Mode")
 				.replace("%mode%", returnMode(user.getMode()))));
 		int id = user.getDistributionChestID();
-		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
+		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.DChestDontExist")));
-			return;
+			DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
+					MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id);
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.DC")
+					+user.getDistributionChestID() + " &r| "+dc.getChestName()));
+			
 		}
-		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
-				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.DC")
-				+user.getDistributionChestID() + " &r| "+dc.getChestName()));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.SC")
-				+user.getStorageChestID()));
+		int idsc = user.getStorageChestID();
+		if(plugin.getMysqlHandler().exist(Type.STORAGECHEST, "`id` = ?", idsc))
+		{
+			StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(Type.STORAGECHEST, "`id` = ?", idsc);
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.SC")
+					+user.getStorageChestID() +  " &r| "+sc.getChestName()));
+		}
+		
 		if(user.getItemFilterSet() != null)
 		{
 			if(user.getItemFilterSet().getID() != 0)

@@ -83,17 +83,15 @@ public class ChestHandler
 					}
 				}
 			}
-		} else
+		}
+		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
 		{
-			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+			DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
 					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
-			{
-				DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
-						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-						server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-				return dc;
-			}
+					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+			return dc;
 		}
 		return null;
 	}
@@ -135,17 +133,15 @@ public class ChestHandler
 					}
 				}
 			}
-		} else
+		}
+		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
+				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
 		{
-			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
+			StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST,
 					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
-			{
-				StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST,
-						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-						server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-				return sc;
-			}
+					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+			return sc;
 		}
 		return null;
 	}
@@ -526,16 +522,12 @@ public class ChestHandler
 	}
 	
 	public static void setDistributionChestOnCooldown(AdvancedStoreHouse plugin,
-			DistributionChest dc, int storagechestamount,
-			boolean useFastDelay)
+			DistributionChest dc, int storagechestamount)
 	{
 		//int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, "`distributionchestid` = ?", dc.getId());
-		long storage = storagechestamount;
+		long storage = storagechestamount / plugin.getYamlHandler().getConfig().getInt("ChestsPerTick", 10);
 		long dif = plugin.getYamlHandler().getConfig().getInt("DelayedTicks", 1);
-		if(useFastDelay && plugin.getYamlHandler().getConfig().getBoolean("UseFastDelayedDistribution", true))
-		{
-			storage = storagechestamount / plugin.getYamlHandler().getConfig().getInt("ChestsPerTick", 10);
-		}
+		
 		long start = System.currentTimeMillis();
 		long cooldown = start
 				+ 1000 //+ Eine Sekunde cooldown

@@ -53,7 +53,9 @@ public class ARGItemFilterSet_Create extends ArgumentModule
 			return;
 		}
 		user.setMode(PluginUser.Mode.CREATEITEMFILTERSET);
-		Inventory empty = Bukkit.createInventory(null, 6*9, "ItemFilter: "+name);
+		Inventory empty = Bukkit.createInventory(null, 6*9,
+				ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSet.InventoryName")
+				.replace("%name%", name)));
 		user.setItemFilterSet(new ItemFilterSet(0, name, user.getUUID(), empty.getContents()));
 		PluginUserHandler.addUser(user);
 		player.openInventory(empty);

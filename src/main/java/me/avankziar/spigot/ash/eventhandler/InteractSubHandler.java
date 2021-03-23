@@ -7,7 +7,9 @@ import java.util.LinkedHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -42,28 +44,33 @@ public class InteractSubHandler
 	
 	public void simplifiedHandling(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
 	{
+		if(event.getClickedBlock() != null 
+				&& AdvancedStoreHouse.getPlugin().getUtility().isNOTStoragechest(event.getClickedBlock().getState()))
+		{
+			return;
+		}
 		ItemStack isInHand = player.getInventory().getItemInMainHand();
 		Material inHand = (isInHand == null) ? Material.AIR : isInHand.getType();
-		if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Simple.CopyAndPaste")))
+		if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig().getString("Simple.CopyAndPaste")))
 		{
 			//Mit einer Enderkiste (Ohne Shift) sollen Verteilerkisten kopiert werden können. 
 			//Dabei wählt man vorher eine Verteilerkiste aus und mit dem klick kopiert man diese. (Nur für System mit weniger als x Kisten (LIMIT))
 			enderchestHandling(AdvancedStoreHouse.getPlugin(), event, player, user);
-		} else if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Simple.Select")))
+		} else if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig().getString("Simple.Select")))
 		{
 			//Mit einem Fass (MIt shift) wird die Verteilerkiste, ohne Shift eine Lagerkiste ausgewählt.
 			barrelHandling(AdvancedStoreHouse.getPlugin(), event, player, user);
-		} else if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Simple.OpenIFSAndVisuals")))
+		} else if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig().getString("Simple.OpenIFSAndVisuals")))
 		{
 			//Mit dem Schmelzofen (Ohne shift) auf eine bestehende Lagerkiste, wird das Itemfilterset aufgerufen. 
 			//Mit Shift werden alle Zugehörigen Lagerkisten einer Verteilerkiste angezeigt. (Visuelle darstellung)
 			blastfurnaceHandling(AdvancedStoreHouse.getPlugin(), event, player, user);
-		} else if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Simple.OpenOptionGUI")))
+		} else if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig().getString("Simple.OpenOptionGUI")))
 		{
 			//Mit einem Ofen (ohne shift) wird eine GUI zu den Optioneinstellungen einer lagerkiste, 
 			//(mit shift) das der Verteilerkisten aufgerufen.
 			furnaceHandling(AdvancedStoreHouse.getPlugin(), event, player, user);
-		} else if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Simple.Reposition")))
+		} else if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig().getString("Simple.Reposition")))
 		{
 			//Mit einem Räucherofen (ohne Shift) kann eine Lagerkiste versetzt werden. Mit Shift kann eine Verteilerkiste versetzt werden.
 			smokerHandling(AdvancedStoreHouse.getPlugin(), event, player, user);
@@ -78,6 +85,64 @@ public class InteractSubHandler
 	{
 		final Location loc = event.getClickedBlock().getLocation();
 		event.setCancelled(true);
+		if(plugin.getUtility().isNOTStoragechest(event.getClickedBlock().getState()))
+		{
+			debug(event.getPlayer(), "!(ClickedBlock.State instanceof Chest && Barrel)");
+			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
+			return;
+		}
+		String server = plugin.getYamlHandler().getConfig().getString("Servername");
+		if(event.getClickedBlock().getState() instanceof Chest)
+		{
+			Chest chest = (Chest) event.getClickedBlock().getState();
+			if(chest.getInventory() instanceof DoubleChestInventory)
+			{
+				DoubleChestInventory dcinv = (DoubleChestInventory) chest.getInventory();
+				Location left = dcinv.getLeftSide().getLocation();
+				Location right = dcinv.getRightSide().getLocation();
+				if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+						server, left.getWorld().getName(), left.getBlockX(), left.getBlockY(), left.getBlockZ()))
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DoubleChestAlreadyAsDistributionChestExist")));
+					return;
+				} else
+				{
+					if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+							"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+							server, right.getWorld().getName(), right.getBlockX(), right.getBlockY(), right.getBlockZ()))
+					{
+						player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("DoubleChestAlreadyAsDistributionChestExist")));
+						return;
+					}
+				}
+			} else if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
+			{
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("ChestAlreadyAsDistributionChestExist")));
+				return;
+			}
+		} else
+		{
+			if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
+					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
+			{
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("ChestAlreadyAsDistributionChestExist")));
+				return;
+			}
+		}
+		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, 
+				"`owner_uuid` = ?", user.getUUID());
+		if(!PermissionHandler.canCreate(player, Utility.PERMCOUNTDISTRIBUTIONCHEST+"*", Utility.PERMCOUNTDISTRIBUTIONCHEST,
+				amount , plugin.getYamlHandler().getConfig().getInt("maximumDistributionChest"), false))
+		{
+			debug(event.getPlayer(), "TooMany DistributionChest");
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooMany")));
+			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
+			return;
+		}
 		if(user.getDistributionChestID() == 0)
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.DcNotSelected")));
@@ -104,7 +169,6 @@ public class InteractSubHandler
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.CopyPaste.CopyAndPasteTaskRun")));
 		new BukkitRunnable()
 		{
-			
 			@Override
 			public void run()
 			{
@@ -123,14 +187,23 @@ public class InteractSubHandler
 					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.CopyPaste.CopyAndPasteTaskRunFailed")));
 					return;
 				}
+				final long createdate = System.currentTimeMillis();
 				DistributionChest newOne = new DistributionChest(0, dc.getOwneruuid(), dc.getMemberList(),
-						System.currentTimeMillis(), dc.getChestName()+"_Copy", dc.isNormalPriority(),
+						createdate, dc.getChestName()+"_Copy", dc.isNormalPriority(),
 						dc.getPriorityType(), dc.getPriorityNumber(), dc.isAutomaticDistribution(), dc.isDistributeRandom(),
 						dc.getServer(), loc.getWorld().getName(),
 						loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 				plugin.getMysqlHandler().create(Type.DISTRIBUTIONCHEST, newOne);
+				try
+				{
+					newOne = (DistributionChest) plugin.getMysqlHandler().getData(Type.DISTRIBUTIONCHEST, "`creationdate` = ?", createdate);
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 				for(StorageChest sc : sclist)
 				{
+					sc.setDistributionChestID(newOne.getId());
 					plugin.getMysqlHandler().create(Type.STORAGECHEST, sc);
 				}
 				if(player != null)
@@ -194,8 +267,9 @@ public class InteractSubHandler
 				user.setStorageChestID(sclist.get(0).getId());
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectSChest")
 						.replace("%idsc%", String.valueOf(sclist.get(0).getId()))
+						.replace("%namesc%", sclist.get(0).getChestName())
 						.replace("%iddc%", String.valueOf(dc.getId()))
-						.replace("%name%", dc.getChestName())));
+						.replace("%namedc%", dc.getChestName())));
 				PluginUserHandler.addUser(user);
 			} else
 			{
@@ -204,7 +278,7 @@ public class InteractSubHandler
 				for(StorageChest sc : sclist)
 				{
 					TextComponent tc = ChatApi.clickEvent("&f"+sc.getId()+"&e"+sc.getChestName(),
-							Action.SUGGEST_COMMAND, PluginSettings.settings.getCommands().get(KeyHandler.SC_SELECT)+sc.getId());
+							Action.RUN_COMMAND, PluginSettings.settings.getCommands().get(KeyHandler.SC_SELECT)+sc.getId());
 					s.add(tc);
 					s.add(ChatApi.tctl("&1 | "));
 				}
@@ -242,17 +316,53 @@ public class InteractSubHandler
 			ArrayList<StorageChest> sclist = ConvertHandler.convertListIII(plugin.getMysqlHandler().getList(Type.STORAGECHEST,
 					"`id`", false, user.getNumberScForParticel(), PluginSettings.settings.getStorageChestAmountWhereShowParticels(),
 					"`distributionchestid` = ?", dc.getId()));
+			long cooldown = System.currentTimeMillis()
+					+ plugin.getYamlHandler().getConfig().getLong("AnimationAdditionalCooldown", 10000)
+					+ sclist.size()*plugin.getYamlHandler().getConfig().getLong("AnimationLenght", 10000);
 			if(chestAnimationCooldown.containsKey(dc.getId()))
 			{
-				chestAnimationCooldown.replace(dc.getId(), System.currentTimeMillis()+sclist.size()*4000);
+				chestAnimationCooldown.replace(dc.getId(), cooldown);
 			} else
 			{
-				chestAnimationCooldown.put(dc.getId(), System.currentTimeMillis()+sclist.size()*4000);
+				chestAnimationCooldown.put(dc.getId(), cooldown);
 			}
-			for(StorageChest sc : sclist)
+			new BukkitRunnable()
 			{
-				new ChestAnimation(ChestHandler.getLocationStorageChest(sc)).startSingleChestAnimation();
-			}
+				int count = 0;
+				int countGlobal = 0;
+				int animationPerTick = plugin.getYamlHandler().getConfig().getInt("AnimationPerTick", 25);
+				int animationLenght = plugin.getYamlHandler().getConfig().getInt("AnimationLenght", 4000);
+				Particle particledc = 
+						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("AnimationParticleDistributionChest", "WATER_DROP"));
+				Particle particlesc = 
+						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("AnimationParticleStorageChest", "FLAME"));
+				@Override
+				public void run()
+				{
+					if(countGlobal == 0)
+					{
+						new ChestAnimation(ChestHandler.getLocationDistributionChest(dc))
+						.startSingleChestAnimation(animationLenght*(1+sclist.size()/50), particledc);
+					}
+					while(countGlobal < sclist.size())
+					{
+						int rest = (count == 0 ? 1 : count) % (animationPerTick*2);
+						if(rest == 0)
+						{
+							count = 0;
+							break;
+						}
+						StorageChest sc = sclist.get(countGlobal);
+						new ChestAnimation(ChestHandler.getLocationStorageChest(sc)).startSingleChestAnimation(animationLenght, particlesc);
+						count++;
+						countGlobal++;
+					}
+					if(countGlobal >= (sclist.size()-1))
+					{
+						cancel();
+					}
+				}
+			}.runTaskTimer(plugin, 0L, 2L);
 		} else
 		{
 			updateStorageChestItemFilterSet(plugin, event, player, user);
@@ -277,6 +387,8 @@ public class InteractSubHandler
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
 				return;
 			}
+			user.setDistributionChestID(dc.getId());
+			PluginUserHandler.addUser(user);
 			new OptionGuiHandler().openDcGuiMain(player, user, dc, null);
 		} else
 		{
@@ -300,6 +412,8 @@ public class InteractSubHandler
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
 				return;
 			}
+			user.setStorageChestID(sc.getId());
+			PluginUserHandler.addUser(user);
 			new OptionGuiHandler().openScGuiMain(player, user, sc, null);
 		}
 	}
@@ -464,11 +578,11 @@ public class InteractSubHandler
 		user.setStorageChestID(sc.getId());
 		PluginUserHandler.addUser(user);
 		Inventory inv = Bukkit.createInventory(null, 6*9, 
-				plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
+				ChatApi.tl(plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
 				.replace("%p%", String.valueOf(sc.getPriorityNumber()))
 				.replace("%name%", name)
 				.replace("%dcid%", id)
-				.replace("%id%", String.valueOf(sc.getId())));
+				.replace("%id%", String.valueOf(sc.getId()))));
 		inv.setContents(sc.getContents());
 		player.openInventory(inv);
 		return;

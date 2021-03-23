@@ -9,6 +9,7 @@ import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
+import main.java.me.avankziar.general.objects.MatchApi;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
@@ -39,6 +40,10 @@ public class ARGStorageChest_Info extends ArgumentModule
 			return;
 		}
 		int id = user.getStorageChestID();
+		if(args.length == 3 && MatchApi.isInteger(args[2]))
+		{
+			id = Integer.parseInt(args[2]);
+		}
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST, "`id` = ?", id))
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SChestDontExist")));
@@ -58,6 +63,7 @@ public class ARGStorageChest_Info extends ArgumentModule
 		}
 		
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.HeadlineS")
+				.replace("%name%", sc.getChestName())
 				.replace("%id%", String.valueOf(id))));
 		if(dc != null)
 		{
@@ -87,6 +93,39 @@ public class ARGStorageChest_Info extends ArgumentModule
 				.replace("%prio%", String.valueOf(sc.getPriorityNumber()))));
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Endstorage")
 				.replace("%end%", String.valueOf(sc.isEndstorage()))));
+		
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.OptionDurability")
+				.replace("%opdur%", String.valueOf(sc.isOptionDurability()))));
+		if(sc.isOptionDurability())
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.DurabilityType")
+					.replace("%durtype%", String.valueOf(sc.getDurabilityType()))));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.DurabilityValue")
+					.replace("%dur%", String.valueOf(sc.getDurability()))));
+		}		
+		
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.OptionRepair")
+				.replace("%oprepair%", String.valueOf(sc.isOptionRepair()))));
+		if(sc.isOptionRepair())
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.RepairType")
+					.replace("%repairtype%", String.valueOf(sc.getRepairType()))));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.RepairCost")
+					.replace("%repaircost%", String.valueOf(sc.getRepairCost()))));
+		}
+		
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.OptionEnchantment")
+				.replace("%opench%", String.valueOf(sc.isOptionEnchantment()))));
+		
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.OptionMaterial")
+				.replace("%opmat%", String.valueOf(sc.isOptionMaterial()))));
+		
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.OptionVoid")
+				.replace("%opvoid%", String.valueOf(sc.isOptionVoid()))));
+		
+		
+		
+						
 		return;
 	}
 }

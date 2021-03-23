@@ -41,21 +41,21 @@ public class ARGStorageChest_OpenOption extends ArgumentModule
 			return;
 		}
 		StorageChest sc = null;
-		if(args.length == 3)
+		if(args.length == 2)
 		{
 			int id = user.getStorageChestID();
 			sc = (StorageChest) plugin.getMysqlHandler().getData(
 					MysqlHandler.Type.STORAGECHEST, "`id` = ?", id);
 			
-		} else if(args.length == 4 && MatchApi.isInteger(args[3]))
+		} else if(args.length == 3 && MatchApi.isInteger(args[2]))
 		{
 			sc = (StorageChest) plugin.getMysqlHandler().getData(
-					MysqlHandler.Type.STORAGECHEST, "`id` = ?", Integer.parseInt(args[3]));
-		} else if(args.length == 4)
+					MysqlHandler.Type.STORAGECHEST, "`id` = ?", Integer.parseInt(args[2]));
+		} else if(args.length == 3)
 		{
 			sc = (StorageChest) plugin.getMysqlHandler().getData(
 					MysqlHandler.Type.STORAGECHEST, "`owner_uuid` = ? AND `chestname` = ?", 
-					player.getUniqueId().toString(), args[3]);
+					player.getUniqueId().toString(), args[2]);
 		}
 		if(sc == null)
 		{

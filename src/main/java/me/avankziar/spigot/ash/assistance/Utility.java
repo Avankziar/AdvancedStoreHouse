@@ -297,10 +297,10 @@ public class Utility
 	
 	public boolean isNOTStoragechest(BlockState state)
 	{
-		if(!(state instanceof Chest) && !(state instanceof Barrel))
+		if(state instanceof Chest || state instanceof Barrel)
 		{
-			return true;
+			return false;
 		}
-		return false;
+		return true;
 	}
 }

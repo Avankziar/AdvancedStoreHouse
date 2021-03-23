@@ -31,8 +31,8 @@ public interface TableIII
 		        	preparedStatement.setObject(i, o);
 		        	i++;
 		        }
-		        
 		        result = preparedStatement.executeQuery();
+		        
 		        while (result.next()) 
 		        {
 		        	return true;
@@ -75,14 +75,16 @@ public interface TableIII
 			{
 				String sql = "INSERT INTO `" + plugin.getMysqlHandler().tableNameIII 
 						+ "`(`distributionchestid`, `owner_uuid`, `creationdate`, `priority`, `content`,"
-						+ " `endstorage`, `server`, `world`, `blockx`, `blocky`, `blockz`,"
+						+ " `endstorage`,"
+						+ " `server`, `world`, `blockx`, `blocky`, `blockz`,"
 						+ " `chestname`, `optionvoid`, `optiondurability`, `durabilitytype`, `durability`,"
 						+ " `optionrepair`, `repairtype`, `repaircost`, `optionenchantments`, `optionmaterial`) " 
 						+ "VALUES("
 						+ "?, ?, ?, ?, ?, "
 						+ "?, ?, ?, ?, ?, "
 						+ "?, ?, ?, ?, ?, "
-						+ "?, ?, ?, ?, ?)";
+						+ "?, ?, ?, ?, ?,"
+						+ "?)";
 				preparedStatement = conn.prepareStatement(sql);
 				preparedStatement.setInt(1, cu.getDistributionChestID());
 		        preparedStatement.setString(2, cu.getOwneruuid());
