@@ -38,6 +38,7 @@ import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.general.objects.StorageChest.Type;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
+import main.java.me.avankziar.spigot.ash.assistance.ItemGenerator;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 import net.md_5.bungee.api.ChatColor;
@@ -363,8 +364,8 @@ public class InteractHandler implements Listener
 		}
 		event.setCancelled(true);
 		StorageChest sc = new StorageChest(0, user.getDistributionChestID(), user.getUUID(),
-				user.getPriority(),
-				System.currentTimeMillis(), Bukkit.createInventory(null, 6*9).getContents(), user.isEndStorage(),
+				0,
+				System.currentTimeMillis(), Bukkit.createInventory(null, 6*9).getContents(), false,
 				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(),
 				"unnamed", false, false, Type.LESSTHAN, 0, false, Type.LESSTHAN, 0, false, false);
 		
@@ -429,6 +430,7 @@ public class InteractHandler implements Listener
 			Inventory gui = Bukkit.createInventory(null, 6*9, 
 					ChatApi.tl(plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
 					.replace("%p%", String.valueOf(sc.getPriorityNumber()))
+					.replace("%e%", ItemGenerator.getColor(sc.isEndstorage()))
 					.replace("%dcname%", name)
 					.replace("%dcid%", id)
 					.replace("%scname%", sc.getChestName())

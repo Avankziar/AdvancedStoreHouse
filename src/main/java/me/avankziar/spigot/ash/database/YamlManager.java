@@ -8,6 +8,7 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import main.java.me.avankziar.general.objects.SettingLevel;
 import main.java.me.avankziar.spigot.ash.database.Language.ISO639_2B;
 
 public class YamlManager
@@ -282,21 +283,30 @@ public class YamlManager
 		configKeys.put("StorageChestAmountWhereShowParticles"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				25}));
-		configKeys.put("AnimationPerTick"
+		configKeys.put("Animation.PerTick"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				25}));
-		configKeys.put("AnimationLenght"
+		configKeys.put("Animation.Lenght"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				10000}));
-		configKeys.put("AnimationAdditionalCooldown"
+		configKeys.put("Animation.AdditionalCooldown"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				10000}));
-		configKeys.put("AnimationParticleDistributionChest"
+		configKeys.put("Animation.Particle.DistributionChest"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"WATER_DROP"}));
-		configKeys.put("AnimationParticleStorageChest"
+		configKeys.put("Animation.Particle.RandomDistributionChest"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"END_ROD"}));
+		configKeys.put("Animation.Particle.StorageChest"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"COMPOSTER"}));
+		configKeys.put("Animation.Particle.VoidStorageChest"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"FLAME"}));
+		configKeys.put("Animation.Particle.EndStorageChest"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"SMOKE_LARGE"}));
 		configKeys.put("GUISound"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"BLOCK_ANCIENT_DEBRIS_HIT"}));
@@ -682,7 +692,7 @@ public class YamlManager
 						"&cThere is a general error in the command right now: &f%cmd% %message%"}));
 		languageKeys.put("GUI", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"LK: &c%scid% &f%scname% &7| &b%dcid% &e%dcname% &7(&fP:&d%p%&7)",
+						"LK: &c%scid% &f%scname% &7| &b%dcid% &e%dcname% &7(&fP:&d%p%&7||&fEnd:&r%e%&7)",
 						"SC: &c%scid% &f%scname% &7| &b%dcid% &e%dcname% &7(&fP:&d%p%&7)"}));
 		languageKeys.put("CmdAsh.BaseInfo.Headline", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
@@ -1075,10 +1085,6 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cAusgewählte Lagerkiste: &f",
 						"&cSelected storage box: &f"}));
-		languageKeys.put("CmdAsh.PlayerInfo.Priority",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cPriorität: &f",
-						"&cPriority: &f"}));
 		languageKeys.put("CmdAsh.PlayerInfo.ItemFilterID",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cAusgewählte ItemFilterSetID: &f",
@@ -1087,10 +1093,6 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cSuchtyp: &f",
 						"&cSearch type: &f"}));
-		languageKeys.put("CmdAsh.PlayerInfo.EndStorage", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cEndlagerkistenmodus aktiv: &f",
-						"&cEnd storage crate mode active: &f"}));
 		languageKeys.put("CmdAsh.PlayerInfo.BLOCKINFO",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"BlockinfoModus (Zeigt alle Infos zu einem geklicken Block[Kiste ect.] an)",
@@ -1349,84 +1351,141 @@ public class YamlManager
 		 SC_MAIN, SC_PRIORITY_NUMPAD, SC_DURABILITY_NUMPAD, SC_REPAIR_NUMPAD
 	}
 	
-	private void setSlot(GuiType type, int slot, Material material, String urlTexture,
+	private void setSlot(GuiType type, int slot, SettingLevel settingLevel, Material material, String urlTexture,
 			String displaynameGER, String displaynameENG,
 			String[] itemflag, String[] enchantments, String[] lore)
 	{
 		if(guiKeys.containsKey(type.toString()))
 		{
 			LinkedHashMap<String, Language> gui = guiKeys.get(type.toString());
-			gui.put(slot+".Name"
+			gui.put(slot+"."+settingLevel.getName()+".Name"
 					, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 					displaynameGER,
 					displaynameENG}));
-			gui.put(slot+".Material"
+			gui.put(slot+"."+settingLevel.getName()+".Material"
 					, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 					material.toString()}));
 			if(urlTexture != null)
 			{
-				gui.put(slot+".PlayerHeadTexture"
+				gui.put(slot+"."+settingLevel.getName()+".PlayerHeadTexture"
 					, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 					urlTexture}));
 			}
 			if(itemflag != null)
 			{
-				gui.put(slot+".Itemflag"
+				gui.put(slot+"."+settingLevel.getName()+".Itemflag"
 						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 						itemflag}));
 			}
 			if(enchantments != null)
 			{
-				gui.put(slot+".Enchantments"
+				gui.put(slot+"."+settingLevel.getName()+".Enchantments"
 						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 						enchantments}));
 			}
 			if(lore != null)
 			{
-				gui.put(slot+".Lore"
+				gui.put(slot+"."+settingLevel.getName()+".Lore"
 						, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, lore));
 			}
 			guiKeys.replace(type.toString(), gui);
 		} else
 		{
 			LinkedHashMap<String, Language> gui = new LinkedHashMap<>();
-			gui.put(slot+".Name"
+			gui.put(slot+"."+settingLevel.getName()+".Name"
 					, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 					displaynameGER,
 					displaynameENG}));
-			gui.put(slot+".Material"
+			gui.put(slot+"."+settingLevel.getName()+".Material"
 					, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 					material.toString()}));
 			if(urlTexture != null)
 			{
-				gui.put(slot+".PlayerHeadTexture"
+				gui.put(slot+"."+settingLevel.getName()+".PlayerHeadTexture"
 					, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 					urlTexture}));
 			}
 			if(itemflag != null)
 			{
-				gui.put(slot+".Itemflag"
+				gui.put(slot+"."+settingLevel.getName()+".Itemflag"
 						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 						itemflag}));
 			}
 			if(enchantments != null)
 			{
-				gui.put(slot+".Enchantments"
+				gui.put(slot+"."+settingLevel.getName()+".Enchantments"
 						, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 						enchantments}));
 			}
 			if(lore != null)
 			{
-				gui.put(slot+".Lore"
+				gui.put(slot+"."+settingLevel.getName()+".Lore"
 						, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, lore));
 			}
 			guiKeys.put(type.toString(), gui);
 		}
 	}
 	
+	private void setSlot(GuiType type, int slot, Material material, String urlTexture,
+			String displaynameGER, String displaynameENG,
+			String[] itemflag, String[] enchantments, String[] lore)
+	{
+		setSlot(type, slot, SettingLevel.BASE, material, urlTexture, displaynameGER, displaynameENG, itemflag, enchantments, lore);
+		setSlot(type, slot, SettingLevel.EXPERT, material, urlTexture, displaynameGER, displaynameENG, itemflag, enchantments, lore);
+	}
+	
 	public void initGuis() //INFO:Guis
 	{
-		setSlot(GuiType.DC_MAIN, 4, Material.BOOKSHELF,
+		setSlot(GuiType.DC_MAIN, 0, SettingLevel.BASE, Material.CHARCOAL,
+				null,
+				"&eZur &6Experten&e-Einstellung wechseln.",
+				"&eSwitch to the &6Expert&e-setting.",
+				null,//Itemflag
+				null,//Ench
+				new String[] {
+				"&eWechselt zur Ansicht der &6Experten&e-Einstellung,",
+				"&ewelche mehr Einstellungsmöglichkeiten sichtbar macht.",
+				
+				"&eSwitches to the &6Expert&e setting view,",
+				"&ewhich makes more setting options visible."
+				});
+		setSlot(GuiType.DC_MAIN, 0, SettingLevel.EXPERT, Material.NETHERITE_INGOT,
+				null,
+				"&eZur &fGrund&e-Einstellung wechseln.",
+				"&eSwitch to the &fBase&e-setting.",
+				null,//Itemflag
+				null,//Ench
+				new String[] {
+				"&eWechselt zur Ansicht der &fGrund&e-Einstellung,",
+				"&ewelche nur die Basis Einstellungsmöglichkeiten sichtbar macht.",
+				
+				"&eSwitches to the &fBase&e setting view,",
+				"&ewhich makes only the basic setting options visible."
+				});
+		setSlot(GuiType.DC_MAIN, 4, SettingLevel.BASE, Material.BOOKSHELF,
+				null,
+				"&eVerteilerkiste &f%id% &e- &f%name%",
+				"&eDistributionchest &f%id% &e- &f%name%",
+				null,//Itemflag
+				null,//Ench
+				new String[] {
+				"&eErstellungsdatum: &f%creationdate%",
+				"&eVerteilt automatisch: &f%automaticdistribution%",
+				"&eMitglieder: &f%member%",
+				"&eOrt: &f%locationone%",
+				"&eKoordinaten: &f%locationtwo%",
+				"&eAnzahl Lagerkisten: &f%storagechestamount%",
+				"&eAnzahl Endlagerkisten: &f%storagechestendamount%",
+				
+				"&eCreationdate: &f%creationdate%",
+				"&eDistribute automatic: &f%automaticdistribution%",
+				"&eMember: &f%member%",
+				"&eLocation: &f%locationone%",
+				"&eCoordinates: &f%locationtwo%",
+				"&eAmount Storagechest: &f%storagechestamount%",
+				"&eAmount Endstoragechest: &f%storagechestendamount%"
+				});
+		setSlot(GuiType.DC_MAIN, 4, SettingLevel.EXPERT, Material.BOOKSHELF,
 				null,
 				"&eVerteilerkiste &f%id% &e- &f%name%",
 				"&eDistributionchest &f%id% &e- &f%name%",
@@ -1464,7 +1523,7 @@ public class YamlManager
 				null,
 				null,
 				null);
-		setSlot(GuiType.DC_MAIN, 16, Material.CRIMSON_SIGN,
+		setSlot(GuiType.DC_MAIN, 16, SettingLevel.EXPERT, Material.CRIMSON_SIGN,
 				null,
 				"&ePrioritätssortierung switchen",
 				"&ePrioritysorting switch", 
@@ -1481,7 +1540,7 @@ public class YamlManager
 				"&eBy click it changes to &aascending",
 				"&eor &cdescending &e(false &c↘ &e/true &a↗&e)"
 				});
-		setSlot(GuiType.DC_MAIN, 25, Material.OAK_SIGN,
+		setSlot(GuiType.DC_MAIN, 25, SettingLevel.EXPERT, Material.OAK_SIGN,
 				null,
 				"&ePrioritätstyp wechseln",
 				"&ePrioritytype change", 
@@ -1500,7 +1559,7 @@ public class YamlManager
 				"&ePLACE &7(&d»۝«&7) &emeans that only boxes WITH this",
 				"&eexact priority are controlled."
 				});
-		setSlot(GuiType.DC_MAIN, 34, Material.JUNGLE_SAPLING,
+		setSlot(GuiType.DC_MAIN, 34, SettingLevel.EXPERT, Material.JUNGLE_SAPLING,
 				null,
 				"&ePrioritätszahl setzten",
 				"&ePrioritynumber set", 
@@ -1524,7 +1583,7 @@ public class YamlManager
 				"&eIf you click here, you will activate",
 				"&eor deactivate the Automatic distribution."
 				});
-		setSlot(GuiType.DC_MAIN, 46, Material.SUSPICIOUS_STEW,
+		setSlot(GuiType.DC_MAIN, 46, SettingLevel.EXPERT, Material.SUSPICIOUS_STEW,
 				null,
 				"&eZufällige Verteilung",
 				"&eRandom distribution", 
@@ -1650,7 +1709,54 @@ public class YamlManager
 				null,
 				null);
 		//INFO SC_MAIN
-		setSlot(GuiType.SC_MAIN, 4, Material.BOOKSHELF,
+		setSlot(GuiType.SC_MAIN, 0, SettingLevel.BASE, Material.CHARCOAL,
+				null,
+				"&eZur &6Experten&e-Einstellung wechseln.",
+				"&eSwitch to the &6Expert&e-setting.",
+				null,//Itemflag
+				null,//Ench
+				new String[] {
+				"&eWechselt zur Ansicht der &6Experten&e-Einstellung,",
+				"&ewelche mehr Einstellungsmöglichkeiten sichtbar macht.",
+				
+				"&eSwitches to the &6Expert&e setting view,",
+				"&ewhich makes more setting options visible."
+				});
+		setSlot(GuiType.SC_MAIN, 0, SettingLevel.EXPERT, Material.NETHERITE_INGOT,
+				null,
+				"&eZur &fGrund&e-Einstellung wechseln.",
+				"&eSwitch to the &fBase&e-setting.",
+				null,//Itemflag
+				null,//Ench
+				new String[] {
+				"&eWechselt zur Ansicht der &fGrund&e-Einstellung,",
+				"&ewelche nur die Basis Einstellungsmöglichkeiten sichtbar macht.",
+				
+				"&eSwitches to the &fBase&e setting view,",
+				"&ewhich makes only the basic setting options visible."
+				});
+		setSlot(GuiType.SC_MAIN, 4, SettingLevel.BASE, Material.BOOKSHELF,
+				null,
+				"&eLagerkiste &f%id% &e- &f%name%",
+				"&eStoragechest &f%id% &e- &f%name%",
+				null,
+				null,
+				new String[] {
+				"&eEigentümer: &f%owner%",
+				"&eErstellungsdatum: &f%creationdate%",
+				"&eVerteilerkisten ID: &f%distributionchestid%",
+				"&eIst Endlagerkiste: &f%isendstorage%",
+				"&eOrt: &f%locationone%",
+				"&eKoordinaten: &f%locationtwo%",
+				
+				"&eOwner: &f%owner%",
+				"&eCreationdate: &f%creationdate%",
+				"&eDistributionchest ID: &f%distributionchestid%",
+				"&eIs endstoragechest: &f%isendstorage%",
+				"&eLocation: &f%locationone%",
+				"&eCoordinates: &f%locationtwo%"
+				});
+		setSlot(GuiType.SC_MAIN, 4, SettingLevel.EXPERT, Material.BOOKSHELF,
 				null,
 				"&eLagerkiste &f%id% &e- &f%name%",
 				"&eStoragechest &f%id% &e- &f%name%",
@@ -1710,7 +1816,7 @@ public class YamlManager
 				"&eClick here to change the state of the endstorage.",
 				"&eEither it's a endstorage or it's not."
 				});
-		setSlot(GuiType.SC_MAIN, 14, Material.PLAYER_HEAD,
+		setSlot(GuiType.SC_MAIN, 14, SettingLevel.EXPERT, Material.PLAYER_HEAD,
 				"http://textures.minecraft.net/texture/9ae85f74f8e2c054b781a29fa9b25934ba63bb79f1de8a95b436d9bfdcaf4cd",
 				"&ePrioritätszahl setzten",
 				"&ePrioritynumber set",
@@ -1722,7 +1828,7 @@ public class YamlManager
 				"&eDirects you to another gui,",
 				"&ewhere you can enter the exact number."
 				});
-		setSlot(GuiType.SC_MAIN, 15, Material.BUCKET,
+		setSlot(GuiType.SC_MAIN, 15, SettingLevel.EXPERT, Material.BUCKET,
 				null,
 				"&eVoid-Option &a✔ &eoder &c✖&e.",
 				"&eVoid option &a✔ &eor &c✖&e.", 
@@ -1734,14 +1840,14 @@ public class YamlManager
 				"&eIf you click here, you will activate",
 				"&eor deactivate the automatic delete."
 				});
-		setSlot(GuiType.SC_MAIN, 19, Material.SMITHING_TABLE,
+		setSlot(GuiType.SC_MAIN, 19, SettingLevel.EXPERT, Material.SMITHING_TABLE,
 				null,
 				"&eHaltbarkeit-Option &a✔ &eoder &c✖&e.",
 				"&eDurability option &a✔ &eor &c✖&e.", 
 				null,
 				null,
 				null);
-		setSlot(GuiType.SC_MAIN, 28, Material.WOODEN_SWORD,
+		setSlot(GuiType.SC_MAIN, 28, SettingLevel.EXPERT, Material.WOODEN_SWORD,
 				null,
 				"&eHaltbarkeittyp wechseln",
 				"&eDurabilitytype switch.", 
@@ -1752,7 +1858,7 @@ public class YamlManager
 				"&eund &fgrößer als &7(&c>&7) &ewechseln.",
 				"&eBetween &fless than &7(&a<&7)",
 				"&eand &flarger than &7(&c<&7) &eswitching."});
-		setSlot(GuiType.SC_MAIN, 37, Material.WOODEN_SHOVEL,
+		setSlot(GuiType.SC_MAIN, 37, SettingLevel.EXPERT, Material.WOODEN_SHOVEL,
 				null,
 				"&eHaltbarkeitswert setzen.",
 				"&eDurabilityvalue set.", 
@@ -1764,14 +1870,14 @@ public class YamlManager
 				"&eDirects you to another gui,",
 				"&ewhere you can enter the exact number."
 				});
-		setSlot(GuiType.SC_MAIN, 25, Material.ANVIL,
+		setSlot(GuiType.SC_MAIN, 25, SettingLevel.EXPERT, Material.ANVIL,
 				null,
 				"&eReparatur-Option &a✔ &eoder &c✖&e.",
 				"&eReparation option &a✔ &eor &c✖&e.", 
 				null,
 				null,
 				null);
-		setSlot(GuiType.SC_MAIN, 34, Material.CHIPPED_ANVIL,
+		setSlot(GuiType.SC_MAIN, 34, SettingLevel.EXPERT, Material.CHIPPED_ANVIL,
 				null,
 				"&eReparaturtyp wechseln.",
 				"&eReparationtype switch.", 
@@ -1782,7 +1888,7 @@ public class YamlManager
 				"&eund &fgrößer als &7(&c>&7) &ewechseln.",
 				"&eBetween &fless than &7(&a<&7)",
 				"&eand &flarger than &7(&c<&7) &eswitching."});
-		setSlot(GuiType.SC_MAIN, 43, Material.DAMAGED_ANVIL,
+		setSlot(GuiType.SC_MAIN, 43, SettingLevel.EXPERT, Material.DAMAGED_ANVIL,
 				null,
 				"&eReparaturwert setzen.",
 				"&eReparationvalue set.", 
@@ -1794,14 +1900,14 @@ public class YamlManager
 				"&eDirects you to another gui,",
 				"&ewhere you can enter the exact number."
 				});
-		setSlot(GuiType.SC_MAIN, 39, Material.ENCHANTING_TABLE,
+		setSlot(GuiType.SC_MAIN, 39, SettingLevel.EXPERT, Material.ENCHANTING_TABLE,
 				null,
 				"&eVerzauberungsoption &a✔ &eoder &c✖&e.",
 				"&eEnchantment option &a✔ &eor &c✖&e.", 
 				null,
 				null,
 				null);
-		setSlot(GuiType.SC_MAIN, 48, Material.CRAFTING_TABLE,
+		setSlot(GuiType.SC_MAIN, 48, SettingLevel.EXPERT, Material.CRAFTING_TABLE,
 				null,
 				"&eMaterial-Option &a✔ &eoder &c✖&e.",
 				"&eMaterial option &a✔ &eor &c✖&e.", 

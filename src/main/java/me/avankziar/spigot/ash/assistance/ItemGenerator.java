@@ -28,6 +28,7 @@ import main.java.me.avankziar.general.handler.TimeHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.DistributionChest.PriorityType;
+import main.java.me.avankziar.general.objects.SettingLevel;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
@@ -37,44 +38,45 @@ public class ItemGenerator
 {	
 	@SuppressWarnings("deprecation")
 	public static ItemStack create(String ID, YamlConfiguration itm, int amount, GuiType type, 
-			DistributionChest dc, StorageChest sc, boolean mustReplaceLore) throws IOException
+			DistributionChest dc, StorageChest sc, boolean mustReplaceLore,
+			SettingLevel settingLevel) throws IOException
 	{
 		ItemStack is = null;
-		if(itm.getString(ID+".Material") == null)
+		if(itm.getString(ID+"."+settingLevel.getName()+".Material") == null)
 		{
 			return null;
 		}
-		Material mat = Material.matchMaterial(itm.getString(ID+".Material"));
-		if(mat == Material.PLAYER_HEAD && itm.getString(ID+".PlayerHeadTexture") != null)
+		Material mat = Material.matchMaterial(itm.getString(ID+"."+settingLevel.getName()+".Material"));
+		if(mat == Material.PLAYER_HEAD && itm.getString(ID+"."+settingLevel.getName()+".PlayerHeadTexture") != null)
 		{
-			is = getSkull(itm.getString(ID+".PlayerHeadTexture"));
+			is = getSkull(itm.getString(ID+"."+settingLevel.getName()+".PlayerHeadTexture"));
 		} else
 		{
 			is = new ItemStack(mat);
 		}
 		ItemMeta im = is.getItemMeta();
-		if(itm.getString(ID+".Name") == null)
+		if(itm.getString(ID+"."+settingLevel.getName()+".Name") == null)
 		{
 			return null;
 		}
 		String name = "";
 		if(dc != null)
 		{
-			name = itm.getString(ID+".Name")
+			name = itm.getString(ID+"."+settingLevel.getName()+".Name")
 					.replace("%name%", dc.getChestName())
 					.replace("%id%", String.valueOf(dc.getId()));
 		}
 		if(sc != null)
 		{
-			name = itm.getString(ID+".Name")
+			name = itm.getString(ID+"."+settingLevel.getName()+".Name")
 					.replace("%name%", sc.getChestName())
 					.replace("%id%", String.valueOf(sc.getId()));
 		}
 		im.setDisplayName(ChatApi.tl(name));
 		ArrayList<String> itf = null;
-		if(itm.getStringList(ID+".Itemflag") != null)
+		if(itm.getStringList(ID+"."+settingLevel.getName()+".Itemflag") != null)
 		{
-			itf = (ArrayList<String>) itm.getStringList(ID+".Itemflag");
+			itf = (ArrayList<String>) itm.getStringList(ID+"."+settingLevel.getName()+".Itemflag");
 			for(int i = 0 ; i < itf.size() ; i++)
 			{
 				ItemFlag it = ItemFlag.valueOf(itf.get(i));
@@ -82,9 +84,9 @@ public class ItemGenerator
 			}
 		}
 		ArrayList<String> ech = null;
-		if(itm.getStringList(ID+".Enchantments") != null)
+		if(itm.getStringList(ID+"."+settingLevel.getName()+".Enchantments") != null)
 		{
-			ech = (ArrayList<String>) itm.getStringList(ID+".Enchantments");
+			ech = (ArrayList<String>) itm.getStringList(ID+"."+settingLevel.getName()+".Enchantments");
 			for(int i = 0 ; i < ech.size() ; i++)
 			{
 				String[] a = ech.get(i).split(";");
@@ -98,14 +100,14 @@ public class ItemGenerator
 			}
 		}
 		ArrayList<String> desc = null;
-		if(itm.getStringList(ID+".Lore") != null)
+		if(itm.getStringList(ID+"."+settingLevel.getName()+".Lore") != null)
 		{
 			if(mustReplaceLore)
 			{
-				desc = (ArrayList<String>) replace(itm.getStringList(ID+".Lore"), dc, sc);
+				desc = (ArrayList<String>) replace(itm.getStringList(ID+"."+settingLevel.getName()+".Lore"), dc, sc);
 			} else
 			{
-				desc = (ArrayList<String>) color(itm.getStringList(ID+".Lore"));
+				desc = (ArrayList<String>) color(itm.getStringList(ID+"."+settingLevel.getName()+".Lore"));
 			}
 		}
 		im.setLore(desc);
@@ -214,7 +216,7 @@ public class ItemGenerator
         return skull;
     }
 	
-	private static String getColor(boolean boo)
+	public static String getColor(boolean boo)
 	{
 		if(boo)
 		{

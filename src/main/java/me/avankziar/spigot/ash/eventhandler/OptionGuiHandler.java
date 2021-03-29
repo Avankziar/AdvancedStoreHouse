@@ -24,6 +24,7 @@ import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.DistributionChest.PriorityType;
 import main.java.me.avankziar.general.objects.PluginUser.Mode;
+import main.java.me.avankziar.general.objects.SettingLevel;
 import main.java.me.avankziar.general.objects.ItemFilterSet;
 import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
@@ -94,11 +95,11 @@ public class OptionGuiHandler
 		/*
 		 * Slot 4 Alle Infos zur Dc
 		 * Slot 10 Namen ändern
-		 * Slot 16 Priorität switchen
-		 * Slot 25 Prorität umschalten (Zwischen Switch oder Place)
+		 * Slot 16 Priorität switchen {Experte}
+		 * Slot 25 Prorität umschalten (Zwischen Switch oder Place) {Experte}
 		 * Slot 28 Automatische Verteilung ein oder ausschalten
-		 * Slot 34 Priorität setzten (Taschenrechner like)
-		 * Slot 46 Random ein- auschalten
+		 * Slot 34 Priorität setzten (Taschenrechner like) {Experte}
+		 * Slot 46 Random ein- auschalten {Experte}
 		 * Slot 52 Mitglieder
 		 */
 		YamlConfiguration yml = plugin.getYamlHandler().getGui(type.toString());
@@ -119,25 +120,25 @@ public class OptionGuiHandler
 		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
-			if(yml.getString(slot+".Name") == null)
+			if(yml.getString(slot+"."+user.getSettingLevel().getName()+".Name") == null)
 			{
 				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, true);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, true, user.getSettingLevel());
 				inventory.setItem(slot, is);
 			} else if(slot == 46)
 			{
 				if(player.hasPermission(Utility.PERMBYPASSRANDOM))
 				{
-					ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, true);
+					ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, true, user.getSettingLevel());
 					inventory.setItem(slot, is);
 				}				
 			} else
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, false);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, false, user.getSettingLevel());
 				inventory.setItem(slot, is);
 			}
 		}
@@ -193,19 +194,22 @@ public class OptionGuiHandler
 		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
-			if(yml.getString(slot+".Name") == null)
+			if(yml.getString(slot+"."+user.getSettingLevel().getName()+".Name") == null)
 			{
 				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, true);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, true, user.getSettingLevel());
 				inventory.setItem(slot, is);
 			} else
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, false);
-				inventory.setItem(slot, is);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, false, user.getSettingLevel());
+				if(is != null)
+				{
+					inventory.setItem(slot, is);
+				}
 			}
 		}
 		if(inv == null)
@@ -230,6 +234,18 @@ public class OptionGuiHandler
 		switch(slot)
 		{
 		default:
+			break;
+		case 0:
+			guiSound(loc);
+			if(user.getSettingLevel() == SettingLevel.BASE)
+			{
+				user.setSettingLevel(SettingLevel.EXPERT);
+			} else
+			{
+				user.setSettingLevel(SettingLevel.BASE);
+			}
+			PluginUserHandler.addUser(user);
+			openDcGuiMain(player, user, dc, event.getClickedInventory());
 			break;
 		case 10:
 			guiSound(loc);
@@ -422,14 +438,14 @@ public class OptionGuiHandler
 		 * Slot 4 Sc info
 		 * Slot 10 Chestname ändern
 		 * Slot 19 Endstorage boolean
-		 * Slot 16 Prioritätnumber Numpad
-		 * Slot 25 Void Option
-		 * Slot 29 Durability Option
-		 * Slot 38 Durability Numpad
-		 * Slot 33 Repair Option
-		 * Slot 42 Repaircost Numpad
-		 * Slot 39 Enchantment Option
-		 * Slot 48 Material Option
+		 * Slot 16 Prioritätnumber Numpad {Experte}
+		 * Slot 25 Void Option {Experte}
+		 * Slot 29 Durability Option {Experte}
+		 * Slot 38 Durability Numpad {Experte}
+		 * Slot 33 Repair Option {Experte}
+		 * Slot 42 Repaircost Numpad {Experte}
+		 * Slot 39 Enchantment Option {Experte}
+		 * Slot 48 Material Option {Experte}
 		 * Slot 41 FilterSet der Kiste aufrufen
 		 * Slot 50 ItemFilterSet überschreiben
 		 */
@@ -451,19 +467,22 @@ public class OptionGuiHandler
 		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
-			if(yml.getString(slot+".Name") == null)
+			if(yml.getString(slot+"."+user.getSettingLevel().getName()+".Name") == null)
 			{
 				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, true);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, true, user.getSettingLevel());
 				inventory.setItem(slot, is);
 			} else
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, false);
-				inventory.setItem(slot, is);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, false, user.getSettingLevel());
+				if(is != null)
+				{
+					inventory.setItem(slot, is);
+				}
 			}
 		}
 		user.setMode(Mode.OPTIONGUI);
@@ -490,6 +509,18 @@ public class OptionGuiHandler
 		switch(slot)
 		{
 		default:
+			break;
+		case 0:
+			guiSound(loc);
+			if(user.getSettingLevel() == SettingLevel.BASE)
+			{
+				user.setSettingLevel(SettingLevel.EXPERT);
+			} else
+			{
+				user.setSettingLevel(SettingLevel.BASE);
+			}
+			PluginUserHandler.addUser(user);
+			openScGuiMain(player, user, sc, event.getClickedInventory());
 			break;
 		case 11:
 			guiSound(loc);
@@ -662,18 +693,18 @@ public class OptionGuiHandler
 		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
-			if(yml.getString(slot+".Name") == null)
+			if(yml.getString(slot+"."+user.getSettingLevel().getName()+".Name") == null)
 			{
 				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, true);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, true, user.getSettingLevel());
 				inventory.setItem(slot, is);
 			} else
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, false);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, false, user.getSettingLevel());
 				inventory.setItem(slot, is);
 			}
 		}
@@ -835,18 +866,18 @@ public class OptionGuiHandler
 		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
-			if(yml.getString(slot+".Name") == null)
+			if(yml.getString(slot+"."+user.getSettingLevel().getName()+".Name") == null)
 			{
 				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, true);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, true, user.getSettingLevel());
 				inventory.setItem(slot, is);
 			} else
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, false);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, false, user.getSettingLevel());
 				inventory.setItem(slot, is);
 			}
 		}
@@ -1000,18 +1031,18 @@ public class OptionGuiHandler
 		ItemStack air = new ItemStack(Material.AIR);
 		for(int slot = 0; slot < 54; slot++)
 		{
-			if(yml.getString(slot+".Name") == null)
+			if(yml.getString(slot+"."+user.getSettingLevel().getName()+".Name") == null)
 			{
 				inventory.setItem(slot, air);
 				continue;
 			}
 			if(slot == 4)
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, true);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, true, user.getSettingLevel());
 				inventory.setItem(slot, is);
 			} else
 			{
-				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, false);
+				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, false, user.getSettingLevel());
 				inventory.setItem(slot, is);
 			}
 		}
@@ -1195,9 +1226,11 @@ public class OptionGuiHandler
 		Inventory inv = Bukkit.createInventory(null, 6*9, 
 				ChatApi.tl(plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
 				.replace("%p%", String.valueOf(sc.getPriorityNumber()))
-				.replace("%name%", name)
+				.replace("%e%", ItemGenerator.getColor(sc.isEndstorage()))
+				.replace("%dcname%", name)
 				.replace("%dcid%", id)
-				.replace("%id%", String.valueOf(sc.getId()))));
+				.replace("%scname%", sc.getChestName())
+				.replace("%scid%", String.valueOf(sc.getId()))));
 		inv.setContents(sc.getContents());
 		player.openInventory(inv);
 		return;

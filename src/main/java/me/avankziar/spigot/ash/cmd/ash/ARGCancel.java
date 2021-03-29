@@ -39,9 +39,7 @@ public class ARGCancel extends ArgumentModule
 		user.setDistributionChestID(0);
 		Inventory inv = Bukkit.createInventory(null, 6*9);
 		user.setItemFilterSet(new ItemFilterSet(0, "", user.getUUID(), inv.getContents()));
-		user.setPriority(0);
 		user.setStorageChestID(0);
-		user.setEndStorage(false);
 		if(user.getCompassLocation() != null)
 		{
 			player.setCompassTarget(user.getCompassLocation());

@@ -31,14 +31,10 @@ public class PluginUser
 	private int distributionChestID;
 	private String distributionChestName;
 	private int storageChestID;
-	private int priority;
-	private boolean endStorage;
 	private ItemFilterSet itemFilterSet;
 	private Location compassLocation;
 	private Boolean canDistributionChestBreak;
-	
-	//The number (in a List), from where it call Particels, to show the storagechest
-	private int numberScForParticel;
+	private SettingLevel settingLevel;
 	
 	public PluginUser(String uuid, String name, SearchType searchType)
 	{
@@ -47,14 +43,12 @@ public class PluginUser
 		setMode(Mode.CONSTRUCT);
 		setSearchType(SearchType.COMPASS);
 		setDistributionChestID(0);
-		setDistributionChestName("0");
+		setDistributionChestName("unnamed");
 		setStorageChestID(0);
-		setPriority(0);
-		setEndStorage(false);
 		setItemFilterSet(new ItemFilterSet(0, "0", uuid, Bukkit.createInventory(null, 9*6).getContents()));
 		setCompassLocation(null);
 		setCanDistributionChestBreak(false);
-		setNumberScForParticel(0);
+		setSettingLevel(SettingLevel.BASE);
 	}
 
 	public String getUUID()
@@ -107,16 +101,6 @@ public class PluginUser
 		this.storageChestID = storageChestID;
 	}
 
-	public int getPriority()
-	{
-		return priority;
-	}
-
-	public void setPriority(int priority)
-	{
-		this.priority = priority;
-	}
-
 	public ItemFilterSet getItemFilterSet()
 	{
 		return itemFilterSet;
@@ -135,16 +119,6 @@ public class PluginUser
 	public void setSearchType(SearchType searchType)
 	{
 		this.searchType = searchType;
-	}
-
-	public boolean isEndStorage()
-	{
-		return endStorage;
-	}
-
-	public void setEndStorage(boolean endStorage)
-	{
-		this.endStorage = endStorage;
 	}
 
 	public String getDistributionChestName()
@@ -177,14 +151,13 @@ public class PluginUser
 		this.canDistributionChestBreak = canDistributionChestBreak;
 	}
 
-	public int getNumberScForParticel()
+	public SettingLevel getSettingLevel()
 	{
-		return numberScForParticel;
+		return settingLevel;
 	}
 
-	public void setNumberScForParticel(int numberScForParticel)
+	public void setSettingLevel(SettingLevel settingLevel)
 	{
-		this.numberScForParticel = numberScForParticel;
+		this.settingLevel = settingLevel;
 	}
-
 }

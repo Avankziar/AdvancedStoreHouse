@@ -87,12 +87,8 @@ public class ARGPlayerInfo extends ArgumentModule
 						+user.getItemFilterSet().getID()));
 			}
 		}
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.Priority")
-				+user.getPriority()));
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.SearchType")
 				+user.getSearchType()));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.EndStorage")
-				+user.isEndStorage()));
 		return;
 	}
 	

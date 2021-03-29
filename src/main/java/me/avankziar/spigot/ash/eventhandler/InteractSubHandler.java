@@ -31,6 +31,7 @@ import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
+import main.java.me.avankziar.spigot.ash.assistance.ItemGenerator;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler.Type;
@@ -318,12 +319,11 @@ public class InteractSubHandler
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
 				return;
 			}
-			ArrayList<StorageChest> sclist = ConvertHandler.convertListIII(plugin.getMysqlHandler().getList(Type.STORAGECHEST,
-					"`id`", false, user.getNumberScForParticel(), PluginSettings.settings.getStorageChestAmountWhereShowParticles(),
-					"`distributionchestid` = ?", dc.getId()));
+			ArrayList<StorageChest> sclist = ConvertHandler.convertListIII(plugin.getMysqlHandler()
+					.getAllListAt(Type.STORAGECHEST, "`id`", false, "`distributionchestid` = ?", dc.getId()));
 			long cooldown = System.currentTimeMillis()
-					+ plugin.getYamlHandler().getConfig().getLong("AnimationAdditionalCooldown", 10000)
-					+ sclist.size()*plugin.getYamlHandler().getConfig().getLong("AnimationLenght", 10000);
+					+ plugin.getYamlHandler().getConfig().getLong("Animation.AdditionalCooldown", 10000)
+					+ sclist.size()*plugin.getYamlHandler().getConfig().getLong("Animation.Lenght", 10000);
 			if(chestAnimationCooldown.containsKey(dc.getId()))
 			{
 				chestAnimationCooldown.replace(dc.getId(), cooldown);
@@ -331,43 +331,74 @@ public class InteractSubHandler
 			{
 				chestAnimationCooldown.put(dc.getId(), cooldown);
 			}
+			final int wait = 5;
 			new BukkitRunnable()
 			{
+				
 				int count = 0;
 				int countGlobal = 0;
-				int animationPerTick = plugin.getYamlHandler().getConfig().getInt("AnimationPerTick", 25);
-				int animationLenght = plugin.getYamlHandler().getConfig().getInt("AnimationLenght", 4000);
+				int animationPerTick = plugin.getYamlHandler().getConfig().getInt("Animation.PerTick", 25);
+				int animationLenght = plugin.getYamlHandler().getConfig().getInt("Animation.Lenght", 10000);
 				Particle particledc = 
-						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("AnimationParticleDistributionChest", "WATER_DROP"));
+						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.DistributionChest", "WATER_DROP"));
+				Particle particledcrandom = 
+						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.RandomDistributionChest", "END_ROD"));
 				Particle particlesc = 
-						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("AnimationParticleStorageChest", "FLAME"));
+						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.StorageChest", "COMPOSTER"));
+				Particle particlescvoid = 
+						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.VoidStorageChest", "FLAME"));
+				Particle particlescend = 
+						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.EndStorageChest", "SMOKE_LARGE"));
+				
 				@Override
 				public void run()
 				{
 					if(countGlobal == 0)
 					{
-						new ChestAnimation(ChestHandler.getLocationDistributionChest(dc))
-						.startSingleChestAnimation(animationLenght*(1+sclist.size()/50), particledc);
+						//Only DistributionChest
+						if(dc.isDistributeRandom())
+						{
+							new ChestAnimation(ChestHandler.getLocationDistributionChest(dc))
+							.startSingleChestAnimation(animationLenght+(1+sclist.size()/(wait*animationPerTick)), particledcrandom);
+						} else
+						{
+							new ChestAnimation(ChestHandler.getLocationDistributionChest(dc))
+							.startSingleChestAnimation(animationLenght+(1+sclist.size()/(wait*animationPerTick)), particledc);
+						}
 					}
 					while(countGlobal < sclist.size())
 					{
-						int rest = (count == 0 ? 1 : count) % (animationPerTick*2);
+						int rest = (count == 0 ? 1 : count) % (animationPerTick*wait);
 						if(rest == 0)
 						{
 							count = 0;
 							break;
 						}
 						StorageChest sc = sclist.get(countGlobal);
-						new ChestAnimation(ChestHandler.getLocationStorageChest(sc)).startSingleChestAnimation(animationLenght, particlesc);
+						debug(player, "countGlobal: "+countGlobal+" | count: "+count+" | sc.list.sizee: "+sclist.size());
+						if(sc.isOptionVoid())
+						{
+							new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
+							.startSingleChestAnimation(animationLenght, particlescvoid);
+						} else if(sc.isEndstorage())
+						{
+							new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
+							.startSingleChestAnimation(animationLenght, particlescend);
+						} else
+						{
+							new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
+							.startSingleChestAnimation(animationLenght, particlesc);
+						}
 						count++;
 						countGlobal++;
 					}
+					count = 0;
 					if(countGlobal >= (sclist.size()-1))
 					{
 						cancel();
 					}
 				}
-			}.runTaskTimer(plugin, 0L, 2L);
+			}.runTaskTimer(plugin, 0L, 1L*wait);
 		} else
 		{
 			updateStorageChestItemFilterSet(plugin, event, player, user);
@@ -585,6 +616,7 @@ public class InteractSubHandler
 		Inventory inv = Bukkit.createInventory(null, 6*9, 
 				ChatApi.tl(plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
 				.replace("%p%", String.valueOf(sc.getPriorityNumber()))
+				.replace("%e%", ItemGenerator.getColor(sc.isEndstorage()))
 				.replace("%dcname%", name)
 				.replace("%dcid%", id)
 				.replace("%scname%", sc.getChestName())
@@ -668,7 +700,11 @@ public class InteractSubHandler
 		boolean bo = false;
 		if(bo)
 		{
-			player.spigot().sendMessage(ChatApi.tctl(s));
+			if(player != null)
+			{
+				player.spigot().sendMessage(ChatApi.tctl(s));
+			}
+			System.out.println(s);
 		}
 	}
 }

@@ -62,7 +62,6 @@ public class ARGItemFilterSet_Update extends ArgumentModule
 			newifs.setID(((ItemFilterSet) plugin.getMysqlHandler().getData(MysqlHandler.Type.ITEMFILTERSET,
 					"`itemfiltersetname` = ? AND `owner_uuid` = ?", newifs.getName(), user.getUUID())).getID());
 			user.setItemFilterSet(newifs);
-			user.setMode(PluginUser.Mode.CREATEITEMFILTERSET);
 		} else
 		{
 			user.setMode(PluginUser.Mode.CHANGEITEMFILTERSET);
