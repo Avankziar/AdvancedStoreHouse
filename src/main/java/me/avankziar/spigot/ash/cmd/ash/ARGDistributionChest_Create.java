@@ -45,9 +45,9 @@ public class ARGDistributionChest_Create extends ArgumentModule
 		}
 		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, "`owner_uuid` = ?", user.getUUID());
 		if(!PermissionHandler.canCreate(player, Utility.PERMCOUNTDISTRIBUTIONCHEST+"*", Utility.PERMCOUNTDISTRIBUTIONCHEST,
-				amount , plugin.getYamlHandler().getConfig().getInt("maximumDistributionChest"), false))
+				amount , plugin.getYamlHandler().getConfig().getInt("MaximumDistributionChest"), false))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooMany")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooManyDC")));
 			return;
 		}
 		user.setMode(PluginUser.Mode.CREATEDISTRIBUTIONCHEST);

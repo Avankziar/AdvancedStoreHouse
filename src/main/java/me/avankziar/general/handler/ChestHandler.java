@@ -24,6 +24,7 @@ import org.bukkit.inventory.meta.Repairable;
 
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
+import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
@@ -525,13 +526,16 @@ public class ChestHandler
 			DistributionChest dc, int storagechestamount)
 	{
 		//int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, "`distributionchestid` = ?", dc.getId());
-		long storage = storagechestamount / plugin.getYamlHandler().getConfig().getInt("ChestsPerTick", 10);
-		long dif = plugin.getYamlHandler().getConfig().getInt("DelayedTicks", 1);
+		//3000/10 = 300
+		//1000 + (300*25*20)/(10) = 16000 ms = 16 sekunden
+		long storage = storagechestamount / PluginSettings.settings.getChestsPerTick();
+		long dif = PluginSettings.settings.getDelayedTicks();
 		
 		long start = System.currentTimeMillis();
 		long cooldown = start
 				+ 1000 //+ Eine Sekunde cooldown
-				+ (storage*(dif*25)/10)*20; //+ Anzahl an Lagerkisten(* ChestsPerTick) * DelayedTicks * Mulitplikator von 2,5 * Ticks zu MilliSekunde
+				+ storagechestamount/PluginSettings.settings.getWaitBeforStartFactor()
+				+ storage*20*dif*25/10; //300*2,5*20/2
 		if(InteractHandler.distributionCooldown.containsKey(dc.getId()))
 		{
 			InteractHandler.distributionCooldown.replace(dc.getId(), cooldown);

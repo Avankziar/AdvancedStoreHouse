@@ -121,12 +121,22 @@ public class DistributionHandler
 		{
 			return;
 		}
+		if(ChestHandler.isDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc))
+		{
+			debug(0, "Dc is already in distribution");
+			return;
+		}
 		distributeMiddle(dc.getServer(), dc, inv);
 	}
 	
 	public static void distributeStartVersionAutomatic(String server, DistributionChest dc, Inventory inv) throws IOException
 	{
 		debug(0, "Distrute VersionAutomatic start");
+		if(ChestHandler.isDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc))
+		{
+			debug(0, "Dc is already in distribution");
+			return;
+		}
 		distributeMiddle(server, dc, inv);
 	}
 	
@@ -162,57 +172,75 @@ public class DistributionHandler
 			return;
 		}
 		ChestHandler.setDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc, storagechestamount);
-		
-		ItemStack[] cloneInvL = null;
-		ItemStack[] cloneInvR = null;
-		if(inv instanceof DoubleChestInventory)
+		distributionPost(server, dc, inv, prioList, endList, storagechestamount);
+	}
+	
+	private static void distributionPost(String server, DistributionChest dc, Inventory inv,
+			final ArrayList<StorageChest> prioListPre, final ArrayList<StorageChest> endListPre, int storagechestamount)
+	{
+		int wait = storagechestamount/PluginSettings.settings.getWaitBeforStartFactor();
+		new BukkitRunnable()
 		{
-			debug(0, "distribution is DoubleChestInv");
-			DoubleChestInventory dcinv = (DoubleChestInventory) inv;
-			cloneInvL = dcinv.getLeftSide().getContents();
-			cloneInvR = dcinv.getRightSide().getContents();
-		} else
-		{
-			debug(0, "distribution dci == false");
-			cloneInvL = inv.getContents();
-			cloneInvR = inv.getContents();
-			int j = 0;
-			for(int i = 0; i < cloneInvR.length; i++)
+			ArrayList<StorageChest> prioList = prioListPre;
+			ArrayList<StorageChest> endList = endListPre;
+			@Override
+			public void run()
 			{
-				cloneInvR[i] = null;
-				j = i;
+				ItemStack[] cloneInvL = null;
+				ItemStack[] cloneInvR = null;
+				if(inv instanceof DoubleChestInventory)
+				{
+					debug(0, "distribution is DoubleChestInv");
+					DoubleChestInventory dcinv = (DoubleChestInventory) inv;
+					cloneInvL = dcinv.getLeftSide().getContents();
+					cloneInvR = dcinv.getRightSide().getContents();
+				} else
+				{
+					debug(0, "distribution dci == false");
+					cloneInvL = inv.getContents();
+					cloneInvR = inv.getContents();
+					int j = 0;
+					for(int i = 0; i < cloneInvR.length; i++)
+					{
+						cloneInvR[i] = null;
+						j = i;
+					}
+					debug(0, "distribution Right side set all null | i = "+j);
+				}
+				
+				//Normal Lager
+				//PrioList und EndList
+				ItemDistributeObject ido = new ItemDistributeObject(null, null);
+				if(dc.isDistributeRandom())
+				{
+					int[] excludes = new int[0];
+					ArrayList<StorageChest> clonePrioList = new ArrayList<>();
+					for(int i = 0; i < prioList.size(); i++)
+					{
+						int n = ChestHandler.getRandomWithExclusion(new Random(), 0, prioList.size()-1, excludes);
+						clonePrioList.add(prioList.get(n));
+					}
+					prioList = clonePrioList;
+					int[] excludesEnd = new int[0];
+					ArrayList<StorageChest> cloneEndList = new ArrayList<>();
+					for(int i = 0; i < endList.size(); i++)
+					{
+						int n = ChestHandler.getRandomWithExclusion(new Random(), 0, endList.size()-1, excludesEnd);
+						cloneEndList.add(endList.get(n));
+					}
+					endList = cloneEndList;
+				}
+				ido.chestDistribute(AdvancedStoreHouse.getPlugin(),
+						inv, prioList, endList, cloneInvL, cloneInvR, server, dc.isDistributeRandom(), "Normal ");
+				
+				//here Chainstart
+				long supposeCooldown = storagechestamount*PluginSettings.settings.getDelayChainChest()*20+10;
+				try
+				{
+					distributeChain(server, supposeCooldown, prioList, endList);
+				} catch (IOException e) {}
 			}
-			debug(0, "distribution Right side set all null | i = "+j);
-		}
-		
-		//Normal Lager
-		//PrioList und EndList
-		ItemDistributeObject ido = new ItemDistributeObject(null, null);
-		if(dc.isDistributeRandom())
-		{
-			int[] excludes = new int[0];
-			ArrayList<StorageChest> clonePrioList = new ArrayList<>();
-			for(int i = 0; i < prioList.size(); i++)
-			{
-				int n = ChestHandler.getRandomWithExclusion(new Random(), 0, prioList.size()-1, excludes);
-				clonePrioList.add(prioList.get(n));
-			}
-			prioList = clonePrioList;
-			int[] excludesEnd = new int[0];
-			ArrayList<StorageChest> cloneEndList = new ArrayList<>();
-			for(int i = 0; i < endList.size(); i++)
-			{
-				int n = ChestHandler.getRandomWithExclusion(new Random(), 0, endList.size()-1, excludesEnd);
-				cloneEndList.add(endList.get(n));
-			}
-			endList = cloneEndList;
-		}
-		ido.chestDistribute(AdvancedStoreHouse.getPlugin(),
-				inv, prioList, endList, cloneInvL, cloneInvR, server, dc.isDistributeRandom(), "Normal ");
-		
-		//here Chainstart
-		long supposeCooldown = storagechestamount*PluginSettings.settings.getDelayChainChest()*20+10;
-		distributeChain(server, supposeCooldown, prioList, endList);
+		}.runTaskLater(AdvancedStoreHouse.getPlugin(), 1L*wait);
 	}
 	
 	public static void distributeChain(String server, long supposeCooldown,
@@ -424,12 +452,6 @@ public class DistributionHandler
 		//Add the not distributed item to the return value!
 		sendBack.addAll(map.values());
 		debug(5, "sendBack.size: "+sendBack.size());
-		String s = "";
-		for(ItemStack b : sendBack)
-		{
-			s += b.getType()+" ";
-		}
-		debug(1, "sendBack.Content: "+s);
 		ItemStack[] sendBackArray = new ItemStack[sendBack.size()];
 		sendBack.toArray(sendBackArray);
 		

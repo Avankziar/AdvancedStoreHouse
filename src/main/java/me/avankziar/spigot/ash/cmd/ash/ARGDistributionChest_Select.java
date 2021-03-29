@@ -78,7 +78,7 @@ public class ARGDistributionChest_Select extends ArgumentModule
 			return;
 		}
 		user.setDistributionChestID(dc.getId());
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectDChest")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectDC")
 				.replace("%iddc%", String.valueOf(dc.getId()))
 				.replace("%name%", dc.getChestName())));
 		PluginUserHandler.addUser(user);

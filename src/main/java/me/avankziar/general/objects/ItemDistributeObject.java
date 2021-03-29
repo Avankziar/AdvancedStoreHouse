@@ -72,6 +72,15 @@ public class ItemDistributeObject
 		}
 	}
 	
+	public static void debug(boolean bo, String s)
+	{
+		//boolean bo = false;
+		if(bo)
+		{
+			AdvancedStoreHouse.log.info(s);		
+		}
+	}
+	
 	public void chestDistribute(AdvancedStoreHouse plugin, Inventory inventory, 
 			ArrayList<StorageChest> prioList, ArrayList<StorageChest> endList,
 			ItemStack[] cloneInvyL, ItemStack[] cloneInvyR, String server, boolean isRandom, String debug)
@@ -96,6 +105,7 @@ public class ItemDistributeObject
 					{
 						li = true;
 						StorageChest sc = prioList.get(i);
+						//debug(true, debug+"distribution i: "+i+" | j: "+j);
 						if(ChestHandler.isContentEmpty(cloneInvL) && ChestHandler.isContentEmpty(cloneInvR))
 						{
 							debug(debug+"distribution Content is Empty");
@@ -241,6 +251,6 @@ public class ItemDistributeObject
 					loopj += loop;
 				}
 			}
-		}.runTaskTimer(plugin, 0L, 1L*PluginSettings.settings.getDelayedTicks());
+		}.runTaskTimer(plugin, 1L, 1L*PluginSettings.settings.getDelayedTicks());
 	}
 }

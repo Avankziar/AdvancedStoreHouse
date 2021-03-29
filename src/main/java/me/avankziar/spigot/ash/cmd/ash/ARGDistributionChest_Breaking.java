@@ -36,11 +36,11 @@ public class ARGDistributionChest_Breaking extends ArgumentModule
 		if(user.canDistributionChestBreak())
 		{
 			user.setCanDistributionChestBreak(false);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.CanBreakDChest.Deactive")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.CanBreakDC.Deactive")));
 		} else
 		{
 			user.setCanDistributionChestBreak(true);
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.CanBreakDChest.Active")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.CanBreakDC.Active")));
 		}
 		PluginUserHandler.addUser(user);
 		return;

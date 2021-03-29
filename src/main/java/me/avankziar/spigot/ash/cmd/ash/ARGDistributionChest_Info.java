@@ -57,7 +57,7 @@ public class ARGDistributionChest_Info extends ArgumentModule
 				"`distributionchestid` = ? AND `endstorage` = ?", id, false);
 		int storagechestamountend = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST,
 				"`distributionchestid` = ? AND `endstorage` = ?", id, true);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.HeadlineD")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.HeadlineDC")
 				.replace("%id%", String.valueOf(id))
 				.replace("%name%", dc.getChestName())));
 		String owner = Utility.convertUUIDToName(dc.getOwneruuid());
@@ -96,8 +96,8 @@ public class ARGDistributionChest_Info extends ArgumentModule
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Random")
 				.replace("%random%",  String.valueOf(dc.isDistributeRandom()))));
 		
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.SChestAmount")+storagechestamount));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.SChestAmountEnd")+storagechestamountend));
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.SCAmount")+storagechestamount));
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.SCAmountEnd")+storagechestamountend));
 		return;
 	}
 }

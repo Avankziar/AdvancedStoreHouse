@@ -68,7 +68,7 @@ public class ARGStorageChest_Select extends ArgumentModule
 				return;
 			}
 			user.setStorageChestID(sc.getId());
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectSChest")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectSC")
 					.replace("%idsc%", String.valueOf(sc.getId()))
 					.replace("%iddc%", String.valueOf(dc.getId()))
 					.replace("%name%", dc.getChestName())));
@@ -81,7 +81,7 @@ public class ARGStorageChest_Select extends ArgumentModule
 				return;
 			}
 			user.setStorageChestID(sc.getId());
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectSChestWithOutD")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectSCWithOutDC")
 					.replace("%id%", String.valueOf(sc.getId()))));
 		}
 		PluginUserHandler.addUser(user);

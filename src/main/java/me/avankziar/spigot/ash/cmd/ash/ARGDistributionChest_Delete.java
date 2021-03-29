@@ -58,13 +58,13 @@ public class ARGDistributionChest_Delete extends ArgumentModule
 			return;
 		}
 		plugin.getMysqlHandler().deleteData(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", dc.getId());
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.DChestDeleted")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.DCDeleted")
 				.replace("%name%", dc.getChestName())
 				.replace("%id%", String.valueOf(dc.getId()))));
 		final int count = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST, 
 				"`distributionchestid` = ?", dc.getId());
 		plugin.getMysqlHandler().deleteData(MysqlHandler.Type.STORAGECHEST, "`distributionchestid` = ?", dc.getId());
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.LinkedSChestDeleted")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.LinkedSCDeleted")
 				.replace("%count%", String.valueOf(count))
 				.replace("%name%", dc.getChestName())
 				.replace("%id%", String.valueOf(dc.getId()))));

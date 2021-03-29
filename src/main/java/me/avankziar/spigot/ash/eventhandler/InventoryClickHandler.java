@@ -112,12 +112,12 @@ public class InventoryClickHandler implements Listener
 		{
 			if(ChestHandler.isSimilarShort(clicked, inv.getContents()))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.InventoyClick.ItemExist")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.InventoryClick.ItemExist")));
 				return;
 			}
 			if(ChestHandler.isFull(inv))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.InventoyClick.InventoryFull")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.InventoryClick.InventoryFull")));
 				return;
 			}
 			inv.addItem(clicked);

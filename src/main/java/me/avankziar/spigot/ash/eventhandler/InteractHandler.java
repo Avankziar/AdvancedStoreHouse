@@ -77,7 +77,6 @@ public class InteractHandler implements Listener
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onInteract(PlayerInteractEvent event) throws IOException
 	{
-		//TODO bis das per Spieler einstellbar ist
 		if(event.getClickedBlock() != null)
 		{
 			if(event.getClickedBlock().getType() == Material.LEVER)
@@ -91,18 +90,6 @@ public class InteractHandler implements Listener
 			if(cooldown.get(event.getPlayer().getName()) > System.currentTimeMillis())
 			{
 				debug(event.getPlayer(), "Cooldown");
-				
-				/*Player player = event.getPlayer();
-				PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
-				if(user == null)
-				{
-					debug(event.getPlayer(), "User == null");
-					return;
-				}
-				if(user.getMode() != Mode.CONSTRUCT)
-				{
-					event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getL().getString("Cooldown")));
-				}*/
 				return;
 			} else
 			{
@@ -265,10 +252,10 @@ public class InteractHandler implements Listener
 		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, 
 				"`owner_uuid` = ?", user.getUUID());
 		if(!PermissionHandler.canCreate(player, Utility.PERMCOUNTDISTRIBUTIONCHEST+"*", Utility.PERMCOUNTDISTRIBUTIONCHEST,
-				amount , plugin.getYamlHandler().getConfig().getInt("maximumDistributionChest"), false))
+				amount , plugin.getYamlHandler().getConfig().getInt("MaximumDistributionChest"), false))
 		{
 			debug(event.getPlayer(), "TooMany DistributionChest");
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooMany")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooManyDC")));
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
 		}
@@ -293,7 +280,7 @@ public class InteractHandler implements Listener
 				plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SetupDChest")
 				.replace("%cmd%", PluginSettings.settings.getCommands().get(KeyHandler.DC_INFO).replace(" ", "+"))
 				.replace("%dc%", dc.getChestName())));
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.FutherInstruction")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.FurtherInstruction")
 				.replace("%dc%", dc.getChestName())));
 		player.spigot().sendMessage(
 				ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Cancel.SetCancel")
@@ -318,10 +305,10 @@ public class InteractHandler implements Listener
 		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST, 
 				"`distributionchestid` = ? AND `owner_uuid` = ?", user.getDistributionChestID(), user.getUUID());
 		if(!PermissionHandler.canCreate(player, Utility.PERMCOUNTSTORAGECHEST+"*", Utility.PERMCOUNTSTORAGECHEST,
-				amount , plugin.getYamlHandler().getConfig().getInt("maximumStorageChestPerDistributionChest"), false))
+				amount , plugin.getYamlHandler().getConfig().getInt("MaximumStorageChestPerDistributionChest"), false))
 		{
 			debug(event.getPlayer(), "TooMany StorageChest");
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooManyS")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooManySC")));
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
 		}
@@ -333,7 +320,7 @@ public class InteractHandler implements Listener
 				user.getDistributionChestID(), user.getUUID(), 
 				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.StorageChestExist")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.StorageChestExists")
 					.replace("%dc%", String.valueOf(user.getDistributionChestID()))));
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
@@ -361,7 +348,7 @@ public class InteractHandler implements Listener
 		}
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", user.getDistributionChestID()))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.DistributionChestDontExist")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.DistributionChestDontExists")
 					.replace("%dc%", String.valueOf(user.getDistributionChestID()))));
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
@@ -406,7 +393,7 @@ public class InteractHandler implements Listener
 		{
 			if(ChestHandler.isLocationsEquals(dcloc, sclocr))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SChestDontBeSameAsDChest")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SCDontBeSameAsDC")));
 				return;
 			}
 		}
@@ -414,7 +401,7 @@ public class InteractHandler implements Listener
 		{
 			if(ChestHandler.isLocationsEquals(dcloc, sclocl))
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SChestDontBeSameAsDChest")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SCDontBeSameAsDC")));
 				return;
 			}
 		}
@@ -436,15 +423,16 @@ public class InteractHandler implements Listener
 			user.setStorageChestID(last);
 			PluginUserHandler.addUser(user);
 			player.spigot().sendMessage(
-					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SetupSChest")
+					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SetupSC")
 							.replace("%cmd%", PluginSettings.settings.getCommands().get(KeyHandler.SC_INFO).replace(" ", "+"))
 							.replace("%sc%", String.valueOf(last))));
 			Inventory gui = Bukkit.createInventory(null, 6*9, 
 					ChatApi.tl(plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
 					.replace("%p%", String.valueOf(sc.getPriorityNumber()))
-					.replace("%name%", name)
+					.replace("%dcname%", name)
 					.replace("%dcid%", id)
-					.replace("%id%", String.valueOf(sc.getId()))));
+					.replace("%scname%", sc.getChestName())
+					.replace("%scid%", String.valueOf(sc.getId()))));
 			gui.setContents(sc.getContents());
 			player.openInventory(gui);
 		} else if(inHand == Material.valueOf
@@ -456,7 +444,7 @@ public class InteractHandler implements Listener
 			user.setStorageChestID(last);
 			PluginUserHandler.addUser(user);
 			player.spigot().sendMessage(
-					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SetupSChestIFS")
+					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SetupSCIFS")
 							.replace("%cmd%", PluginSettings.settings.getCommands().get(KeyHandler.SC_INFO).replace(" ", "+"))
 							.replace("%sc%", String.valueOf(last))));
 		} else if(inHand == Material.valueOf
@@ -469,7 +457,7 @@ public class InteractHandler implements Listener
 			user.setStorageChestID(last);
 			PluginUserHandler.addUser(user);
 			player.spigot().sendMessage(
-					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SetupSChestInventory")
+					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.SetupSCInventory")
 							.replace("%cmd%", PluginSettings.settings.getCommands().get(KeyHandler.SC_INFO).replace(" ", "+"))
 							.replace("%sc%", String.valueOf(last))));
 		}

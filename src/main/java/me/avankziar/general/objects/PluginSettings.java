@@ -18,6 +18,7 @@ public class PluginSettings
 	private long directPauseValue;
 	private long indirectPauseValue;
 	
+	private int waitBeforStartFactor;
 	private int delayedTicks;
 	private int delayChainChest;
 	private int delayedChainTicks;
@@ -35,7 +36,7 @@ public class PluginSettings
 	public PluginSettings(String server, boolean mysql, boolean lwc,
 			boolean automaticDistribution, List<String> serverRestartTime, int minimumTickPerDistributionChest,
 			long directPauseValue, long indirectPauseValue,
-			int delayedTicks, int delayChainChest, int delayedChainTicks, int chestsPerTick,
+			int waitBeforStartFactor, int delayedTicks, int delayChainChest, int delayedChainTicks, int chestsPerTick,
 			int voidChestRun, int voidChestsPerTick,
 			int storageChestAmountWhereShowParticels)
 	{
@@ -48,15 +49,16 @@ public class PluginSettings
 		setDirectPauseValue(indirectPauseValue);
 		setIndirectPauseValue(indirectPauseValue);
 		
+		setWaitBeforStartFactor(waitBeforStartFactor);
 		setDelayedTicks(delayedTicks);
 		setDelayChainChest(delayChainChest);
-		setDelayedTicks(delayedChainTicks);
+		setDelayedChainTicks(delayedChainTicks);
 		setChestsPerTick(chestsPerTick);
 		
 		setVoidChestRun(voidChestRun);
 		setVoidChestsPerTick(voidChestsPerTick);
 		
-		setStorageChestAmountWhereShowParticels(storageChestAmountWhereShowParticels);
+		setStorageChestAmountWhereShowParticles(storageChestAmountWhereShowParticels);
 	}
 	
 	public static void init(AdvancedStoreHouse plugin)
@@ -70,18 +72,19 @@ public class PluginSettings
 		long directPauseValue = plugin.getYamlHandler().getConfig().getLong("DirectPauseValue", 20*60*10);
 		long indirectPauseValue = plugin.getYamlHandler().getConfig().getLong("IndirectPauseValue", 20*60*10);
 		
-		int delayedTicks = plugin.getYamlHandler().getConfig().getInt("DelayedTicks", 1);
+		int waitBeforStartFactor = plugin.getYamlHandler().getConfig().getInt("WaitBeforeStartFactor", 100);
+		int delayedTicks = plugin.getYamlHandler().getConfig().getInt("DelayedTicks", 2);
 		int delayChainChest = plugin.getYamlHandler().getConfig().getInt("DelayChainChests", 10);
 		int delayedChainTicks = plugin.getYamlHandler().getConfig().getInt("DelayedChainTicks", 10);
-		int chestsPerTick = plugin.getYamlHandler().getConfig().getInt("ChestsPerTick", 10);
+		int chestsPerTick = plugin.getYamlHandler().getConfig().getInt("ChestsPerTick", 5);
 		
 		int voidChestRun = plugin.getYamlHandler().getConfig().getInt("VoidChestRun", 300);
 		int voidChestsPerTick = plugin.getYamlHandler().getConfig().getInt("VoidChestsPerTick", 10);
 		
-		int storageChestAmountWhereShowParticels = plugin.getYamlHandler().getConfig().getInt("StorageChestAmountWhereShowParticels", 10);
+		int storageChestAmountWhereShowParticels = plugin.getYamlHandler().getConfig().getInt("StorageChestAmountWhereShowParticles", 10);
 		settings = new PluginSettings(server, mysql, lwc,
 				automaticDistribution, serverRestartTime, minimumTickPerDistributionChest, directPauseValue, indirectPauseValue,
-				delayedTicks, delayChainChest, delayedChainTicks, chestsPerTick,
+				waitBeforStartFactor, delayedTicks, delayChainChest, delayedChainTicks, chestsPerTick,
 				voidChestRun, voidChestsPerTick,
 				storageChestAmountWhereShowParticels);
 	}
@@ -206,12 +209,12 @@ public class PluginSettings
 		this.indirectPauseValue = indirectPauseValue;
 	}
 
-	public int getStorageChestAmountWhereShowParticels()
+	public int getStorageChestAmountWhereShowParticles()
 	{
 		return storageChestAmountWhereShowParticels;
 	}
 
-	public void setStorageChestAmountWhereShowParticels(int storageChestAmountWhereShowParticels)
+	public void setStorageChestAmountWhereShowParticles(int storageChestAmountWhereShowParticels)
 	{
 		this.storageChestAmountWhereShowParticels = storageChestAmountWhereShowParticels;
 	}
@@ -244,6 +247,16 @@ public class PluginSettings
 	public void setVoidChestsPerTick(int voidChestsPerTick)
 	{
 		this.voidChestsPerTick = voidChestsPerTick;
+	}
+
+	public int getWaitBeforStartFactor()
+	{
+		return waitBeforStartFactor;
+	}
+
+	public void setWaitBeforStartFactor(int waitBeforStartFactor)
+	{
+		this.waitBeforStartFactor = waitBeforStartFactor;
 	}
 
 }

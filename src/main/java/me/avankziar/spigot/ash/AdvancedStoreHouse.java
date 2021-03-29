@@ -60,7 +60,6 @@ import main.java.me.avankziar.spigot.ash.cmd.ash.ARGItemFilterSet_Select;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGItemFilterSet_Update;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGMode;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGPlayerInfo;
-import main.java.me.avankziar.spigot.ash.cmd.ash.ARGPriority;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Chestname;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGStorageChest_Create;
@@ -306,7 +305,6 @@ public class AdvancedStoreHouse extends JavaPlugin
 		
 		ArgumentConstructor mode = new ArgumentConstructor(baseCommandI+"_mode", 0, 1, 1, false, lhmmode);
 		ArgumentConstructor playerinfo = new ArgumentConstructor(baseCommandI+"_playerinfo", 0, 0, 1, false, playerMapI);
-		ArgumentConstructor priority = new ArgumentConstructor(baseCommandI+"_priority", 0, 1, 1, false, null);
 	
 		ArgumentConstructor sc_create = new ArgumentConstructor(baseCommandI+"_sc_create", 1, 1, 1, false, null);
 		ArgumentConstructor sc_chestname = new ArgumentConstructor(baseCommandI+"_sc_chestname", 1, 2, 2, false, null);
@@ -326,7 +324,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 				sc_create, sc_chestname, sc_delete, sc_info, sc_list, sc_openoption, sc_select, sc_search);
 		
 		CommandConstructor ash = new CommandConstructor(baseCommandI, false,
-				autodistributioninfo, blockinfo, cancel, debug, delete, dc, itemfilterset, mode, playerinfo, priority, sc);
+				autodistributioninfo, blockinfo, cancel, debug, delete, dc, itemfilterset, mode, playerinfo, sc);
 		
 		cc = ash;
 		
@@ -341,7 +339,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 				dc, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member,
 				dc_openoption, dc_select, dc_search, dc_switch, dc_transfer,
 				itemfilterset, ifs_create, ifs_delete, ifs_list, ifs_name, ifs_select, ifs_update,
-				mode, playerinfo, priority,
+				mode, playerinfo,
 				sc, sc_chestname, sc_create, sc_delete, sc_info, sc_list, sc_openoption, sc_select, sc_search);
 		
 		new ARGAutomaticDistributionInfo(plugin, autodistributioninfo);
@@ -377,7 +375,6 @@ public class AdvancedStoreHouse extends JavaPlugin
 		
 		new ARGMode(plugin, mode);
 		new ARGPlayerInfo(plugin, playerinfo);
-		new ARGPriority(plugin, priority);
 		
 		new ARGStorageChest(plugin, sc);
 		new ARGStorageChest_Chestname(plugin, sc_chestname);

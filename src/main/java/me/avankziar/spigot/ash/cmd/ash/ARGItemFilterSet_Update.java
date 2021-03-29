@@ -51,7 +51,7 @@ public class ARGItemFilterSet_Update extends ArgumentModule
 		{
 			int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.ITEMFILTERSET, "`owner_uuid` = ?", user.getUUID());
 			if(!PermissionHandler.canCreate(player, Utility.PERMBYPASSITEMFILTERSET, Utility.PERMCOUNTITEMFILTERSET,
-					amount, plugin.getYamlHandler().getConfig().getInt("maximumItemFilterSet", 500), false))
+					amount, plugin.getYamlHandler().getConfig().getInt("MaximumItemFilterSet", 500), false))
 			{
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetCreate.TooMany")));
 				return;

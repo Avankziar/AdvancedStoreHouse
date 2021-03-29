@@ -76,7 +76,9 @@ public class InteractSubHandler
 			smokerHandling(AdvancedStoreHouse.getPlugin(), event, player, user);
 		} else
 		{
-			//Egal welches Item
+			PluginUserHandler.cancelAction(player, user, user.getMode(), 
+					AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("CancelAction"));
+			checkIfDistributionChest(event, player, user);
 			return;
 		}
 	}
@@ -136,10 +138,10 @@ public class InteractSubHandler
 		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, 
 				"`owner_uuid` = ?", user.getUUID());
 		if(!PermissionHandler.canCreate(player, Utility.PERMCOUNTDISTRIBUTIONCHEST+"*", Utility.PERMCOUNTDISTRIBUTIONCHEST,
-				amount , plugin.getYamlHandler().getConfig().getInt("maximumDistributionChest"), false))
+				amount , plugin.getYamlHandler().getConfig().getInt("MaximumDistributionChest"), false))
 		{
 			debug(event.getPlayer(), "TooMany DistributionChest");
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooMany")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooManyDC")));
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
 		}
@@ -161,9 +163,12 @@ public class InteractSubHandler
 			return;
 		}
 		int countsc = plugin.getMysqlHandler().countWhereID(Type.STORAGECHEST, "`distributionchestid` = ?", dc.getId());
-		if(countsc > plugin.getYamlHandler().getConfig().getInt("CopyPasteMaxStorageChest"))
+		int maxCopy = plugin.getYamlHandler().getConfig().getInt("CopyPasteMaxStorageChest");
+		if(countsc > maxCopy)
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.CopyPaste.TooManyToCopy")));
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.CopyPaste.TooManyToCopy")
+					.replace("%mysccount%", String.valueOf(countsc))
+					.replace("%copylimit%", String.valueOf(maxCopy))));
 			return;
 		}
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.CopyPaste.CopyAndPasteTaskRun")));
@@ -235,7 +240,7 @@ public class InteractSubHandler
 				return;
 			}
 			user.setDistributionChestID(dc.getId());
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectDChest")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectDC")
 					.replace("%iddc%", String.valueOf(dc.getId()))
 					.replace("%name%", dc.getChestName())));
 			PluginUserHandler.addUser(user);
@@ -265,7 +270,7 @@ public class InteractSubHandler
 					return;
 				}
 				user.setStorageChestID(sclist.get(0).getId());
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectSChest")
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectSC")
 						.replace("%idsc%", String.valueOf(sclist.get(0).getId()))
 						.replace("%namesc%", sclist.get(0).getChestName())
 						.replace("%iddc%", String.valueOf(dc.getId()))
@@ -314,7 +319,7 @@ public class InteractSubHandler
 				return;
 			}
 			ArrayList<StorageChest> sclist = ConvertHandler.convertListIII(plugin.getMysqlHandler().getList(Type.STORAGECHEST,
-					"`id`", false, user.getNumberScForParticel(), PluginSettings.settings.getStorageChestAmountWhereShowParticels(),
+					"`id`", false, user.getNumberScForParticel(), PluginSettings.settings.getStorageChestAmountWhereShowParticles(),
 					"`distributionchestid` = ?", dc.getId()));
 			long cooldown = System.currentTimeMillis()
 					+ plugin.getYamlHandler().getConfig().getLong("AnimationAdditionalCooldown", 10000)
@@ -552,7 +557,7 @@ public class InteractSubHandler
 		}
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", sc.getDistributionChestID()))
 		{
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.DistributionChestDontExistNone")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.DistributionChestDontExistsNone")
 					.replace("%dc%", String.valueOf(user.getDistributionChestID()))));
 			player.spigot().sendMessage(
 					ChatApi.generateTextComponent(plugin.getYamlHandler().getLang().getString("CmdAsh.Update.MayDeleteNone")));
@@ -580,9 +585,10 @@ public class InteractSubHandler
 		Inventory inv = Bukkit.createInventory(null, 6*9, 
 				ChatApi.tl(plugin.getYamlHandler().getLang().getString("GUI", "StorageChest GUI ID: &c%id% &bP:%p% &f| %dcid% %name%")
 				.replace("%p%", String.valueOf(sc.getPriorityNumber()))
-				.replace("%name%", name)
+				.replace("%dcname%", name)
 				.replace("%dcid%", id)
-				.replace("%id%", String.valueOf(sc.getId()))));
+				.replace("%scname%", sc.getChestName())
+				.replace("%scid%", String.valueOf(sc.getId()))));
 		inv.setContents(sc.getContents());
 		player.openInventory(inv);
 		return;

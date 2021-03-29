@@ -1,9 +1,7 @@
 Future =============================================================================================================================
 - Befehle einbauen um per Gui die Einstellungen der verteilerkisten und Lagerkisten aufzurufen und zu ändern.
-- Cmd um alle Lagerkisten abzusuchen, welche das Item als Filter haben als liste
+- XCmd um alle Lagerkisten abzusuchen, welche das Item als Filter haben als liste
 - Ein Vererbungsbefehl.
-- Ein Toggelbefehl um Verteilerkisten abschlag zu können.
-- Lagerkiste nur mit leeren hand einstellen.
 - Die Option "MoneyPrinter" zu den Lagerkisten hinzufügen. Der MoneyPrinter sorgt dafür, dass alle Item, welche in diese kommen sollten, in Geld (per yaml) umgewandelt werden.
 - Wenn man die kisten vorherbefüllt und dann diese als Lagerkiste registriert, dann verschwinden die Items, die vorher drin waren.
 
@@ -14,7 +12,7 @@ Build 4 ========================================================================
 - ++Die Option "Verzauberung" hinzufügen. Diese soll als Filter dafür sorgen, dass mit dem ItemFilterset Items welchen beides entspricht sortiert wird. Beispiel. Itemfilter Goldhelm unverz. Verzauberung on. 
     Nun legt man ein verzauberten Goldhelm hinein. Ungeachtet welche Verz. dieser hat, wird der reinsortiert.
 - ++Die Option Material.
-- +Vereinfachung des Erstellungsprozesses für Lagersysteme:
+- ++Vereinfachung des Erstellungsprozesses für Lagersysteme:
   - ++(Mit Befehl)Ohne Item (leere Hand) (Ohne Shift) soll zukünftig nach einem eingangsbefehl die Lagerkisten erstellt werden, wie es zuvor auch war.
   - ++(Mit Befehl)Mit einer redstonekiste in der hand (Ohne Shift) beim erstellen von Lagerkisten, soll direkt der eingestellte Itemfilterset übernommen werden, ohne das gui aufzurufen.
   - ++(Mit Befehl)Mit einem normalen kiste bei erstellung von Lagerkisten, die items IN der Kiste als Itemfilterset übernehmen und somit das gui nicht aufzurufen.
@@ -22,12 +20,12 @@ Build 4 ========================================================================
   - ++Mit einem Fass (MIt shift) wird die Verteilerkiste, ohne Shift eine Lagerkiste ausgewählt.
   - ++Mit dem Schmelzofen (Ohne shift) auf eine bestehende Lagerkiste, wird das Itemfilterset aufgerufen. Mit Shift werden ein Teil der Zugehörigen Lagerkisten einer Verteilerkiste angezeigt. (Visuelle darstellung)
   - ++Mit einem Ofen (ohne shift) wird eine GUI zu den Optioneinstellungen einer lagerkiste, (mit shift) das der Verteilerkisten aufgerufen.
-  - +Mit einem Räucherofen (ohne Shift) kann eine Lagerkiste versetzt werden. Mit Shift kann eine Verteilerkiste versetzt werden.
+  - ++Mit einem Räucherofen (ohne Shift) kann eine Lagerkiste versetzt werden. Mit Shift kann eine Verteilerkiste versetzt werden.
 - ++Öfen aller Art, Trichter, Spender, Werfer, Braustand als Verteilungsziel herausnehmen.
 - ++Verbessertes Verteilungssystem
   - ++Physikalische Verteilung
   - ++Button Verteilung
-  - +Automatische Verteilung
+  - ++Automatische Verteilung
 - ++Das Plugin soll intern es blocken, weitere Lagersystem auf bereits existierende Lagerkisten zu setzten wenn es NICHT die Mitglieder des orginalen Lagersystem ist.
 - ++Über ein Schild per LWC so handhaben, dass nur LWC Mitglieder die Priorität des Lagersystem Switchen können.
 - ++Über ein Schild per LWC so handhaben, die Prioritäten zuweisen können um somit NUR Lagerkisten mit der exakten Prio anzusprechen.
@@ -46,13 +44,25 @@ Build 4 ========================================================================
 - +Interne Überholung auf den jetztigen Standart
 - Alle Kisten in der Welt des ausführenden Spielers, den Server updaten.
 - ++Shulkerkisten komplett rausnehmen.
-- ++9 Befehl entfernt: /ash gui; /ash distributionchest random; /ash override; /ash storagechest update, sowie positionsänderungsbefehle
-      /ash searchtype, /ash distributionchest automaticdistribution, /ash endstorage
+- ++11 Befehl entfernt: /ash gui; /ash distributionchest random; /ash override; /ash storagechest update, sowie positionsänderungsbefehle
+      /ash searchtype, /ash distributionchest automaticdistribution, /ash endstorage, /ash priority, /ash storagechest openitemfilterset
 - ++/ash distributionchest openoption, /ash storagechest openoption hinzugefügt
 
 - Mysql Colum hinzufügen:
   Dc: prioritytype, prioritynumber
   Sc: chestname, optionvoid, optiondurability, durabilitytype, durability, optionrepair, repairtype, repaircost, optionenchantments, optionmaterial
+  
+  Mysql:
+  - Zuerst bei den DistributionChestTable, Reiter 'Struktur', nach "normalpriority" 2 Spalten hinzufügen.
+    - wie bild beschreibt
+  - UPDATE `yourASHDistributionChestTable` SET `prioritytype`='SWITCH' WHERE 1; in phpmyadmin unter Sql eingeben
+  - In dem StorageChestTable nach "blockz" 10 Spalten einfügen.
+    - wie bild beschreibt
+  - UPDATE `yourASHStorageChestTable` SET `chestname`='unnamed',`durabilitytype`='LESSTHAN',`repairtype`='LESSTHAN' WHERE 1
+  
+  - Falls Welten auf andere Server umziehen, so mache:
+    UPDATE `yourASHDistributionORStorageChestTable` SET `server`='yourNewServer' WHERE `server`='youroldserver' AND `world`='yourworld'
+  
 
 Build 3 =============================================================================================================================
 - +/ash distributionchest random, hinzugefügt. Setzt die Verteilerkiste in den Randommodus.

@@ -51,7 +51,7 @@ public class ARGStorageChest_Delete extends ArgumentModule
 			return;
 		}
 		plugin.getMysqlHandler().deleteData(MysqlHandler.Type.STORAGECHEST, "`id` = ?", sc.getId());
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.SChestDeleted")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.SCDeleted")
 				.replace("%id%", String.valueOf(sc.getId()))));
 		return;
 	}

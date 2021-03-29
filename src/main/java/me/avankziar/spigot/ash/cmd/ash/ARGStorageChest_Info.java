@@ -62,7 +62,7 @@ public class ARGStorageChest_Info extends ArgumentModule
 			}
 		}
 		
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.HeadlineS")
+		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.HeadlineSC")
 				.replace("%name%", sc.getChestName())
 				.replace("%id%", String.valueOf(id))));
 		if(dc != null)
@@ -77,7 +77,7 @@ public class ARGStorageChest_Info extends ArgumentModule
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.Owner")
 						.replace("%owner%", "/")));
 			}
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.DChestName")
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.DCName")
 					.replace("%id%", String.valueOf(dc.getId()))
 					.replace("%name%", dc.getChestName())));
 		}

@@ -103,7 +103,7 @@ public class BlockBreakListener implements Listener
 						"`distributionchestid` = ?", id);
 				plugin.getMysqlHandler().deleteData(MysqlHandler.Type.STORAGECHEST, "`distributionchestid` = ?", id);
 				event.getPlayer().sendMessage(ChatApi.tl(
-						plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.LinkedSChestDeleted")
+						plugin.getYamlHandler().getLang().getString("CmdAsh.Delete.LinkedSCDeleted")
 						.replace("%count%", String.valueOf(count))
 						.replace("%name%", dc.getChestName())
 						.replace("%id%", String.valueOf(dc.getId()))));
