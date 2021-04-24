@@ -35,6 +35,8 @@ import main.java.me.avankziar.spigot.ash.cmd.TabCompletion;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGAutomaticDistributionInfo;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGBlockInfo;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGCancel;
+import main.java.me.avankziar.spigot.ash.cmd.ash.ARGCheckUnboundChest;
+import main.java.me.avankziar.spigot.ash.cmd.ash.ARGConvert;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDebug;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDebug_ItemMeta;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDelete;
@@ -263,6 +265,9 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor cancel = new ArgumentConstructor(baseCommandI+"_cancel", 0, 0, 0, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.CANCEL, cancel.getCommandString());
 		
+		ArgumentConstructor checkunboundchest = new ArgumentConstructor(baseCommandI+"_checkunboundchest", 0, 0, 1, false, null);
+		ArgumentConstructor convert = new ArgumentConstructor(baseCommandI+"_convert", 0, 0, 1, false, null);
+		
 		ArgumentConstructor debug_im = new ArgumentConstructor(baseCommandI+"_debug_itemmeta", 1, 1, 1, false, null);
 		ArgumentConstructor debug = new ArgumentConstructor(baseCommandI+"_debug", 0, 0, 0, false, null, debug_im);
 		
@@ -281,6 +286,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor dc_member = new ArgumentConstructor(baseCommandI+"_dc_member", 1, 2, 2, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.DC_MEMBER, dc_member.getCommandString());
 		ArgumentConstructor dc_openoption = new ArgumentConstructor(baseCommandI+"_dc_openoption", 1, 1, 2, false, null);
+		PluginSettings.settings.getCommands().put(KeyHandler.DC_OPENOPTION, dc_openoption.getCommandString());
 		ArgumentConstructor dc_select = new ArgumentConstructor(baseCommandI+"_dc_select", 1, 2, 3, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.DC_SELECT, dc_select.getCommandString());
 		ArgumentConstructor dc_search = new ArgumentConstructor(baseCommandI+"_dc_search", 1, 1, 1, false, null);
@@ -324,7 +330,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 				sc_create, sc_chestname, sc_delete, sc_info, sc_list, sc_openoption, sc_select, sc_search);
 		
 		CommandConstructor ash = new CommandConstructor(baseCommandI, false,
-				autodistributioninfo, blockinfo, cancel, debug, delete, dc, itemfilterset, mode, playerinfo, sc);
+				autodistributioninfo, blockinfo, cancel, checkunboundchest, convert, debug, delete, dc, itemfilterset, mode, playerinfo, sc);
 		
 		cc = ash;
 		
@@ -334,6 +340,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		
 		addingHelps(ash,
 				autodistributioninfo, blockinfo, cancel,
+				checkunboundchest, convert,
 				debug, debug_im,
 				delete,
 				dc, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member,
@@ -345,6 +352,9 @@ public class AdvancedStoreHouse extends JavaPlugin
 		new ARGAutomaticDistributionInfo(plugin, autodistributioninfo);
 		new ARGBlockInfo(plugin, blockinfo);
 		new ARGCancel(plugin, cancel);
+		
+		new ARGCheckUnboundChest(plugin, checkunboundchest);
+		new ARGConvert(plugin, convert);
 		
 		new ARGDebug(plugin, debug);
 		new ARGDebug_ItemMeta(plugin, debug_im);

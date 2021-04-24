@@ -331,6 +331,54 @@ public interface TableI
 		return 0;
 	}
 	
+	default int getCountI(AdvancedStoreHouse plugin, String orderByColumn, String whereColumn, Object... whereObject)
+	{
+		PreparedStatement preparedStatement = null;
+		ResultSet result = null;
+		Connection conn = plugin.getMysqlSetup().getConnection();
+		if (conn != null) 
+		{
+			try 
+			{
+				String sql = " SELECT count(*) FROM `"+plugin.getMysqlHandler().tableNameI
+						+"` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC";
+		        preparedStatement = conn.prepareStatement(sql);
+		        int i = 1;
+		        for(Object o : whereObject)
+		        {
+		        	preparedStatement.setObject(i, o);
+		        	i++;
+		        }
+		        
+		        result = preparedStatement.executeQuery();
+		        while (result.next()) 
+		        {
+		        	return result.getInt(1);
+		        }
+		    } catch (SQLException e) 
+			{
+				  AdvancedStoreHouse.log.warning("Error: " + e.getMessage());
+				  e.printStackTrace();
+		    } finally 
+			{
+		    	  try 
+		    	  {
+		    		  if (result != null) 
+		    		  {
+		    			  result.close();
+		    		  }
+		    		  if (preparedStatement != null) 
+		    		  {
+		    			  preparedStatement.close();
+		    		  }
+		    	  } catch (Exception e) {
+		    		  e.printStackTrace();
+		    	  }
+		      }
+		}
+		return 0;
+	}
+	
 	default ArrayList<PluginUser> getListI(AdvancedStoreHouse plugin, String orderByColumn,
 			int start, int end, String whereColumn, Object...whereObject)
 	{

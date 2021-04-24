@@ -11,6 +11,7 @@ public class KeyHandler
 	public static String DC_INFO = "DC_INFO";
 	public static String DC_LIST = "DC_LIST";
 	public static String DC_MEMBER = "DC_MEMBER";
+	public static String DC_OPENOPTION = "DC_OPENOPTION";
 	public static String DC_SELECT = "DC_SELECT";
 	
 	public static String IFS_SELECT = "IFS_SELECT";

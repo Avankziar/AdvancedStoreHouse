@@ -601,9 +601,6 @@ public class ChestHandler
 		int damage = 0;
 		switch(material)
 		{
-		default:
-			damage = 0;
-			break;
 		case WOODEN_AXE: //Fallthrough
 		case WOODEN_HOE:
 		case WOODEN_PICKAXE:
@@ -750,6 +747,9 @@ public class ChestHandler
 			break;
 		case FLINT_AND_STEEL:
 			damage = 65;
+			break;
+		default:
+			damage = 0;
 			break;
 		}
 		return damage;

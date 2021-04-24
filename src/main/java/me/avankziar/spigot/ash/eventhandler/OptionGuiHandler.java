@@ -125,7 +125,14 @@ public class OptionGuiHandler
 				inventory.setItem(slot, air);
 				continue;
 			}
-			if(slot == 4)
+			if(slot == 0)
+			{
+				if(player.hasPermission(Utility.PERMBYPASSEXPERTMODUS))
+				{
+					ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, false, user.getSettingLevel());
+					inventory.setItem(slot, is);
+				}
+			} else if(slot == 4)
 			{
 				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, dc, null, true, user.getSettingLevel());
 				inventory.setItem(slot, is);
@@ -472,7 +479,14 @@ public class OptionGuiHandler
 				inventory.setItem(slot, air);
 				continue;
 			}
-			if(slot == 4)
+			if(slot == 0)
+			{
+				if(player.hasPermission(Utility.PERMBYPASSEXPERTMODUS))
+				{
+					ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, false, user.getSettingLevel());
+					inventory.setItem(slot, is);
+				}
+			} else if(slot == 4)
 			{
 				ItemStack is = ItemGenerator.create(String.valueOf(slot), yml, 1, type, null, sc, true, user.getSettingLevel());
 				inventory.setItem(slot, is);

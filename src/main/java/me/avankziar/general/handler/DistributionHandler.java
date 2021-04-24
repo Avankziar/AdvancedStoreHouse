@@ -477,6 +477,7 @@ public class DistributionHandler
 	        
 	        if(optionMaterial)
 	        {
+	        	//FIXME Flussbild noch korrigieren
 	        	if(i.getType() == f.getType())
 		        {
 	        		debug(0, "OpMaterial >> i & f getType == || i:"+i.getType()+" | f:"+f.getType());
@@ -506,8 +507,14 @@ public class DistributionHandler
 	        			Damageable id = (Damageable) i.getItemMeta();
 	        			if(optionDurability)
 	        			{
-	        				int percent = ChestHandler.getMaxDamage(i.getType())/(id.getDamage() == 0 ? 1 : id.getDamage());
+	        				//(132-5/132)*100 =
+	        				double maxdamage = ChestHandler.getMaxDamage(i.getType()); //132
+	        				double damage = id.getDamage(); //64
+	        				double dpercent = ((maxdamage-damage)/maxdamage)*100;
+	        				int percent = (int) dpercent;
 	        				debug(0, "similar Long is Option Durability");
+	        				debug(0, "similar Long Op Dura| maxdamage:"+maxdamage+" | damage: "+damage);
+	        				debug(0, "similar Long Op Dura| dpercent:"+dpercent+" | percent: "+percent);
 	        				//the percentage muss be OVER the value, to be distributed!
 	        				if(durabilityType == Type.LESSTHAN)
 	        				{

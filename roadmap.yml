@@ -1,11 +1,16 @@
 Future =============================================================================================================================
-- Befehle einbauen um per Gui die Einstellungen der verteilerkisten und Lagerkisten aufzurufen und zu ändern.
-- XCmd um alle Lagerkisten abzusuchen, welche das Item als Filter haben als liste
 - Ein Vererbungsbefehl.
 - Die Option "MoneyPrinter" zu den Lagerkisten hinzufügen. Der MoneyPrinter sorgt dafür, dass alle Item, welche in diese kommen sollten, in Geld (per yaml) umgewandelt werden.
-- Wenn man die kisten vorherbefüllt und dann diese als Lagerkiste registriert, dann verschwinden die Items, die vorher drin waren.
+- Mit IFH ein Interface aufbauen, um bspw. alle Verteilerkisten oder Lagerkisten per Spieler per Server per World und innerhalb eines bereichs
+  zugänglich machen.
 
 Build 4 =============================================================================================================================
+- +/ash blockinfo, gibt nun per Chat clickbare id und Chestname aller Verteiler- und lagerkisten, vom block, welchen man gerade ansieht.
+- +Tabcompleter funktioniert nun richtig.
+- +/ash transfer, werden auch alle Lagerkisten der zu transferierenden Lagersystems mitübertragen. (Async)
+- +/ash convert, update alle Datenbankeinträge auf Build 4
+- +/ash checkunboundchest, Befehl, welcher checkt, ob Verteilerkisten überhaupt Lagerkisten haben, wenn nicht gelöscht.
+  Checkt auch, ob Lagerkisten an Verteilerkisten angebunden sind, falls nicht, werden die gelöscht.
 - ++Die Option "Void" zu den Lagerkisten hinzufügen. Void sorgt dafür, dass alle Item, welche in diese kommen sollten, ins void wanderen.
 - ++Die Option "Haltbarkeit" zu den Lagerkisten hinzufügen. Welche einen größer, kleiner angeben lässt, um Items, welche eine Haltbarkeit haben, dahingehend sortiert werden kann.
 - ++Die Option "Reparatur" zu den Lagerkisten hinzugefügt. Welche einen größer, kleiner angeben lässt, um Items, welche eine Reparaturkosten haben dahingehend sortieren zu können.

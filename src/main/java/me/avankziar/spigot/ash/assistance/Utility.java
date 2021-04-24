@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Barrel;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Dropper;
 import org.bukkit.inventory.ItemStack;
 
 import main.java.me.avankziar.general.objects.ChatApi;
@@ -53,7 +54,13 @@ public class Utility
 	PERMBYPASSREPOSITION = "",
 	PERMBYPASSOPENOPTION = "",
 	PERMBYPASSIFSORVISUAL = "",
-	PERMBYPASSCOPYANDPASTE = "";
+	PERMBYPASSCOPYANDPASTE = "",
+	
+	PERMBYPASSSIGN = "",
+	
+	PERMBYPASSEXPERTMODUS = "",
+	
+	PERMBYPASSCREATEDROPPER = "";
 	
 	public Utility(AdvancedStoreHouse plugin)
 	{
@@ -92,6 +99,9 @@ public class Utility
 		PERMBYPASSOPENOPTION = plugin.getYamlHandler().getCom().getString("Bypass.OpenOption", "ash.bypass.openoption");
 		PERMBYPASSIFSORVISUAL = plugin.getYamlHandler().getCom().getString("Bypass.IFSOrVisual", "ash.bypass.ifsorvisual");
 		PERMBYPASSCOPYANDPASTE = plugin.getYamlHandler().getCom().getString("Bypass.CopyAndPaste", "ash.bypass.copyandpaste");
+		PERMBYPASSSIGN = plugin.getYamlHandler().getCom().getString("Bypass.Sign", "ash.bypass.sign");
+		PERMBYPASSEXPERTMODUS = plugin.getYamlHandler().getCom().getString("Bypass.ExpertModus", "ash.bypass.expertmodus");
+		PERMBYPASSCREATEDROPPER = plugin.getYamlHandler().getCom().getString("Bypass.CreateDropper", "ash.bypass.dropper");
 	}
 	
 	public String getPrefix()
@@ -148,21 +158,6 @@ public class Utility
 	    	return false;
 	    }
 	}
-	
-	/*public void isAfk(Player player, Player targed)
-	{
-		if(plugin.getAfkRecord() != null)
-		{
-			if(existMethod(plugin.getAfkRecord().getClass(), "isAfk"))
-			{
-				if(plugin.getAfkRecord().isAfk(targed))
-				{
-					///Der Spieler ist afk!
-					player.spigot().sendMessage(ChatApi.tctl(plugin.getYamlHandler().getL().getString("AfkRecord.IsAfk")));	
-				}
-			}
-		}
-	}*/
 	
 	public static boolean containsIgnoreCase(String message, String searchStr)     
 	{
@@ -295,9 +290,18 @@ public class Utility
 		return false;
 	}
 	
-	public boolean isNOTStoragechest(BlockState state)
+	public boolean isNOTDistributionchest(BlockState state)
 	{
 		if(state instanceof Chest || state instanceof Barrel)
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean isNOTStoragechest(BlockState state)
+	{
+		if(state instanceof Chest || state instanceof Barrel || state instanceof Dropper)
 		{
 			return false;
 		}

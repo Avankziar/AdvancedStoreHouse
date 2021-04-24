@@ -96,8 +96,6 @@ public class ARGPlayerInfo extends ArgumentModule
 	{
 		switch(mode)
 		{
-		case BLOCKINFO:
-			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.BLOCKINFO");
 		case CHANGEITEMFILTERSET:
 			return plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.CHANGEITEMFILTERSET");
 		case CONSTRUCT:

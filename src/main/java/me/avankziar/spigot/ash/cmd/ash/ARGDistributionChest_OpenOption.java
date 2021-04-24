@@ -32,6 +32,11 @@ public class ARGDistributionChest_OpenOption extends ArgumentModule
 	public void run(CommandSender sender, String[] args) throws IOException
 	{
 		Player player = (Player) sender;
+		if(player.getInventory().getItemInMainHand() != null)
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("PleaseNoItemInHand")));
+			return;
+		}
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
 		{

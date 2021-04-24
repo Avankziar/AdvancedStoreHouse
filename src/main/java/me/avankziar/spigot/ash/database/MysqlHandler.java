@@ -1,8 +1,19 @@
 package main.java.me.avankziar.spigot.ash.database;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.tables.TableI;
 import main.java.me.avankziar.spigot.ash.database.tables.TableII;
@@ -207,6 +218,24 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		return 0;
 	}
 	
+	public int getCount(Type type, String orderByColumn, String whereColumn, Object... whereObject)
+	{
+		switch(type)
+		{
+		case PLUGINUSER:
+			return TableI.super.getCountI(plugin, orderByColumn, whereColumn, whereObject);
+		case DISTRIBUTIONCHEST:
+			return TableII.super.getCountII(plugin, orderByColumn, whereColumn, whereObject);
+		case STORAGECHEST:
+			return TableIII.super.getCountIII(plugin, orderByColumn, whereColumn, whereObject);
+		case ITEMFILTERSET:
+			return TableIV.super.getCountIV(plugin, orderByColumn, whereColumn, whereObject);
+		case TRANSFERLOG:
+			return 0;
+		}
+		return 0;
+	}
+	
 	public ArrayList<?> getList(Type type, String orderByColumn,
 			boolean desc, int start, int quantity, String whereColumn, Object...whereObject) throws IOException
 	{
@@ -267,5 +296,242 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 			//return TableVI.super.getAllListAtVI(plugin, orderByColumn, whereColumn, whereObject);
 		}
 		return null;
+	}
+	
+	public void startConvert(String server, final Player player, int lastid)
+	{
+		new BukkitRunnable()
+		{
+			int start = 0;
+			final int amount = 15;
+			@Override
+			public void run()
+			{
+				if(start >= lastid)
+				{
+					cancel();
+					int lastidII = countWhereID(Type.STORAGECHEST, "`server` = ?", server);
+					startConvertPartII(server, player, lastidII);
+					return;
+				}
+				convertII(server, 0, amount);
+				start += amount;
+			}
+		}.runTaskTimer(plugin, 0L, 5L);
+	}
+	
+	private void convertII(String server, int start, int amount)
+	{
+		PreparedStatement preparedUpdateStatement = null;
+		ResultSet result = null;
+		Connection conn = plugin.getMysqlSetup().getConnection();
+		if (conn != null) 
+		{
+			try 
+			{			
+				String sql = "SELECT `id`,`world`,`blockx`,`blocky`,`blockz` FROM `" + tableNameII + "` WHERE `server` = ? ORDER BY `id` ASC LIMIT "+start+", "+amount;
+		        
+				preparedUpdateStatement = conn.prepareStatement(sql);
+		        preparedUpdateStatement.setString(1, server);
+		        result = preparedUpdateStatement.executeQuery();
+		        while (result.next()) 
+		        {
+		        	int id = result.getInt("id");
+		        	String world = result.getString("world");
+		        	int x = result.getInt("blockx");
+		        	int y = result.getInt("blocky");
+		        	int z = result.getInt("blockz");
+		        	Block b = new Location(Bukkit.getWorld(world), x, y, z).getBlock();
+		        	if(plugin.getUtility().isNOTStoragechest(b.getState()))
+		        	{
+		        		deleteData(Type.DISTRIBUTIONCHEST, "`id` = ?", id);
+		        		deleteData(Type.STORAGECHEST, "`distributionchestid` = ?", id);
+		        	}
+		        }
+		    } catch (SQLException e) 
+			{
+				  e.printStackTrace();
+		    } finally 
+			{
+		    	  try 
+		    	  {
+		    		  if (result != null) 
+		    		  {
+		    			  result.close();
+		    		  }
+		    		  if (preparedUpdateStatement != null) 
+		    		  {
+		    			  preparedUpdateStatement.close();
+		    		  }
+		    	  } catch (Exception e) {
+		    		  e.printStackTrace();
+		    	  }
+		      }
+		}
+		return;
+	}
+	
+	private void startConvertPartII(String server, final Player player, int lastid)
+	{
+		new BukkitRunnable()
+		{
+			int start = 0;
+			final int amount = 15;
+			@Override
+			public void run()
+			{
+				if(start >= lastid)
+				{
+					cancel();
+					if(player != null)
+					{
+						player.sendMessage(ChatApi.tl("&6Convert finish!"));
+					}
+					return;
+				}
+				convertIIPartII(server, 0, amount);
+				start += amount;
+			}
+		}.runTaskTimer(plugin, 0L, 5L);
+	}
+	
+	private void convertIIPartII(String server, int start, int amount)
+	{
+		PreparedStatement preparedUpdateStatement = null;
+		ResultSet result = null;
+		Connection conn = plugin.getMysqlSetup().getConnection();
+		if (conn != null) 
+		{
+			try 
+			{			
+				String sql = "SELECT `id`,`world`,`blockx`,`blocky`,`blockz` FROM `" 
+						+ tableNameIII + "` WHERE `server` = ? ORDER BY `id` ASC LIMIT "+start+", "+amount;
+		        
+				preparedUpdateStatement = conn.prepareStatement(sql);
+		        preparedUpdateStatement.setString(1, server);
+		        result = preparedUpdateStatement.executeQuery();
+		        while (result.next()) 
+		        {
+		        	int id = result.getInt("id");
+		        	String world = result.getString("world");
+		        	int x = result.getInt("blockx");
+		        	int y = result.getInt("blocky");
+		        	int z = result.getInt("blockz");
+		        	Block b = new Location(Bukkit.getWorld(world), x, y, z).getBlock();
+		        	if(plugin.getUtility().isNOTStoragechest(b.getState()))
+		        	{
+		        		deleteData(Type.STORAGECHEST, "`id` = ?", id);
+		        	}
+		        }
+		    } catch (SQLException e) 
+			{
+				  e.printStackTrace();
+		    } finally 
+			{
+		    	  try 
+		    	  {
+		    		  if (result != null) 
+		    		  {
+		    			  result.close();
+		    		  }
+		    		  if (preparedUpdateStatement != null) 
+		    		  {
+		    			  preparedUpdateStatement.close();
+		    		  }
+		    	  } catch (Exception e) {
+		    		  e.printStackTrace();
+		    	  }
+		      }
+		}
+		return;
+	}
+	
+	public void checkUnboundChest(int start, int amount)
+	{
+		PreparedStatement preparedUpdateStatement = null;
+		ResultSet result = null;
+		Connection conn = plugin.getMysqlSetup().getConnection();
+		if (conn != null) 
+		{
+			try 
+			{			
+				String sql = "SELECT `id` FROM `" 
+						+ tableNameII + "` ORDER BY `id` ASC LIMIT "+start+", "+amount;
+		        
+				preparedUpdateStatement = conn.prepareStatement(sql);
+		        result = preparedUpdateStatement.executeQuery();
+		        while (result.next()) 
+		        {
+		        	int id = result.getInt("id");
+		        	if(!exist(Type.STORAGECHEST, "`distributionchestid` = ?", id))
+		        	{
+		        		deleteData(Type.DISTRIBUTIONCHEST, "`id` = ?", id);
+		        	}
+		        }
+		    } catch (SQLException e) 
+			{
+				  e.printStackTrace();
+		    } finally 
+			{
+		    	  try 
+		    	  {
+		    		  if (result != null) 
+		    		  {
+		    			  result.close();
+		    		  }
+		    		  if (preparedUpdateStatement != null) 
+		    		  {
+		    			  preparedUpdateStatement.close();
+		    		  }
+		    	  } catch (Exception e) {
+		    		  e.printStackTrace();
+		    	  }
+		      }
+		}
+		return;
+	}
+	public void checkUnboundChestII(int start, int amount)
+	{
+		PreparedStatement preparedUpdateStatement = null;
+		ResultSet result = null;
+		Connection conn = plugin.getMysqlSetup().getConnection();
+		if (conn != null) 
+		{
+			try 
+			{			
+				String sql = "SELECT `id`,`distributionchestid` FROM `" 
+						+ tableNameIII + "` ORDER BY `id` ASC LIMIT "+start+", "+amount;
+		        
+				preparedUpdateStatement = conn.prepareStatement(sql);
+		        result = preparedUpdateStatement.executeQuery();
+		        while (result.next()) 
+		        {
+		        	int dcid = result.getInt("distributionchestid");
+		        	if(!exist(Type.DISTRIBUTIONCHEST, "`id` = ?", dcid))
+		        	{
+		        		deleteData(Type.DISTRIBUTIONCHEST, "`distributionchestid` = ?", dcid);
+		        	}
+		        }
+		    } catch (SQLException e) 
+			{
+				  e.printStackTrace();
+		    } finally 
+			{
+		    	  try 
+		    	  {
+		    		  if (result != null) 
+		    		  {
+		    			  result.close();
+		    		  }
+		    		  if (preparedUpdateStatement != null) 
+		    		  {
+		    			  preparedUpdateStatement.close();
+		    		  }
+		    	  } catch (Exception e) {
+		    		  e.printStackTrace();
+		    	  }
+		      }
+		}
+		return;
 	}
 }

@@ -173,6 +173,7 @@ public class InteractSubHandler
 			return;
 		}
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.CopyPaste.CopyAndPasteTaskRun")));
+		final String newowner = player.getUniqueId().toString();
 		new BukkitRunnable()
 		{
 			@Override
@@ -194,7 +195,7 @@ public class InteractSubHandler
 					return;
 				}
 				final long createdate = System.currentTimeMillis();
-				DistributionChest newOne = new DistributionChest(0, dc.getOwneruuid(), dc.getMemberList(),
+				DistributionChest newOne = new DistributionChest(0, newowner, dc.getMemberList(),
 						createdate, dc.getChestName()+"_Copy", dc.isNormalPriority(),
 						dc.getPriorityType(), dc.getPriorityNumber(), dc.isAutomaticDistribution(), dc.isDistributeRandom(),
 						dc.getServer(), loc.getWorld().getName(),
@@ -210,6 +211,7 @@ public class InteractSubHandler
 				for(StorageChest sc : sclist)
 				{
 					sc.setDistributionChestID(newOne.getId());
+					sc.setOwneruuid(newowner);
 					plugin.getMysqlHandler().create(Type.STORAGECHEST, sc);
 				}
 				if(player != null)

@@ -345,4 +345,10 @@ public class BackgroundTask
 			}
 		}.runTaskTimer(plugin, 0L, 2L);
 	}
+	
+	//ADDME Converter für das konvertierten aler builds.
+	public void convert()
+	{
+		
+	}
 }

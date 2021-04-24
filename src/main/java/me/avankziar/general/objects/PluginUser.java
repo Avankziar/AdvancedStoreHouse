@@ -8,7 +8,6 @@ public class PluginUser
 	public enum Mode
 	{
 		CONSTRUCT, //Wenn man nur bauen will.
-		BLOCKINFO, //Durch shift+Rechtsklick werden alle Infos zu dem Block angezeigt.
 		CREATEDISTRIBUTIONCHEST, //Man hat den Cmd /ash create genutzt
 		CREATESTORAGE, //Man hat eine Verteilerkiste erstellt und will nun Lagerkisten erstellen
 		UPDATESTORAGEITEMFILTERSET, //Das eigentliche Update der Gui nach NONE

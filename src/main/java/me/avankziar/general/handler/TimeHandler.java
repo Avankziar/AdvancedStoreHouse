@@ -27,6 +27,12 @@ public class TimeHandler
 				.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 	}
 	
+	public static String getDateTime(long l)
+	{
+		return LocalDateTime.ofInstant(Instant.ofEpochMilli(l), ZoneId.systemDefault())
+				.format(DateTimeFormatter.ofPattern("dd.MM.yyyy-HH:mm:ss"));
+	}
+	
 	public static String getRepeatingTime(long l) // dd-HH:mm
 	{
 		long ll = l;
@@ -103,6 +109,58 @@ public class TimeHandler
 		int H = Integer.parseInt(b[0]);
 		int m = Integer.parseInt(b[1]);
 		long time = d*dd + H*HH + m*mm;
+		return time;
+	}
+	
+	public static String getRepeatingTime(long l, String timeformat) // yyyy-dd-HH:mm
+	{
+		long ll = l;
+		/*String year = "";
+		long y = Math.floorDiv(ll, yyyy);
+		year += String.valueOf(y);
+		ll = ll - y*yyyy;
+		
+		String month = "";
+		long M = Math.floorDiv(ll, MM);
+		month += String.valueOf(M);
+		ll = ll - M*MM;*/
+		
+		String day = "";
+		long d = Math.floorDiv(ll, dd);
+		day += String.valueOf(d);
+		ll = ll - d*dd;
+		
+		String hour = "";
+		long H = Math.floorDiv(ll, HH);
+		if(H < 10)
+		{
+			hour += String.valueOf(0);
+		}
+		hour += String.valueOf(H);
+		ll = ll - H*HH;
+		
+		long m = Math.floorDiv(ll, mm);
+		String min = "";
+		if(m < 10)
+		{
+			min += String.valueOf(0);
+		}
+		min += String.valueOf(m);
+		ll = ll - m*mm;
+		
+		long s = Math.floorDiv(ll, ss);
+		String sec = "";
+		if(s < 10)
+		{
+			sec += String.valueOf(0);
+		}
+		sec += String.valueOf(s);
+		String time = timeformat//.replace("yyyy", year)
+								//.replace("MM", month)
+								.replace("dd", day)
+								.replace("HH", hour)
+								.replace("mm", min)
+								.replace("ss", sec);
 		return time;
 	}
 }

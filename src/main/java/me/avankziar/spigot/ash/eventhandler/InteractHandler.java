@@ -8,9 +8,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
+import org.bukkit.block.Dropper;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,9 +44,6 @@ import main.java.me.avankziar.spigot.ash.assistance.ItemGenerator;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class InteractHandler implements Listener
 {
@@ -157,7 +156,6 @@ public class InteractHandler implements Listener
 			case CREATESTORAGE:
 				createStorageChest(event, player, user);
 				return;
-			case BLOCKINFO:
 			case CREATEDISTRIBUTIONCHEST:
 			case UPDATESTORAGEITEMFILTERSET:
 			case CREATEITEMFILTERSET:
@@ -181,9 +179,6 @@ public class InteractHandler implements Listener
 		case CONSTRUCT:
 			irch.simplifiedHandling(event, player, user);
 			return;
-		case BLOCKINFO:
-			blockInfo(event, player, user);
-			return;
 		case CREATEDISTRIBUTIONCHEST:
 			createDistributionChest(event, player, user);
 			return;
@@ -200,7 +195,15 @@ public class InteractHandler implements Listener
 	private void createDistributionChest(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
 	{
 		debug(event.getPlayer(), "=> Begin Methode createDistributionChest");
-		if(plugin.getUtility().isNOTStoragechest(event.getClickedBlock().getState()))
+		if(event.getClickedBlock().getState() instanceof Barrel)
+		{
+			if(!player.hasPermission(Utility.PERMBYPASSCREATEDROPPER))
+			{
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NoPermission")));
+				return;
+			}
+		}
+		if(plugin.getUtility().isNOTDistributionchest(event.getClickedBlock().getState()))
 		{
 			debug(event.getPlayer(), "!(ClickedBlock.State instanceof Chest && Barrel)");
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
@@ -302,6 +305,14 @@ public class InteractHandler implements Listener
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.IsNotChestOrBarrel")));
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
+		}
+		if(event.getClickedBlock().getState() instanceof Dropper)
+		{
+			if(!player.hasPermission(Utility.PERMBYPASSCREATEDROPPER))
+			{
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NoPermission")));
+				return;
+			}
 		}
 		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST, 
 				"`distributionchestid` = ? AND `owner_uuid` = ?", user.getDistributionChestID(), user.getUUID());
@@ -723,78 +734,5 @@ public class InteractHandler implements Listener
 			plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			return;
 		}
-	}	
-	
-	private void blockInfo(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
-	{
-		final String server = plugin.getYamlHandler().getConfig().getString("Servername");
-		final Location loc = event.getClickedBlock().getLocation();
-		if(loc == null)
-		{
-			return;
-		}
-		if(event.getClickedBlock() == null)
-		{
-			debug(event.getPlayer(), "ClickedBlock == null");
-			return;
-		}
-		if(plugin.getUtility().isNOTStoragechest(event.getClickedBlock().getState()))
-		{
-			debug(event.getPlayer(), "!(ClickedBlock.State instanceof Chest && Barrel)");
-			return;
-		}
-		ArrayList<DistributionChest> dc = new ArrayList<DistributionChest>();
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
-		{
-			dc = ConvertHandler.convertListII(plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.DISTRIBUTIONCHEST,
-					"`id`" ,true,
-					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-		}
-		
-		ArrayList<StorageChest> sc = new ArrayList<StorageChest>();
-		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()))
-		{
-			sc = ConvertHandler.convertListIII(plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST,
-					"`id`", true,
-					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-		}
-		event.setCancelled(true);
-		ArrayList<BaseComponent> bcI = new ArrayList<>();
-		bcI.add(ChatApi.tctl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.Dc")));
-		for(DistributionChest dci : dc)
-		{
-			bcI.add(ChatApi.clickEvent("&6"+dci.getId()+"&f,&e"+dci.getChestName()+" ",
-					ClickEvent.Action.RUN_COMMAND, 
-					plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.CommandRun")
-					.replace("%id%", String.valueOf(dci.getId()))));
-		}
-		ArrayList<BaseComponent> bcII = new ArrayList<>();
-		bcII.add(ChatApi.tctl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.Sc")));
-		for(StorageChest sci : sc)
-		{
-			String color = "&a";
-			if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", sci.getDistributionChestID()))
-			{
-				color = "&4";
-			}
-			bcII.add(ChatApi.clickEvent("&6"+sci.getId()+"&f("+color+sci.getDistributionChestID()+"&f) ",
-					ClickEvent.Action.RUN_COMMAND, 
-					plugin.getYamlHandler().getLang().getString("CmdAsh.StorageChestList.CommandRun")
-					.replace("%id%", String.valueOf(sci.getId()))));
-		}
-		TextComponent tcI = ChatApi.tc("");
-		tcI.setExtra(bcI);
-		TextComponent tcII = ChatApi.tc("");
-		tcII.setExtra(bcII);
-		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.Headline")));
-		player.spigot().sendMessage(tcI);
-		player.spigot().sendMessage(tcII);
-		return;
 	}
 }
