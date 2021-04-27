@@ -31,8 +31,9 @@ public class ARGCheckUnboundChest extends ArgumentModule
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.CheckUnboundChest.InProgress")));
 			return;
 		}
-		int count = plugin.getMysqlHandler().getCount(Type.DISTRIBUTIONCHEST, "`id`", "?", 1)
-				+plugin.getMysqlHandler().getCount(Type.STORAGECHEST, "`id`", "?", 1);;
+		int dis = plugin.getMysqlHandler().getCount(Type.DISTRIBUTIONCHEST, "`id`", "?", 1);
+		int sto = plugin.getMysqlHandler().getCount(Type.STORAGECHEST, "`id`", "?", 1);
+		int count = dis+sto;
 		long time = (count/60)*1000;
 		if(args.length == 2)
 		{
@@ -40,7 +41,7 @@ public class ARGCheckUnboundChest extends ArgumentModule
 			{
 				inProgress = true;
 				time += System.currentTimeMillis();
-				checkStartI(player, count);
+				checkStartI(player, dis);
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.CheckUnboundChest.Start")
 						.replace("%time%", TimeHandler.getDateTime(time))));
 				return;
@@ -52,7 +53,7 @@ public class ARGCheckUnboundChest extends ArgumentModule
 		return;
 	}
 	
-	private void checkStartI(Player player, int lastid)
+	private void checkStartI(final Player player, int lastid)
 	{
 		new BukkitRunnable()
 		{
@@ -64,12 +65,12 @@ public class ARGCheckUnboundChest extends ArgumentModule
 				if(start >= lastid)
 				{
 					cancel();
+					player.sendMessage(ChatApi.tl("&6CheckUnboundChest Distributionchest finish, progress with StorageChest!"));
 					int lastidsc = plugin.getMysqlHandler().getCount(Type.STORAGECHEST, "`id`", "?", 1);
 					checkStartII(player, lastidsc);
 					return;
 				}
-				plugin.getMysqlHandler().checkUnboundChest(start, amount);
-				start += amount;
+				start += amount - plugin.getMysqlHandler().checkUnboundChest(player, start, amount);
 			}
 		}.runTaskTimerAsynchronously(plugin, 0L, 5L);
 	}
@@ -88,13 +89,12 @@ public class ARGCheckUnboundChest extends ArgumentModule
 					cancel();
 					if(player != null)
 					{
-						player.sendMessage(ChatApi.tl("&6CheckUnboundChest finish!"));
+						player.sendMessage(ChatApi.tl("&6Storagechest and CheckUnboundChest finish!"));
 						inProgress = false;
 					}
 					return;
 				}
-				plugin.getMysqlHandler().checkUnboundChestII(start, amount);
-				start += amount;
+				start += amount - plugin.getMysqlHandler().checkUnboundChestII(player, start, amount);
 			}
 		}.runTaskTimerAsynchronously(plugin, 0L, 5L);
 	}

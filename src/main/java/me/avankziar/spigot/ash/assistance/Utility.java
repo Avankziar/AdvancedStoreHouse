@@ -307,4 +307,14 @@ public class Utility
 		}
 		return true;
 	}
+	
+	public boolean isNOTStoragechest(Material material)
+	{
+		if(material == Material.CHEST || material == Material.TRAPPED_CHEST || material == Material.DROPPER
+				|| material == Material.BARREL)
+		{
+			return false;
+		}
+		return true;
+	}
 }

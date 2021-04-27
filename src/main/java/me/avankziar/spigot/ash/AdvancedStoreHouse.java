@@ -49,6 +49,7 @@ import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Info;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_List;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Member;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_OpenOption;
+import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_RemoteTriggerAnimation;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Search;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Select;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDistributionChest_Switch;
@@ -83,6 +84,7 @@ import main.java.me.avankziar.spigot.ash.eventhandler.InteractHandler;
 import main.java.me.avankziar.spigot.ash.eventhandler.InventoryClickHandler;
 import main.java.me.avankziar.spigot.ash.eventhandler.InventoryCloseHandler;
 import main.java.me.avankziar.spigot.ash.listener.BlockBreakListener;
+import main.java.me.avankziar.spigot.ash.listener.InventoryClickBlockerListener;
 import main.java.me.avankziar.spigot.ash.listener.JoinQuitListener;
 import main.java.me.avankziar.spigot.ash.listener.PlayerCommandPreprocessListener;
 import main.java.me.avankziar.spigot.ash.listener.SignChangeListener;
@@ -279,7 +281,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor dc_create = new ArgumentConstructor(baseCommandI+"_dc_create", 1, 2, 2, false, null);
 		ArgumentConstructor dc_delete = new ArgumentConstructor(baseCommandI+"_dc_delete", 1, 1, 1, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.DC_DELETE, dc_delete.getCommandString());
-		ArgumentConstructor dc_info = new ArgumentConstructor(baseCommandI+"_dc_info", 1, 1, 1, false, null);
+		ArgumentConstructor dc_info = new ArgumentConstructor(baseCommandI+"_dc_info", 1, 1, 2, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.DC_INFO, dc_info.getCommandString());
 		ArgumentConstructor dc_list = new ArgumentConstructor(baseCommandI+"_dc_list", 1, 1, 3, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.DC_LIST, dc_list.getCommandString());
@@ -287,6 +289,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		PluginSettings.settings.getCommands().put(KeyHandler.DC_MEMBER, dc_member.getCommandString());
 		ArgumentConstructor dc_openoption = new ArgumentConstructor(baseCommandI+"_dc_openoption", 1, 1, 2, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.DC_OPENOPTION, dc_openoption.getCommandString());
+		ArgumentConstructor dc_remotetriggeranimation = new ArgumentConstructor(baseCommandI+"_dc_remotetriggeranimation", 1, 1, 2, false, null);
 		ArgumentConstructor dc_select = new ArgumentConstructor(baseCommandI+"_dc_select", 1, 2, 3, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.DC_SELECT, dc_select.getCommandString());
 		ArgumentConstructor dc_search = new ArgumentConstructor(baseCommandI+"_dc_search", 1, 1, 1, false, null);
@@ -294,7 +297,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor dc_transfer = new ArgumentConstructor(baseCommandI+"_dc_transfer", 1, 2, 2, false, playerMapII);
 		ArgumentConstructor dc = new ArgumentConstructor(baseCommandI+"_dc", 0, 0, 0, false, null,
 				dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member, 
-				dc_openoption, dc_select, dc_search, dc_switch, dc_transfer);
+				dc_openoption, dc_remotetriggeranimation, dc_select, dc_search, dc_switch, dc_transfer);
 		
 		ArgumentConstructor ifs_create = new ArgumentConstructor(baseCommandI+"_itemfilterset_create", 1, 2, 2, false, null);
 		ArgumentConstructor ifs_delete = new ArgumentConstructor(baseCommandI+"_itemfilterset_delete", 1, 1, 1, false, null);
@@ -317,7 +320,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		PluginSettings.settings.getCommands().put(KeyHandler.SC_CHESTNAME, sc_chestname.getCommandString());
 		ArgumentConstructor sc_delete = new ArgumentConstructor(baseCommandI+"_sc_delete", 1, 1, 1, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.SC_DELETE, sc_delete.getCommandString());
-		ArgumentConstructor sc_info = new ArgumentConstructor(baseCommandI+"_sc_info", 1, 1, 1, false, null);
+		ArgumentConstructor sc_info = new ArgumentConstructor(baseCommandI+"_sc_info", 1, 1, 2, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.SC_INFO, sc_info.getCommandString());
 		ArgumentConstructor sc_list = new ArgumentConstructor(baseCommandI+"_sc_list", 1, 1, 3, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.SC_LIST, sc_list.getCommandString());
@@ -344,7 +347,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 				debug, debug_im,
 				delete,
 				dc, dc_breaking, dc_chestname, dc_create, dc_delete, dc_info, dc_list, dc_member,
-				dc_openoption, dc_select, dc_search, dc_switch, dc_transfer,
+				dc_openoption, dc_remotetriggeranimation, dc_select, dc_search, dc_switch, dc_transfer,
 				itemfilterset, ifs_create, ifs_delete, ifs_list, ifs_name, ifs_select, ifs_update,
 				mode, playerinfo,
 				sc, sc_chestname, sc_create, sc_delete, sc_info, sc_list, sc_openoption, sc_select, sc_search);
@@ -370,6 +373,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		new ARGDistributionChest_List(plugin, dc_list);
 		new ARGDistributionChest_Member(plugin, dc_member);
 		new ARGDistributionChest_OpenOption(plugin, dc_openoption);
+		new ARGDistributionChest_RemoteTriggerAnimation(plugin, dc_remotetriggeranimation);
 		new ARGDistributionChest_Select(plugin, dc_select);
 		new ARGDistributionChest_Search(plugin, dc_search);
 		new ARGDistributionChest_Switch(plugin, dc_switch);
@@ -397,34 +401,6 @@ public class AdvancedStoreHouse extends JavaPlugin
 		new ARGStorageChest_Search(plugin, sc_search);
 	}
 	
-	public boolean reload()
-	{
-		if(!yamlHandler.loadYamlHandler())
-		{
-			return false;
-		}
-		if(!utility.loadUtility())
-		{
-			return false;
-		}
-		if(yamlHandler.getConfig().getBoolean("Mysql.Status", false))
-		{
-			mysqlSetup.closeConnection();
-			if(!mysqlHandler.loadMysqlHandler())
-			{
-				return false;
-			}
-			if(!mysqlSetup.loadMysqlSetup())
-			{
-				return false;
-			}
-		} else
-		{
-			return false;
-		}
-		return true;
-	}
-	
 	public void ListenerSetup()
 	{
 		PluginManager pm = getServer().getPluginManager();
@@ -437,6 +413,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		pm.registerEvents(new InteractHandler(plugin), plugin);
 		pm.registerEvents(new InventoryClickHandler(plugin), plugin);
 		pm.registerEvents(new InventoryCloseHandler(plugin), plugin);
+		pm.registerEvents(new InventoryClickBlockerListener(), plugin);
 	}
 	
 	public ArrayList<BaseConstructor> getHelpList()

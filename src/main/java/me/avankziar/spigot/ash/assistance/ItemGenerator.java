@@ -160,7 +160,7 @@ public class ItemGenerator
 			.replace("%automaticdistribution%", getColor(dc.isAutomaticDistribution()))
 			.replace("%random%", getColor(dc.isDistributeRandom()))
 			.replace("%member%", "["+String.join(" ", list)+"]")
-			.replace("%locationone%", dc.getServer()+"&b>>&r"+dc.getWorld())
+			.replace("%locationone%", dc.getServer()+" &b>>&r "+dc.getWorld())
 			.replace("%locationtwo%", "&r"+dc.getBlockX()+"&7|&r"+dc.getBlockY()+"&7|&r"+dc.getBlockZ())
 			.replace("%storagechestamount%", String.valueOf(storagechestamount))
 			.replace("%storagechestendamount%", String.valueOf(storagechestamountend));
@@ -184,7 +184,7 @@ public class ItemGenerator
 			.replace("%isrepair%", getColor(sc.isOptionRepair()))
 			.replace("%repairtype%", getThan(sc.getRepairType()))
 			.replace("%repaircost%", String.valueOf(sc.getRepairCost()))
-			.replace("%locationone%", sc.getServer()+"&b>>&r"+sc.getWorld())
+			.replace("%locationone%", sc.getServer()+" &b>> &r"+sc.getWorld())
 			.replace("%locationtwo%", "&r"+sc.getBlockX()+"&7|&r"+sc.getBlockY()+"&7|&r"+sc.getBlockZ());
 		}
 		return st;

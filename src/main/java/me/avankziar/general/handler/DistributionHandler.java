@@ -36,7 +36,7 @@ public class DistributionHandler
 {
 	public static void debug(int lvl, String s)
 	{
-		int level = -1;
+		int level = 1;
 		boolean bo = false;
 		if(bo && lvl >= level)
 		{
@@ -171,7 +171,7 @@ public class DistributionHandler
 			debug(0, "Normal Dc Content is Empty | Normal End");
 			return;
 		}
-		ChestHandler.setDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc, storagechestamount);
+		ChestHandler.setDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc, storagechestamount, inv.getLocation());
 		distributionPost(server, dc, inv, prioList, endList, storagechestamount);
 	}
 	
@@ -179,6 +179,7 @@ public class DistributionHandler
 			final ArrayList<StorageChest> prioListPre, final ArrayList<StorageChest> endListPre, int storagechestamount)
 	{
 		int wait = storagechestamount/PluginSettings.settings.getWaitBeforStartFactor();
+		debug(2, "DistributionPost start");
 		new BukkitRunnable()
 		{
 			ArrayList<StorageChest> prioList = prioListPre;
@@ -234,11 +235,18 @@ public class DistributionHandler
 						inv, prioList, endList, cloneInvL, cloneInvR, server, dc.isDistributeRandom(), "Normal ");
 				
 				//here Chainstart
-				long supposeCooldown = storagechestamount*PluginSettings.settings.getDelayChainChest()*20+10;
+				float supposeCooldown = (float)storagechestamount/ (float)PluginSettings.settings.getChestsPerTick()
+						+(float)PluginSettings.settings.getDelayChainChest() *1000.0F / 50.0F;
 				try
 				{
-					distributeChain(server, supposeCooldown, prioList, endList);
-				} catch (IOException e) {}
+					debug(2, "SupposeCooldown: "+storagechestamount+"/"+PluginSettings.settings.getChestsPerTick()+"+"+
+					+PluginSettings.settings.getDelayChainChest()+"*"+1000+"/"+50);
+					debug(2, "SupposeCooldown: "+(long)supposeCooldown);
+					distributeChain(server, (long)supposeCooldown, prioList, endList);
+				} catch (IOException e) 
+				{
+					e.printStackTrace();
+				}
 			}
 		}.runTaskLater(AdvancedStoreHouse.getPlugin(), 1L*wait);
 	}
@@ -246,13 +254,13 @@ public class DistributionHandler
 	public static void distributeChain(String server, long supposeCooldown,
 			ArrayList<StorageChest> prioList, ArrayList<StorageChest> endList) throws IOException
 	{
-		debug(0, "ChainDc distribution starts");
+		debug(2, "ChainDc distribution starts");
 		//Kettekisten bestimmung
 		final ArrayList<DistributionChest> chain = ChestHandler.getChainChest(AdvancedStoreHouse.getPlugin(), prioList, endList, server);
-		debug(0, "ChainDc.size: "+chain.size());
+		debug(2, "ChainDc.size: "+chain.size());
 		if(chain.size() == 0)
 		{
-			debug(0, "ChainDc distribution: chain.size == 0 || chain End");
+			debug(2, "ChainDc distribution: chain.size == 0 || chain End");
 			return;
 		}
 		new BukkitRunnable()
@@ -263,15 +271,15 @@ public class DistributionHandler
 			{
 				if(i >= chain.size())
 				{
-					debug(0, "ChainDc distribution: i >= chain.size || chain End");
+					debug(2, "ChainDc distribution: i >= chain.size || chain End");
 					cancel();
 					return;
 				}
 				DistributionChest dcc = chain.get(i);
-				debug(0, "ChainDc: "+dcc.getChestName());
+				debug(2, "ChainDc: "+dcc.getChestName());
 				if(ChestHandler.isDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dcc))
 				{
-					debug(0, "ChainDc Dcc is already in distribution");
+					debug(2, "ChainDc Dcc is already in distribution");
 					i++;
 					return;
 				}
@@ -300,38 +308,38 @@ public class DistributionHandler
 				World world = Bukkit.getWorld(dcc.getWorld());
 				if(world == null)
 				{
-					debug(0, "ChainDc world == null");
+					debug(2, "ChainDc world == null");
 					i++;
 					return;
 				}
 				Block dcblock = new Location(world, dcc.getBlockX(), dcc.getBlockY(), dcc.getBlockZ()).getBlock();
 				if(dcblock == null)
 				{
-					debug(0, "ChainDc block == null");
+					debug(2, "ChainDc block == null");
 					i++;
 					return;
 				}
 				if(dcblock.getState() == null)
 				{
-					debug(0, "ChainDc block.getstate == null");
+					debug(2, "ChainDc block.getstate == null");
 					i++;
 					return;
 				}
 				if(!(dcblock.getState() instanceof Container))
 				{
-					debug(0, "ChainDc block.getstate not a container");
+					debug(2, "ChainDc block.getstate not a container");
 					i++;
 					return;
 				}
 				Inventory inventoryc = ((Container)dcblock.getState()).getInventory();
 				if(inventoryc == null)
 				{
-					debug(0, "ChainDc container inv == null");
+					debug(2, "ChainDc container inv == null");
 					i++;
 					return;
 				}
 				int storagechestamountc = prioListc.size()+endListc.size();
-				ChestHandler.setDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dcc, storagechestamountc);
+				ChestHandler.setDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dcc, storagechestamountc, inventoryc.getLocation());
 				ItemStack[] cloneInvLc = null;
 				ItemStack[] cloneInvRc = null;
 				if(inventoryc instanceof DoubleChestInventory)
@@ -344,14 +352,14 @@ public class DistributionHandler
 				{
 					debug(0, "ChainDc distribution dci == false");
 					cloneInvLc = inventoryc.getContents();
-					cloneInvRc = cloneInvLc;
-					int j = 0;
+					cloneInvRc = null;
+					/*int j = 0;
 					for(int i = 0; i < cloneInvLc.length; i++)
 					{
 						cloneInvRc[i] = null;
 						j = i;
-					}
-					debug(0, "ChainDc distribution Right side set all null | i = "+j);
+					}*/
+					debug(0, "ChainDc distribution Right side set all null");
 				}
 				
 				ItemDistributeObject idoc = new ItemDistributeObject(null, null);
@@ -374,6 +382,7 @@ public class DistributionHandler
 					}
 					endListc = cloneEndListc;
 				}
+				debug(2, "ChainDc distribution start");
 				idoc.chestDistribute(AdvancedStoreHouse.getPlugin(),
 						inventoryc, prioListc, endListc, cloneInvLc, cloneInvRc, server, dcc.isDistributeRandom(), "Chain ");
 				i++;
@@ -440,7 +449,7 @@ public class DistributionHandler
 			}
 		}
 		
-		debug(5, "similar Items:"+similarItems.size());
+		debug(0, "similar Items:"+similarItems.size());
 		ItemStack[] siArray = new ItemStack[similarItems.size()];
 		similarItems.toArray(siArray);
 		
@@ -448,13 +457,12 @@ public class DistributionHandler
 		//Add all not distributed Items back
 		ItemStack[] returns = new ItemStack[map.size()];
 		map.values().toArray(returns);
-		sender.addItem(returns);
+		//sender.addItem(returns);
 		//Add the not distributed item to the return value!
 		sendBack.addAll(map.values());
-		debug(5, "sendBack.size: "+sendBack.size());
+		debug(0, "sendBack.size: "+sendBack.size());
 		ItemStack[] sendBackArray = new ItemStack[sendBack.size()];
 		sendBack.toArray(sendBackArray);
-		
 		return sendBackArray; //INFO:Funktioniert
 	}
 	

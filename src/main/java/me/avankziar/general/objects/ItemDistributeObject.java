@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -72,6 +73,23 @@ public class ItemDistributeObject
 		}
 	}
 	
+	public static void debug(int level, String s)
+	{
+		boolean bo = false;
+		int l = 0;
+		if(bo)
+		{
+			if(level >= l)
+			{
+				AdvancedStoreHouse.log.info(s);
+				for(Player player : Bukkit.getOnlinePlayers())
+				{
+					player.spigot().sendMessage(ChatApi.tctl(s));
+				}	
+			}	
+		}
+	}
+	
 	public static void debug(boolean bo, String s)
 	{
 		//boolean bo = false;
@@ -91,7 +109,7 @@ public class ItemDistributeObject
 			ItemStack[] cloneInvR = cloneInvyR;
 			int i = 0;
 			int j = 0;
-			int loop = PluginSettings.settings.getChestsPerTick();
+			int loop = PluginSettings.settings.getChestsPerTick()*PluginSettings.settings.getDelayedTicks();
 			int loopi = loop-1;
 			int loopj = loop-1;
 			@Override
@@ -166,6 +184,26 @@ public class ItemDistributeObject
 								sc.isOptionDurability(), sc.getDurabilityType(), sc.getDurability(),
 								sc.isOptionRepair(), sc.getRepairType(), sc.getRepairCost(),
 								sc.isOptionEnchantment(), sc.isOptionMaterial());
+						/*int l = 0;
+						int r = 0;
+						for(ItemStack is : cloneInvL)
+						{
+							if(is == null || is.getType() == Material.AIR)
+							{
+								continue;
+							}
+							l++;
+						}
+						for(ItemStack is : cloneInvR)
+						{
+							if(is == null || is.getType() == Material.AIR)
+							{
+								continue;
+							}
+							r++;
+						}
+						System.out.println(debug+"cloneInvL.size: "+l+" | cloneInvR.size:"+r);*/
+						//REMOVEME
 						i++;
 					} else if(i >= prioList.size() && j < endList.size())
 					{
@@ -234,10 +272,38 @@ public class ItemDistributeObject
 								sc.isOptionDurability(), sc.getDurabilityType(), sc.getDurability(),
 								sc.isOptionRepair(), sc.getRepairType(), sc.getRepairCost(),
 								sc.isOptionEnchantment(), sc.isOptionMaterial());
+						/*int l = 0;
+						int r = 0;
+						for(ItemStack is : cloneInvL)
+						{
+							if(is == null || is.getType() == Material.AIR)
+							{
+								continue;
+							}
+							l++;
+						}
+						for(ItemStack is : cloneInvR)
+						{
+							if(is == null || is.getType() == Material.AIR)
+							{
+								continue;
+							}
+							r++;
+						}*/
 						j++;
 					} else
 					{
-						debug(debug+"distribution not Removed Items set back");
+						debug(2, debug+"distribution not Removed Items set back");
+						if(inventory instanceof DoubleChestInventory)
+						{
+							inventory.clear();
+							inventory.addItem(cloneInvL);
+							inventory.addItem(cloneInvR);
+						} else
+						{
+							inventory.clear();
+							inventory.addItem(cloneInvL);
+						}
 						cancel();
 						break;
 					}

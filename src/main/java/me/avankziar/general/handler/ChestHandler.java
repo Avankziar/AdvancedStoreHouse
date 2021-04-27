@@ -29,6 +29,7 @@ import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 import main.java.me.avankziar.spigot.ash.eventhandler.InteractHandler;
+import main.java.me.avankziar.spigot.ash.listener.InventoryClickBlockerListener;
 
 public class ChestHandler
 {	
@@ -523,7 +524,7 @@ public class ChestHandler
 	}
 	
 	public static void setDistributionChestOnCooldown(AdvancedStoreHouse plugin,
-			DistributionChest dc, int storagechestamount)
+			DistributionChest dc, int storagechestamount, Location loc)
 	{
 		//int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, "`distributionchestid` = ?", dc.getId());
 		//3000/10 = 300
@@ -533,9 +534,9 @@ public class ChestHandler
 		
 		long start = System.currentTimeMillis();
 		long cooldown = start
-				+ 1000 //+ Eine Sekunde cooldown
+				+ 2000 //+ Eine Sekunde cooldown
 				+ storagechestamount/PluginSettings.settings.getWaitBeforStartFactor()
-				+ storage*20*dif*25/10; //300*2,5*20/2
+				+ storage*20*25*dif/10; //300*20*2,5/2
 		if(InteractHandler.distributionCooldown.containsKey(dc.getId()))
 		{
 			InteractHandler.distributionCooldown.replace(dc.getId(), cooldown);
@@ -545,6 +546,7 @@ public class ChestHandler
 			InteractHandler.distributionCooldown.put(dc.getId(), cooldown);
 			InteractHandler.distributionCooldownStartTime.put(dc.getId(), start);
 		}
+		InventoryClickBlockerListener.setLocationCooldown(loc, cooldown);
 	}
 	
 	public static boolean isLocationsEquals(Location one, Location two)

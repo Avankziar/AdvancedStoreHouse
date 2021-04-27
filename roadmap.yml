@@ -67,6 +67,7 @@ Build 4 ========================================================================
   
   - Falls Welten auf andere Server umziehen, so mache:
     UPDATE `yourASHDistributionORStorageChestTable` SET `server`='yourNewServer' WHERE `server`='youroldserver' AND `world`='yourworld'
+    //Void in SC Mülleimer nenne.
   
 
 Build 3 =============================================================================================================================

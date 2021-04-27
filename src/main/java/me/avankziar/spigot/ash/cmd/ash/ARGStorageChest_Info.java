@@ -39,17 +39,28 @@ public class ARGStorageChest_Info extends ArgumentModule
 				.replace("%cmd%", "/ash storagechest info")));
 			return;
 		}
-		int id = user.getStorageChestID();
-		if(args.length == 3 && MatchApi.isInteger(args[2]))
+		StorageChest sc = null;
+		if(args.length == 2)
 		{
-			id = Integer.parseInt(args[2]);
+			int id = user.getStorageChestID();
+			sc = (StorageChest) plugin.getMysqlHandler().getData(
+					MysqlHandler.Type.STORAGECHEST, "`id` = ?", id);
+			
+		} else if(args.length == 3 && MatchApi.isInteger(args[2]))
+		{
+			sc = (StorageChest) plugin.getMysqlHandler().getData(
+					MysqlHandler.Type.STORAGECHEST, "`id` = ?", Integer.parseInt(args[2]));
+		} else if(args.length == 3)
+		{
+			sc = (StorageChest) plugin.getMysqlHandler().getData(
+					MysqlHandler.Type.STORAGECHEST, "`owner_uuid` = ? AND `chestname` = ?", 
+					player.getUniqueId().toString(), args[2]);
 		}
-		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST, "`id` = ?", id))
+		if(sc == null)
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SChestDontExist")));
 			return;
 		}
-		StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST, "`id` = ?", id);
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
 				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", sc.getDistributionChestID());
 		if(dc != null)
@@ -64,7 +75,7 @@ public class ARGStorageChest_Info extends ArgumentModule
 		
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Info.HeadlineSC")
 				.replace("%name%", sc.getChestName())
-				.replace("%id%", String.valueOf(id))));
+				.replace("%id%", String.valueOf(sc.getId()))));
 		if(dc != null)
 		{
 			String owner = Utility.convertUUIDToName(dc.getOwneruuid());

@@ -255,6 +255,9 @@ public class YamlManager
 		configKeys.put("CopyPasteMaxStorageChest"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				20}));
+		configKeys.put("StorageChest.DefaultName"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"unnamed"}));
 		//Here is all Simple Methode Materials
 		configKeys.put("Simple.Creating"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
@@ -271,7 +274,7 @@ public class YamlManager
 		configKeys.put("Simple.Select"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"BARREL"}));
-		configKeys.put("Simple.OpenIFSAndVisuals"
+		configKeys.put("Simple.Visuals"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"BLAST_FURNACE"}));
 		configKeys.put("Simple.OpenOptionGUI"
@@ -401,10 +404,14 @@ public class YamlManager
 				"/ash distributionchest member <playername>", "/ash distributionchest member ", 
 				"&c/ash distributionchest member <Spielername> &f| Fügt einen Spieler der Mitgliedsliste hinzu oder entfernt ihn.",
 				"&c/ash distributionchest member <playername> &f| Add or remove a player from the member list.");
-		argumentInput("ash_dc_openoption", "openoption", "ash.cmd.distributionchest.opennoption",
-				"/ash distributionchest openoption [ID/Chestname]", "/ash distributionchest opennoption ", 
+		argumentInput("ash_dc_openoption", "openoption", "ash.cmd.distributionchest.openoption",
+				"/ash distributionchest openoption [ID/Chestname]", "/ash distributionchest openoption ", 
 				"&c/ash distributionchest openoption [ID/Chestname] &f| Öffnet das Options Menu der Verteilerkiste.",
 				"&c/ash distributionchest openoption [ID/Chestname] &f| Opens the Options menu of the distribution chest.");
+		argumentInput("ash_dc_remotetriggeranimation", "remotetriggeranimation", "ash.cmd.distributionchest.remotetriggeranimation",
+				"/ash distributionchest remotetriggeranimation [id/Chestname]", "/ash distributionchest remotetriggeranimation ", 
+				"&c/ash distributionchest remotetriggeranimation [id/Kistenname] &f| Löst die Kistenanimation fern aus.",
+				"&c/ash distributionchest remotetriggeranimation [id/Chestname] &f| Triggered remote the chestanimation.");
 		argumentInput("ash_dc_select", "select", "ash.cmd.distributionchest.select",
 				"/ash distributionchest select <Name> [PlayerName]", "/ash distributionchest select ", 
 				"&c/ash distributionchest select <ID> &f| Wählt eine Verteilerkiste aus.", 
@@ -481,8 +488,8 @@ public class YamlManager
 				"/ash storagechest list", "/ash storagechest list ", 
 				"&c/ash storagechest list &f| Listet alle LagerkistenIDs des Spielers auf.", 
 				"&c/ash storagechest list &f| Lists all the players storagechest IDs.");
-		argumentInput("ash_sc_openoption", "openoption", "ash.cmd.storagechest.opennoption",
-				"/ash storagechest openoption [ID/Chestname]", "/ash storagechest opennoption ", 
+		argumentInput("ash_sc_openoption", "openoption", "ash.cmd.storagechest.openoption",
+				"/ash storagechest openoption [ID/Chestname]", "/ash storagechest openoption ", 
 				"&c/ash storagechest openoption [ID/Chestname] &f| Öffnet das Options Menu der Lagerkiste.",
 				"&c/ash storagechest openoption [ID/Chestname] &f| Opens the Options menu of the storage chest.");
 		argumentInput("ash_sc_select", "select", "ash.cmd.storagechest.select",
@@ -774,8 +781,8 @@ public class YamlManager
 						"&eClick here to select the box."}));
 		languageKeys.put("CmdAsh.BlockInfo.ChestHoverInfo",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eKlick hier alle Informationen zu kiste einzusehen.~!~&cKlick jedoch zuvor auf den Namen im Chat um diese auszuwählen.",
-						"&eClick here to view all information about kiste.~!~&cHowever, click on the name in the chat beforehand to select them."}));
+						"&eKlick hier alle Informationen zu kiste einzusehen.",
+						"&eClick here to view all information about kiste."}));
 		languageKeys.put("CmdAsh.BlockInfo.ChestHoverOpenGui",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eKlick hier um das Menü der Kiste zu öffnen.",
@@ -938,7 +945,7 @@ public class YamlManager
 						"&eSpieler &f%player% &has been removed from the distribution box &f%dc% &eas a member!"}));
 		languageKeys.put("CmdAsh.DistributionChestMember.Add", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eSpieler &f%player% &ewurde von zu Verteilerkiste &f%dc% &eals Mitglied hinzugefügt!",
+						"&eSpieler &f%player% &ewurde zu der Verteilerkiste &f%dc% &eals Mitglied hinzugefügt!",
 						"&eSpieler &f%player% &has been added too the distribution box &f%dc% &eals member!"}));
 		languageKeys.put("CmdAsh.DistributionChestSwitch.Deactive",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
@@ -1262,7 +1269,7 @@ public class YamlManager
 		languageKeys.put("CmdAsh.Select.SelectSC", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eLagerkiste &f%idsc% &e| &f%namesc% &eder Verteilerkiste &f%iddc% &e| &f%namedc% &eausgewählt!",
-						"&eStorage crate &f%idsc% &the distribution crate &f%iddc% &e| &f%name% &e| &f%name% &elect!"}));
+						"&eStorage crate &f%idsc% &e| &f%name% &ethe distribution crate &f%iddc% &e| &f%name% &elect!"}));
 		languageKeys.put("CmdAsh.Select.SelectSCWithOutDC", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eLagerkiste &f%id% &eausgewählt! Beachte, dass diese Kiste mit keiner Verteilerkiste verlinkt ist!",
@@ -1344,6 +1351,10 @@ public class YamlManager
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDu hast nicht das Recht die Einstellungen aufzurufen!",
 						"&cYou do not have the right to access the settings!"}));
+		languageKeys.put("Interact.Option.AnimationCooldown"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cDie Partikelanimation für die Verteilerkiste &f%dcid%-%dcname% &cist noch im Cooldown!",
+						"&cThe particle animation for the distributionchest &f%dcid%-%dcname% &cis still in cooldown!"}));
 		languageKeys.put("Interact.Select.NoPermission"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDu hast nicht das Recht diese Kiste auszuwählen!",
@@ -1987,7 +1998,14 @@ public class YamlManager
 				null,
 				null,
 				null);
-		setSlot(GuiType.SC_MAIN, 50, Material.MAP,
+		setSlot(GuiType.SC_MAIN, 45, SettingLevel.EXPERT, Material.BARRIER,
+				null,
+				"&cLöscht diese Lagerkiste.",
+				"&cDelete this storagechest.", 
+				null,
+				null,
+				null);
+		setSlot(GuiType.SC_MAIN, 53, SettingLevel.EXPERT, Material.MAP,
 				null,
 				"&eFilter mit deinem ItemFilterSet überschreiben.",
 				"&eOverwrite filter with your ItemFilterSet.", 

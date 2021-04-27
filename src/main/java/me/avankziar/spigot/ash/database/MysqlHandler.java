@@ -298,8 +298,11 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		return null;
 	}
 	
-	public void startConvert(String server, final Player player, int lastid)
+	public void startConvert(String server, final Player player, int dis, int sto)
 	{
+		System.out.println("Convert Start!");
+		System.out.println("Before DistributionChest Count: "+dis);
+		System.out.println("Before StorageChest Count: "+sto);
 		new BukkitRunnable()
 		{
 			int start = 0;
@@ -307,24 +310,24 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 			@Override
 			public void run()
 			{
-				if(start >= lastid)
+				if(start >= lastID(Type.DISTRIBUTIONCHEST))
 				{
 					cancel();
-					int lastidII = countWhereID(Type.STORAGECHEST, "`server` = ?", server);
-					startConvertPartII(server, player, lastidII);
+					player.sendMessage(ChatApi.tl("&6PartI finish, next PartII!"));
+					startConvertPartII(player, server);
 					return;
 				}
-				convertII(server, 0, amount);
-				start += amount;
+				start += amount - convertI(player, server, start, amount);
 			}
 		}.runTaskTimer(plugin, 0L, 5L);
 	}
 	
-	private void convertII(String server, int start, int amount)
+	private int convertI(final Player player, String server, int start, int amount)
 	{
 		PreparedStatement preparedUpdateStatement = null;
 		ResultSet result = null;
 		Connection conn = plugin.getMysqlSetup().getConnection();
+		int i = 0;
 		if (conn != null) 
 		{
 			try 
@@ -336,16 +339,24 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		        result = preparedUpdateStatement.executeQuery();
 		        while (result.next()) 
 		        {
-		        	int id = result.getInt("id");
+		        	final int id = result.getInt("id");
 		        	String world = result.getString("world");
 		        	int x = result.getInt("blockx");
 		        	int y = result.getInt("blocky");
-		        	int z = result.getInt("blockz");
-		        	Block b = new Location(Bukkit.getWorld(world), x, y, z).getBlock();
-		        	if(plugin.getUtility().isNOTStoragechest(b.getState()))
+		        	int z = result.getInt("blockz");		        	
+		        	if(Bukkit.getWorld(world) == null)
 		        	{
+		        		System.out.println("Dc: "+id+" | WORLD == null | "+world+" "+x+"|"+y+"|"+x);
+		        		continue;
+		        	}
+		        	Location l = new Location(Bukkit.getWorld(world), x, y, z);
+		        	Block b = l.getBlock();
+		        	if(plugin.getUtility().isNOTStoragechest(b.getType()))
+		        	{
+		        		System.out.println("Dc: "+id+" | Material:"+b.getType().toString()+" | "+world+" "+x+"|"+y+"|"+x);
 		        		deleteData(Type.DISTRIBUTIONCHEST, "`id` = ?", id);
 		        		deleteData(Type.STORAGECHEST, "`distributionchestid` = ?", id);
+		        		i++;
 		        	}
 		        }
 		    } catch (SQLException e) 
@@ -368,10 +379,10 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		    	  }
 		      }
 		}
-		return;
+		return i;
 	}
 	
-	private void startConvertPartII(String server, final Player player, int lastid)
+	public void startConvertPartII(Player player, String server)
 	{
 		new BukkitRunnable()
 		{
@@ -380,23 +391,114 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 			@Override
 			public void run()
 			{
-				if(start >= lastid)
+				if(start >= lastID(Type.DISTRIBUTIONCHEST))
 				{
 					cancel();
 					if(player != null)
 					{
-						player.sendMessage(ChatApi.tl("&6Convert finish!"));
+						player.sendMessage(ChatApi.tl("&6PartII finish, next PartIII!"));
+						startConvertPartIII(player, server);
 					}
 					return;
 				}
-				convertIIPartII(server, 0, amount);
-				start += amount;
+				start += amount - convertII(player, server, start, amount);
 			}
 		}.runTaskTimer(plugin, 0L, 5L);
 	}
 	
-	private void convertIIPartII(String server, int start, int amount)
+	private int convertII(final Player player, String server, int start, int amount)
 	{
+		int i = 0;
+		PreparedStatement preparedUpdateStatement = null;
+		ResultSet result = null;
+		Connection conn = plugin.getMysqlSetup().getConnection();
+		if (conn != null) 
+		{
+			try 
+			{			
+				String sql = "SELECT `id`,`world`,`blockx`,`blocky`,`blockz` FROM `" 
+						+ tableNameII + "` WHERE `server` = ? ORDER BY `id` ASC LIMIT "+start+", "+amount;
+		        
+				preparedUpdateStatement = conn.prepareStatement(sql);
+		        preparedUpdateStatement.setString(1, server);
+		        result = preparedUpdateStatement.executeQuery();
+		        while (result.next()) 
+		        {
+		        	int id = result.getInt("id");
+		        	String world = result.getString("world");
+		        	int x = result.getInt("blockx");
+		        	int y = result.getInt("blocky");
+		        	int z = result.getInt("blockz");
+		        	if(Bukkit.getWorld(world) == null)
+		        	{
+		        		System.out.println("Dc: "+id+" | WORLD == null | "+world+" "+x+"|"+y+"|"+x);
+		        		continue;
+		        	}
+		        	if(getCount(Type.DISTRIBUTIONCHEST, "`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+		        			server, world, x, y, z) > 1)
+		        	{
+		        		System.out.println("Dc ID:"+id+" because multiple values per location found");
+		        		deleteData(Type.DISTRIBUTIONCHEST, "`id` = ?", id);
+		        		deleteData(Type.STORAGECHEST, "`distributionchestid` = ?", id);
+		        		i++;
+		        	}
+		        }
+		    } catch (SQLException e) 
+			{
+				  e.printStackTrace();
+		    } finally 
+			{
+		    	  try 
+		    	  {
+		    		  if (result != null) 
+		    		  {
+		    			  result.close();
+		    		  }
+		    		  if (preparedUpdateStatement != null) 
+		    		  {
+		    			  preparedUpdateStatement.close();
+		    		  }
+		    	  } catch (Exception e) {
+		    		  e.printStackTrace();
+		    	  }
+		      }
+		}
+		return i;
+	}
+	
+	private void startConvertPartIII(final Player player, String server)
+	{
+		new BukkitRunnable()
+		{
+			int start = 0;
+			final int amount = 15;
+			@Override
+			public void run()
+			{
+				if(start >= lastID(Type.STORAGECHEST))
+				{
+					cancel();
+					int dis = plugin.getMysqlHandler().getCount(Type.DISTRIBUTIONCHEST, "`id`", "`server` = ?", server);
+					int sto = plugin.getMysqlHandler().getCount(Type.STORAGECHEST, "`id`", "`server` = ?", server);
+					if(player != null)
+					{
+						player.sendMessage(ChatApi.tl("&6Convert finish!"));						
+						player.sendMessage(ChatApi.tl("&eAfter DistributionChest Count: "+dis));
+						player.sendMessage(ChatApi.tl("&eAfter StorageChest Count: "+sto));
+					}
+					System.out.println("Convert finish!");
+					System.out.println("After DistributionChest Count: "+dis);
+					System.out.println("After StorageChest Count: "+sto);
+					return;
+				}
+				start += amount - convertIII(player, server, start, amount);
+			}
+		}.runTaskTimer(plugin, 0L, 5L);
+	}
+	
+	private int convertIII(final Player player, String server, int start, int amount)
+	{
+		int i = 0;
 		PreparedStatement preparedUpdateStatement = null;
 		ResultSet result = null;
 		Connection conn = plugin.getMysqlSetup().getConnection();
@@ -417,10 +519,17 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		        	int x = result.getInt("blockx");
 		        	int y = result.getInt("blocky");
 		        	int z = result.getInt("blockz");
-		        	Block b = new Location(Bukkit.getWorld(world), x, y, z).getBlock();
-		        	if(plugin.getUtility().isNOTStoragechest(b.getState()))
+		        	if(Bukkit.getWorld(world) == null)
 		        	{
+		        		System.out.println("sc: "+id+" | WORLD == null | "+world+" "+x+"|"+y+"|"+x);
+		        		continue;
+		        	}
+		        	Block b = new Location(Bukkit.getWorld(world), x, y, z).getBlock();
+		        	if(plugin.getUtility().isNOTStoragechest(b.getType()))
+		        	{
+		        		System.out.println("Sc: "+id+" | Material:"+b.getType().toString()+" | "+world+" "+x+"|"+y+"|"+x);
 		        		deleteData(Type.STORAGECHEST, "`id` = ?", id);
+		        		i++;
 		        	}
 		        }
 		    } catch (SQLException e) 
@@ -443,11 +552,12 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		    	  }
 		      }
 		}
-		return;
+		return i;
 	}
 	
-	public void checkUnboundChest(int start, int amount)
+	public int checkUnboundChest(Player player, int start, int amount)
 	{
+		int i = 0;
 		PreparedStatement preparedUpdateStatement = null;
 		ResultSet result = null;
 		Connection conn = plugin.getMysqlSetup().getConnection();
@@ -465,6 +575,7 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		        	int id = result.getInt("id");
 		        	if(!exist(Type.STORAGECHEST, "`distributionchestid` = ?", id))
 		        	{
+		        		i++;
 		        		deleteData(Type.DISTRIBUTIONCHEST, "`id` = ?", id);
 		        	}
 		        }
@@ -488,10 +599,11 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		    	  }
 		      }
 		}
-		return;
+		return i;
 	}
-	public void checkUnboundChestII(int start, int amount)
+	public int checkUnboundChestII(final Player player, int start, int amount)
 	{
+		int i = 0;
 		PreparedStatement preparedUpdateStatement = null;
 		ResultSet result = null;
 		Connection conn = plugin.getMysqlSetup().getConnection();
@@ -509,7 +621,9 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		        	int dcid = result.getInt("distributionchestid");
 		        	if(!exist(Type.DISTRIBUTIONCHEST, "`id` = ?", dcid))
 		        	{
-		        		deleteData(Type.DISTRIBUTIONCHEST, "`distributionchestid` = ?", dcid);
+		        		i++;
+		        		player.sendMessage("Delete Storagechest distributionchestid:"+dcid);
+		        		deleteData(Type.STORAGECHEST, "`distributionchestid` = ?", dcid);
 		        	}
 		        }
 		    } catch (SQLException e) 
@@ -532,6 +646,6 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		    	  }
 		      }
 		}
-		return;
+		return i;
 	}
 }

@@ -90,6 +90,14 @@ public class InteractHandler implements Listener
 			if(cooldown.get(event.getPlayer().getName()) > System.currentTimeMillis())
 			{
 				debug(event.getPlayer(), "Cooldown");
+				PluginUser user = PluginUserHandler.getUser(event.getPlayer().getUniqueId());
+				if(user == null)
+				{
+					return;
+				}
+				PluginUserHandler.cancelAction(event.getPlayer(), user, user.getMode(), 
+						AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("CancelAction"));
+				new InteractSubHandler().checkIfDistributionChest(event, event.getPlayer(), user);
 				return;
 			} else
 			{
@@ -378,7 +386,8 @@ public class InteractHandler implements Listener
 				0,
 				System.currentTimeMillis(), Bukkit.createInventory(null, 6*9).getContents(), false,
 				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(),
-				"unnamed", false, false, Type.LESSTHAN, 0, false, Type.LESSTHAN, 0, false, false);
+				plugin.getYamlHandler().getConfig().getString("StorageChest.DefaultName", "unnamed"),
+				false, false, Type.LESSTHAN, 0, false, Type.LESSTHAN, 0, false, false);
 		
 		Location dcloc = new Location(Bukkit.getWorld(dc.getWorld()), dc.getBlockX(), dc.getBlockY(), dc.getBlockZ());
 		Block block = event.getClickedBlock();

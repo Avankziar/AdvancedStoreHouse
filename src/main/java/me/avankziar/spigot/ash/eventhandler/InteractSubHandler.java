@@ -3,8 +3,8 @@ package main.java.me.avankziar.spigot.ash.eventhandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -12,6 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
@@ -31,17 +32,17 @@ import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
-import main.java.me.avankziar.spigot.ash.assistance.ItemGenerator;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler.Type;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent.Action;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class InteractSubHandler
 {	
-	private LinkedHashMap<Integer, Long> chestAnimationCooldown = new LinkedHashMap<>();
+	public static LinkedHashMap<Integer, Long> chestAnimationCooldown = new LinkedHashMap<>();
 	
 	public void simplifiedHandling(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
 	{
@@ -61,7 +62,7 @@ public class InteractSubHandler
 		{
 			//Mit einem Fass (MIt shift) wird die Verteilerkiste, ohne Shift eine Lagerkiste ausgewählt.
 			barrelHandling(AdvancedStoreHouse.getPlugin(), event, player, user);
-		} else if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig().getString("Simple.OpenIFSAndVisuals")))
+		} else if(inHand == Material.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig().getString("Simple.Visuals")))
 		{
 			//Mit dem Schmelzofen (Ohne shift) auf eine bestehende Lagerkiste, wird das Itemfilterset aufgerufen. 
 			//Mit Shift werden alle Zugehörigen Lagerkisten einer Verteilerkiste angezeigt. (Visuelle darstellung)
@@ -231,29 +232,88 @@ public class InteractSubHandler
 		event.setCancelled(true);
 		if(player.isSneaking())
 		{
-			DistributionChest dc = ChestHandler.getDistributionChest(plugin, loc);
-			if(dc == null)
+			ArrayList<DistributionChest> dclist = new ArrayList<>();
+			try
+			{
+				dclist = ConvertHandler.convertListII(
+						plugin.getMysqlHandler().getAllListAt(Type.DISTRIBUTIONCHEST, "`id`", false,
+								"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+								server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			if(dclist.isEmpty())
 			{
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.DcDontExist")));
 				return;
 			}
-			if(!PermissionHandler.canSelect(player, dc))
+			if(dclist.size() == 1)
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
-				return;
+				DistributionChest dc = dclist.get(0);
+				if(dc == null)
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.DcDontExist")));
+					return;
+				}
+				if(!PermissionHandler.canSelect(player, dc))
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
+					return;
+				}
+				user.setDistributionChestID(dc.getId());
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectDC")
+						.replace("%iddc%", String.valueOf(dc.getId()))
+						.replace("%name%", dc.getChestName())));
+				PluginUserHandler.addUser(user);
+			} else
+			{
+				List<BaseComponent> dcbc = new ArrayList<>();
+				for(DistributionChest dc : dclist)
+				{
+					TextComponent t1 = ChatApi.apiChat("&f"+dc.getId()+"-&e"+dc.getChestName(),
+							ClickEvent.Action.RUN_COMMAND, PluginSettings.settings.getCommands().get(KeyHandler.DC_SELECT)+dc.getChestName(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverSelect"));
+					TextComponent t2 = ChatApi.apiChat("&aⒾ",
+							ClickEvent.Action.RUN_COMMAND,
+							PluginSettings.settings.getCommands().get(KeyHandler.DC_INFO)+dc.getId(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverInfo"));
+					TextComponent t3 = ChatApi.apiChat("&bⓄ ",
+							ClickEvent.Action.RUN_COMMAND,
+							PluginSettings.settings.getCommands().get(KeyHandler.DC_OPENOPTION)+dc.getId(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverOpenGui"));
+					TextComponent t4 = ChatApi.tctl(" &1| ");
+					dcbc.add(t1);
+					dcbc.add(t2);
+					dcbc.add(t3);
+					dcbc.add(t4);
+				}
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.Headline")));
+				if(!dcbc.isEmpty())
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.DistributionChestsIntro")));
+					TextComponent tc = ChatApi.tc("");
+					tc.setExtra(dcbc);
+					player.spigot().sendMessage(tc);
+				}
 			}
-			user.setDistributionChestID(dc.getId());
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectDC")
-					.replace("%iddc%", String.valueOf(dc.getId()))
-					.replace("%name%", dc.getChestName())));
-			PluginUserHandler.addUser(user);
 		} else
 		{
-			ArrayList<StorageChest> sclist = ConvertHandler.convertListIII(plugin.getMysqlHandler().getAllListAt(
-					MysqlHandler.Type.STORAGECHEST, "`id`", false,
-					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-			if(sclist == null || sclist.isEmpty())
+			ArrayList<StorageChest> sclist = new ArrayList<>();
+			try
+			{
+				sclist = ConvertHandler.convertListIII(
+						plugin.getMysqlHandler().getAllListAt(Type.STORAGECHEST, "`id`", false,
+								"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+								server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			if(sclist.isEmpty())
 			{
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.ScsDontExist")));
 				return;
@@ -281,18 +341,37 @@ public class InteractSubHandler
 				PluginUserHandler.addUser(user);
 			} else
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.SelectScsHeadline")));
-				ArrayList<BaseComponent> s = new ArrayList<>();
+				List<BaseComponent> scbc = new ArrayList<>();
 				for(StorageChest sc : sclist)
 				{
-					TextComponent tc = ChatApi.clickEvent("&f"+sc.getId()+"&e"+sc.getChestName(),
-							Action.RUN_COMMAND, PluginSettings.settings.getCommands().get(KeyHandler.SC_SELECT)+sc.getId());
-					s.add(tc);
-					s.add(ChatApi.tctl("&1 | "));
+					TextComponent t1 = ChatApi.apiChat("&f"+sc.getId()+"-&e"+sc.getChestName(),
+							ClickEvent.Action.RUN_COMMAND, PluginSettings.settings.getCommands().get(KeyHandler.SC_SELECT)+sc.getId(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverSelect"));
+					TextComponent t2 = ChatApi.apiChat("&aⒾ",
+							ClickEvent.Action.RUN_COMMAND,
+							PluginSettings.settings.getCommands().get(KeyHandler.SC_INFO)+sc.getId(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverInfo"));
+					TextComponent t3 = ChatApi.apiChat("&bⓄ ",
+							ClickEvent.Action.RUN_COMMAND,
+							PluginSettings.settings.getCommands().get(KeyHandler.SC_OPENOPTION)+sc.getId(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverOpenGui"));
+					TextComponent t4 = ChatApi.tctl(" &1| ");
+					scbc.add(t1);
+					scbc.add(t2);
+					scbc.add(t3);
+					scbc.add(t4);
 				}
-				TextComponent all = ChatApi.tc("");
-				all.setExtra(s);
-				player.spigot().sendMessage(all);
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.Headline")));
+				if(!scbc.isEmpty())
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.StorageChestsIntro")));
+					TextComponent tc = ChatApi.tc("");
+					tc.setExtra(scbc);
+					player.spigot().sendMessage(tc);
+				}
 			}
 		}
 	}
@@ -301,110 +380,112 @@ public class InteractSubHandler
 	{
 		final Location loc = event.getClickedBlock().getLocation();
 		event.setCancelled(true);
-		if(player.isSneaking())
+		DistributionChest dc = ChestHandler.getDistributionChest(plugin, loc);
+		if(dc == null)
 		{
-			DistributionChest dc = ChestHandler.getDistributionChest(plugin, loc);
-			if(dc == null)
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.DcDontExist")));
+			return;
+		}
+		animation(plugin, player, dc);
+	}
+	
+	public void animation(AdvancedStoreHouse plugin, Player player, DistributionChest dc) throws IOException
+	{
+		if(chestAnimationCooldown.containsKey(dc.getId()))
+		{
+			if(chestAnimationCooldown.get(dc.getId()) > System.currentTimeMillis())
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.DcDontExist")));
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.AnimationCooldown"))
+						.replace("%dcid%", String.valueOf(dc.getId()))
+						.replace("%dcname%", dc.getChestName()));
 				return;
 			}
-			if(chestAnimationCooldown.containsKey(dc.getId()))
-			{
-				if(chestAnimationCooldown.get(dc.getId()) > System.currentTimeMillis())
-				{
-					return;
-				}
-			}
-			if(!PermissionHandler.canViewIFSOrVisual(player, dc))
-			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
-				return;
-			}
-			ArrayList<StorageChest> sclist = ConvertHandler.convertListIII(plugin.getMysqlHandler()
-					.getAllListAt(Type.STORAGECHEST, "`id`", false, "`distributionchestid` = ?", dc.getId()));
-			long cooldown = System.currentTimeMillis()
-					+ plugin.getYamlHandler().getConfig().getLong("Animation.AdditionalCooldown", 10000)
-					+ sclist.size()*plugin.getYamlHandler().getConfig().getLong("Animation.Lenght", 10000);
-			if(chestAnimationCooldown.containsKey(dc.getId()))
-			{
-				chestAnimationCooldown.replace(dc.getId(), cooldown);
-			} else
-			{
-				chestAnimationCooldown.put(dc.getId(), cooldown);
-			}
-			final int wait = 5;
-			new BukkitRunnable()
-			{
-				
-				int count = 0;
-				int countGlobal = 0;
-				int animationPerTick = plugin.getYamlHandler().getConfig().getInt("Animation.PerTick", 25);
-				int animationLenght = plugin.getYamlHandler().getConfig().getInt("Animation.Lenght", 10000);
-				Particle particledc = 
-						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.DistributionChest", "WATER_DROP"));
-				Particle particledcrandom = 
-						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.RandomDistributionChest", "END_ROD"));
-				Particle particlesc = 
-						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.StorageChest", "COMPOSTER"));
-				Particle particlescvoid = 
-						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.VoidStorageChest", "FLAME"));
-				Particle particlescend = 
-						Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.EndStorageChest", "SMOKE_LARGE"));
-				
-				@Override
-				public void run()
-				{
-					if(countGlobal == 0)
-					{
-						//Only DistributionChest
-						if(dc.isDistributeRandom())
-						{
-							new ChestAnimation(ChestHandler.getLocationDistributionChest(dc))
-							.startSingleChestAnimation(animationLenght+(1+sclist.size()/(wait*animationPerTick)), particledcrandom);
-						} else
-						{
-							new ChestAnimation(ChestHandler.getLocationDistributionChest(dc))
-							.startSingleChestAnimation(animationLenght+(1+sclist.size()/(wait*animationPerTick)), particledc);
-						}
-					}
-					while(countGlobal < sclist.size())
-					{
-						int rest = (count == 0 ? 1 : count) % (animationPerTick*wait);
-						if(rest == 0)
-						{
-							count = 0;
-							break;
-						}
-						StorageChest sc = sclist.get(countGlobal);
-						debug(player, "countGlobal: "+countGlobal+" | count: "+count+" | sc.list.sizee: "+sclist.size());
-						if(sc.isOptionVoid())
-						{
-							new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
-							.startSingleChestAnimation(animationLenght, particlescvoid);
-						} else if(sc.isEndstorage())
-						{
-							new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
-							.startSingleChestAnimation(animationLenght, particlescend);
-						} else
-						{
-							new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
-							.startSingleChestAnimation(animationLenght, particlesc);
-						}
-						count++;
-						countGlobal++;
-					}
-					count = 0;
-					if(countGlobal >= (sclist.size()-1))
-					{
-						cancel();
-					}
-				}
-			}.runTaskTimer(plugin, 0L, 1L*wait);
+		}
+		if(!PermissionHandler.canViewIFSOrVisual(player, dc))
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
+			return;
+		}
+		ArrayList<StorageChest> sclist = ConvertHandler.convertListIII(plugin.getMysqlHandler()
+				.getAllListAt(Type.STORAGECHEST, "`id`", false, "`distributionchestid` = ?", dc.getId()));
+		long cooldown = System.currentTimeMillis()
+				+ plugin.getYamlHandler().getConfig().getLong("Animation.AdditionalCooldown", 10000)
+				+ (sclist.size()/(plugin.getYamlHandler().getConfig().getInt("Animation.PerTick", 25)*20)*1000)
+				+ plugin.getYamlHandler().getConfig().getLong("Animation.Lenght", 10000);
+		if(chestAnimationCooldown.containsKey(dc.getId()))
+		{
+			chestAnimationCooldown.replace(dc.getId(), cooldown);
 		} else
 		{
-			updateStorageChestItemFilterSet(plugin, event, player, user);
+			chestAnimationCooldown.put(dc.getId(), cooldown);
 		}
+		final int wait = 5;
+		new BukkitRunnable()
+		{
+			int count = 0;
+			int countGlobal = 0;
+			int animationPerTick = plugin.getYamlHandler().getConfig().getInt("Animation.PerTick", 25);
+			int animationLenght = plugin.getYamlHandler().getConfig().getInt("Animation.Lenght", 10000);
+			Particle particledc = 
+					Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.DistributionChest", "WATER_DROP"));
+			Particle particledcrandom = 
+					Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.RandomDistributionChest", "END_ROD"));
+			Particle particlesc = 
+					Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.StorageChest", "COMPOSTER"));
+			Particle particlescvoid = 
+					Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.VoidStorageChest", "FLAME"));
+			Particle particlescend = 
+					Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.EndStorageChest", "SMOKE_LARGE"));
+			
+			@Override
+			public void run()
+			{
+				if(countGlobal == 0)
+				{
+					//Only DistributionChest
+					if(dc.isDistributeRandom())
+					{
+						new ChestAnimation(ChestHandler.getLocationDistributionChest(dc))
+						.startSingleChestAnimation(animationLenght+(1+sclist.size()/(wait*animationPerTick)), particledcrandom);
+					} else
+					{
+						new ChestAnimation(ChestHandler.getLocationDistributionChest(dc))
+						.startSingleChestAnimation(animationLenght+(1+sclist.size()/(wait*animationPerTick)), particledc);
+					}
+				}
+				while(countGlobal < sclist.size())
+				{
+					int rest = (count == 0 ? 1 : count) % (animationPerTick*wait);
+					if(rest == 0)
+					{
+						count = 0;
+						break;
+					}
+					StorageChest sc = sclist.get(countGlobal);
+					debug(player, "countGlobal: "+countGlobal+" | count: "+count+" | sc.list.sizee: "+sclist.size());
+					if(sc.isOptionVoid())
+					{
+						new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
+						.startSingleChestAnimation(animationLenght, particlescvoid);
+					} else if(sc.isEndstorage())
+					{
+						new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
+						.startSingleChestAnimation(animationLenght, particlescend);
+					} else
+					{
+						new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
+						.startSingleChestAnimation(animationLenght, particlesc);
+					}
+					count++;
+					countGlobal++;
+				}
+				count = 0;
+				if(countGlobal >= (sclist.size()-1))
+				{
+					cancel();
+				}
+			}
+		}.runTaskTimer(plugin, 0L, 1L*wait);
 	}
 	
 	private void furnaceHandling(AdvancedStoreHouse plugin, PlayerInteractEvent event, Player player, PluginUser user) throws IOException
@@ -414,45 +495,149 @@ public class InteractSubHandler
 		event.setCancelled(true);
 		if(player.isSneaking())
 		{
-			DistributionChest dc = ChestHandler.getDistributionChest(plugin, loc);
-			if(dc == null)
+			ArrayList<DistributionChest> dclist = new ArrayList<>();
+			try
+			{
+				dclist = ConvertHandler.convertListII(
+						plugin.getMysqlHandler().getAllListAt(Type.DISTRIBUTIONCHEST, "`id`", false,
+								"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+								server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			if(dclist.isEmpty())
 			{
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.DcDontExist")));
 				return;
 			}
-			if(!PermissionHandler.canOpenOption(player, dc))
+			if(dclist.size() == 1)
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
-				return;
+				DistributionChest dc = ChestHandler.getDistributionChest(plugin, loc);
+				if(dc == null)
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.DcDontExist")));
+					return;
+				}
+				if(!PermissionHandler.canOpenOption(player, dc))
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
+					return;
+				}
+				user.setDistributionChestID(dc.getId());
+				PluginUserHandler.addUser(user);
+				new OptionGuiHandler().openDcGuiMain(player, user, dc, null);
+			} else
+			{
+				List<BaseComponent> dcbc = new ArrayList<>();
+				for(DistributionChest dc : dclist)
+				{
+					TextComponent t1 = ChatApi.apiChat("&f"+dc.getId()+"-&e"+dc.getChestName(),
+							ClickEvent.Action.RUN_COMMAND, PluginSettings.settings.getCommands().get(KeyHandler.DC_SELECT)+dc.getChestName(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverSelect"));
+					TextComponent t2 = ChatApi.apiChat("&aⒾ",
+							ClickEvent.Action.RUN_COMMAND,
+							PluginSettings.settings.getCommands().get(KeyHandler.DC_INFO)+dc.getId(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverInfo"));
+					TextComponent t3 = ChatApi.apiChat("&bⓄ ",
+							ClickEvent.Action.RUN_COMMAND,
+							PluginSettings.settings.getCommands().get(KeyHandler.DC_OPENOPTION)+dc.getId(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverOpenGui"));
+					TextComponent t4 = ChatApi.tctl(" &1| ");
+					dcbc.add(t1);
+					dcbc.add(t2);
+					dcbc.add(t3);
+					dcbc.add(t4);
+				}
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.Headline")));
+				if(!dcbc.isEmpty())
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.DistributionChestsIntro")));
+					TextComponent tc = ChatApi.tc("");
+					tc.setExtra(dcbc);
+					player.spigot().sendMessage(tc);
+				}
 			}
-			user.setDistributionChestID(dc.getId());
-			PluginUserHandler.addUser(user);
-			new OptionGuiHandler().openDcGuiMain(player, user, dc, null);
 		} else
 		{
-			StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST,
-					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-			if(sc == null)
+			ArrayList<StorageChest> sclist = new ArrayList<>();
+			try
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.ScDontExist")));
+				sclist = ConvertHandler.convertListIII(
+						plugin.getMysqlHandler().getAllListAt(Type.STORAGECHEST, "`id`", false,
+								"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+								server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			if(sclist.isEmpty())
+			{
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.ScsDontExist")));
 				return;
 			}
-			DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
-					Type.DISTRIBUTIONCHEST, "`id` = ?", sc.getDistributionChestID());
-			if(dc == null)
+			if(sclist.size() == 1)
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.ScDcDontExist")));
-				return;
-			}
-			if(!PermissionHandler.canOpenOption(player, dc))
+				StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.STORAGECHEST,
+						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+						server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+				if(sc == null)
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.ScDontExist")));
+					return;
+				}
+				DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
+						Type.DISTRIBUTIONCHEST, "`id` = ?", sc.getDistributionChestID());
+				if(dc == null)
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Base.ScDcDontExist")));
+					return;
+				}
+				if(!PermissionHandler.canOpenOption(player, dc))
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
+					return;
+				}
+				user.setStorageChestID(sc.getId());
+				PluginUserHandler.addUser(user);
+				new OptionGuiHandler().openScGuiMain(player, user, sc, null);
+			} else
 			{
-				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
-				return;
+				List<BaseComponent> scbc = new ArrayList<>();
+				for(StorageChest sc : sclist)
+				{
+					TextComponent t1 = ChatApi.apiChat("&f"+sc.getId()+"-&e"+sc.getChestName(),
+							ClickEvent.Action.RUN_COMMAND, PluginSettings.settings.getCommands().get(KeyHandler.SC_SELECT)+sc.getId(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverSelect"));
+					TextComponent t2 = ChatApi.apiChat("&aⒾ",
+							ClickEvent.Action.RUN_COMMAND,
+							PluginSettings.settings.getCommands().get(KeyHandler.SC_INFO)+sc.getId(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverInfo"));
+					TextComponent t3 = ChatApi.apiChat("&bⓄ ",
+							ClickEvent.Action.RUN_COMMAND,
+							PluginSettings.settings.getCommands().get(KeyHandler.SC_OPENOPTION)+sc.getId(),
+							HoverEvent.Action.SHOW_TEXT,
+							plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.ChestHoverOpenGui"));
+					TextComponent t4 = ChatApi.tctl(" &1| ");
+					scbc.add(t1);
+					scbc.add(t2);
+					scbc.add(t3);
+					scbc.add(t4);
+				}
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.Headline")));
+				if(!scbc.isEmpty())
+				{
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockInfo.StorageChestsIntro")));
+					TextComponent tc = ChatApi.tc("");
+					tc.setExtra(scbc);
+					player.spigot().sendMessage(tc);
+				}
 			}
-			user.setStorageChestID(sc.getId());
-			PluginUserHandler.addUser(user);
-			new OptionGuiHandler().openScGuiMain(player, user, sc, null);
 		}
 	}
 	
@@ -525,7 +710,8 @@ public class InteractSubHandler
 		}
 	}
 	
-	private void updateStorageChestItemFilterSet(AdvancedStoreHouse plugin, PlayerInteractEvent event, Player player, PluginUser user)
+	/* REMOVEME Veraltet und nicht zielführend
+	 * private void updateStorageChestItemFilterSet(AdvancedStoreHouse plugin, PlayerInteractEvent event, Player player, PluginUser user)
 			throws IOException
 	{
 		debug(event.getPlayer(), "=> Begin Methode updateStorageChestItemFilterSet");
@@ -626,7 +812,7 @@ public class InteractSubHandler
 		inv.setContents(sc.getContents());
 		player.openInventory(inv);
 		return;
-	}
+	}*/
 	
 	/*
 	 * Methode is for check, if the block is a dc.
@@ -681,18 +867,16 @@ public class InteractSubHandler
 		}
 		if(dc != null)
 		{
-			if(InteractHandler.distributionCooldown.containsKey(dc.getId()))
+			if(ChestHandler.isDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc))
 			{
 				long dcc = InteractHandler.distributionCooldown.get(dc.getId());
 				long start = InteractHandler.distributionCooldownStartTime.get(dc.getId());
 				debug(player, "Cooldown: "+dcc+" | Milli: "+System.currentTimeMillis());
-				if(dcc > System.currentTimeMillis())
-				{
-					event.setCancelled(true);
-					player.sendMessage(ChatApi.tl(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("DistributionIsRunning")
-							.replace("%start%", TimeHandler.getTime(start))
-							.replace("%time%", TimeHandler.getTime(dcc))));
-				}
+				event.setCancelled(true);
+				event.setUseInteractedBlock(Result.DENY);
+				player.sendMessage(ChatApi.tl(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("DistributionIsRunning")
+						.replace("%start%", TimeHandler.getTime(start))
+						.replace("%time%", TimeHandler.getTime(dcc))));
 			}
 		}
 	}

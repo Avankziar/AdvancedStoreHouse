@@ -71,7 +71,8 @@ public class ARGStorageChest_Select extends ArgumentModule
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectSC")
 					.replace("%idsc%", String.valueOf(sc.getId()))
 					.replace("%iddc%", String.valueOf(dc.getId()))
-					.replace("%name%", dc.getChestName())));
+					.replace("%namedc%", dc.getChestName())
+					.replace("%namesc%", sc.getChestName())));
 		} else
 		{
 			if(sc.getOwneruuid().equals(player.getUniqueId().toString())
@@ -85,6 +86,7 @@ public class ARGStorageChest_Select extends ArgumentModule
 					.replace("%id%", String.valueOf(sc.getId()))));
 		}
 		PluginUserHandler.addUser(user);
+		//FIXME Replacer
 		return;
 	}
 }

@@ -657,7 +657,7 @@ public class OptionGuiHandler
 			player.closeInventory();
 			openStorageChestItemFilterSet(AdvancedStoreHouse.getPlugin(), player, user, sc.getId());
 			break;
-		case 50:
+		case 53:
 			guiSound(loc);
 			ItemFilterSet ifs = user.getItemFilterSet();
 			if(ifs == null || ifs.getContents() == null)
@@ -669,6 +669,14 @@ public class OptionGuiHandler
 			sc.setContents(ifs.getContents());
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(MysqlHandler.Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 			player.sendMessage(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Gui.Sc.IFSIsOverriden"));
+			break;
+		case 45:
+			guiSound(loc);
+			final int id = sc.getId();
+			AdvancedStoreHouse.getPlugin().getMysqlHandler().deleteData(Type.STORAGECHEST, "`id` = ?", sc.getId());
+			player.closeInventory();
+			player.sendMessage(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("CmdAsh.BlockBreak.DeleteSC")
+					.replace("%id%", String.valueOf(id)));
 			break;
 		}
 	}
