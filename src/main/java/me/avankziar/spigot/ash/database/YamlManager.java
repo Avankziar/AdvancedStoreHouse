@@ -1883,16 +1883,11 @@ public class YamlManager
 				null);
 		setSlot(GuiType.SC_MAIN, 12, Material.BARREL,
 				null,
-				"&eEndlagerkisten Ein- oder Ausschalten.",
-				"&eSwitch on or off the endstorage boxes.", 
+				"&eEndlagerkisten &a✔ &eoder &c✖&e.",
+				"&eEndstoragechest &a✔ &eoder &c✖&e.", 
 				null,
 				null,
-				new String[] {
-				"&eKlick hier um den Zustand des Endlagers zu wechseln.",
-				"&eEntweder ist es eine Endlagerkiste oder nicht.",
-				"&eClick here to change the state of the endstorage.",
-				"&eEither it's a endstorage or it's not."
-				});
+				null);
 		setSlot(GuiType.SC_MAIN, 14, SettingLevel.EXPERT, Material.PLAYER_HEAD,
 				"http://textures.minecraft.net/texture/9ae85f74f8e2c054b781a29fa9b25934ba63bb79f1de8a95b436d9bfdcaf4cd",
 				"&ePrioritätszahl setzten",
