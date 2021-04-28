@@ -97,7 +97,7 @@ public class Utility
 		
 		PERMBYPASSREPOSITION = plugin.getYamlHandler().getCom().getString("Bypass.Reposition", "ash.bypass.reposition");
 		PERMBYPASSOPENOPTION = plugin.getYamlHandler().getCom().getString("Bypass.OpenOption", "ash.bypass.openoption");
-		PERMBYPASSIFSORVISUAL = plugin.getYamlHandler().getCom().getString("Bypass.IFSOrVisual", "ash.bypass.ifsorvisual");
+		PERMBYPASSIFSORVISUAL = plugin.getYamlHandler().getCom().getString("Bypass.Visual", "ash.bypass.visual");
 		PERMBYPASSCOPYANDPASTE = plugin.getYamlHandler().getCom().getString("Bypass.CopyAndPaste", "ash.bypass.copyandpaste");
 		PERMBYPASSSIGN = plugin.getYamlHandler().getCom().getString("Bypass.Sign", "ash.bypass.sign");
 		PERMBYPASSEXPERTMODUS = plugin.getYamlHandler().getCom().getString("Bypass.ExpertModus", "ash.bypass.expertmodus");

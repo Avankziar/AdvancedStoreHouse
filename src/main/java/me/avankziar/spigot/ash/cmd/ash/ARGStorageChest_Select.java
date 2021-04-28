@@ -86,7 +86,6 @@ public class ARGStorageChest_Select extends ArgumentModule
 					.replace("%id%", String.valueOf(sc.getId()))));
 		}
 		PluginUserHandler.addUser(user);
-		//FIXME Replacer
 		return;
 	}
 }

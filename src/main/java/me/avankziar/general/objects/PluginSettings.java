@@ -27,8 +27,6 @@ public class PluginSettings
 	private int voidChestRun;
 	private int voidChestsPerTick;
 	
-	private int storageChestAmountWhereShowParticels;
-	
 	private LinkedHashMap<String, String> commands = new LinkedHashMap<>(); //To save commandstrings
 	
 	public static PluginSettings settings;
@@ -37,8 +35,7 @@ public class PluginSettings
 			boolean automaticDistribution, List<String> serverRestartTime, int minimumTickPerDistributionChest,
 			long directPauseValue, long indirectPauseValue,
 			int waitBeforStartFactor, int delayedTicks, int delayChainChest, int delayedChainTicks, int chestsPerTick,
-			int voidChestRun, int voidChestsPerTick,
-			int storageChestAmountWhereShowParticels)
+			int voidChestRun, int voidChestsPerTick)
 	{
 		setServer(server);
 		setMysql(mysql);
@@ -57,8 +54,6 @@ public class PluginSettings
 		
 		setVoidChestRun(voidChestRun);
 		setVoidChestsPerTick(voidChestsPerTick);
-		
-		setStorageChestAmountWhereShowParticles(storageChestAmountWhereShowParticels);
 	}
 	
 	public static void init(AdvancedStoreHouse plugin)
@@ -80,13 +75,10 @@ public class PluginSettings
 		
 		int voidChestRun = plugin.getYamlHandler().getConfig().getInt("VoidChestRun", 300);
 		int voidChestsPerTick = plugin.getYamlHandler().getConfig().getInt("VoidChestsPerTick", 10);
-		
-		int storageChestAmountWhereShowParticels = plugin.getYamlHandler().getConfig().getInt("StorageChestAmountWhereShowParticles", 10);
 		settings = new PluginSettings(server, mysql, lwc,
 				automaticDistribution, serverRestartTime, minimumTickPerDistributionChest, directPauseValue, indirectPauseValue,
 				waitBeforStartFactor, delayedTicks, delayChainChest, delayedChainTicks, chestsPerTick,
-				voidChestRun, voidChestsPerTick,
-				storageChestAmountWhereShowParticels);
+				voidChestRun, voidChestsPerTick);
 	}
 
 	public boolean isMysql()
@@ -207,16 +199,6 @@ public class PluginSettings
 	public void setIndirectPauseValue(long indirectPauseValue)
 	{
 		this.indirectPauseValue = indirectPauseValue;
-	}
-
-	public int getStorageChestAmountWhereShowParticles()
-	{
-		return storageChestAmountWhereShowParticels;
-	}
-
-	public void setStorageChestAmountWhereShowParticles(int storageChestAmountWhereShowParticels)
-	{
-		this.storageChestAmountWhereShowParticels = storageChestAmountWhereShowParticels;
 	}
 
 	public boolean isLwc()

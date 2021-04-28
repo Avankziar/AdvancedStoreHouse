@@ -201,7 +201,7 @@ public class YamlManager
 		//A Tick is 50 ms. Between 1 and 2 Ticks may should be enough for ~50 - 100 StorageChests per DistributionChest.
 		configKeys.put("DelayedTicks"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				2}));
+				3}));
 		//Seconds, when the chain will be activated
 		configKeys.put("DelayChainChests"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
@@ -283,9 +283,6 @@ public class YamlManager
 		configKeys.put("Simple.Reposition"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"SMOKER"}));
-		configKeys.put("StorageChestAmountWhereShowParticles"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				25}));
 		configKeys.put("Animation.PerTick"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				25}));
@@ -354,8 +351,8 @@ public class YamlManager
 				"&c/ash cancel &f| Cancels all actions");
 		argumentInput("ash_convert", "convert", "ash.cmd.convert",
 				"/ash convert", "/afkr convert ",
-				"&c/ash convert &f| Konvertiert alte Datenbankeinträge auf Build 4.",
-				"&c/ash convert &f| Converts old database entries to Build 4.");
+				"&c/ash convert &f| Konvertiert alte Datenbankeinträge auf Build 4. Pro Server laufend.",
+				"&c/ash convert &f| Converts old database entries to Build 4. Per Server running.");
 		argumentInput("ash_checkunboundchest", "checkunboundchest", "ash.cmd.checkunboundchest",
 				"/ash checkunboundchest", "/afkr checkunboundchest ",
 				"&c/ash checkunboundchest &f| Checkt ob ungenutzte Verteilerkisten oder Lagerkisten ohne Verteilerkiste existieren und löscht diese.",
@@ -389,37 +386,37 @@ public class YamlManager
 				"&c/ash distributionchest create <Name> &f| Beginnt die Erstellung einer Verteilerkiste.",
 				"&c/ash distributionchest create <Name> &f| Starts the creation of a distribution box");
 		argumentInput("ash_dc_delete", "delete", "ash.cmd.distributionchest.delete",
-				"/ash distributionchest delete [true/false(DeleteAllLinkedStorageChest)]", "/ash distributionchest delete ", 
+				"/ash distributionchest delete ", "/ash distributionchest delete ", 
 				"&c/ash distributionchest delete &f| Löscht die vorher ausgewählte Verteilerkiste.", 
 				"&c/ash distributionchest delete &f| Deletes the previously selected distribution box");
 		argumentInput("ash_dc_info", "info", "ash.cmd.distributionchest.info",
 				"/ash distributionchest info", "/ash distributionchest info ", 
-				"&c/ash distributionchest info <ID> &f| Listet alle Infos der Verteilerkiste auf.",
-				"&c/ash distributionchest info <ID> &f| Lists all the information in the distribution box");
+				"&c/ash distributionchest info [ID/Name] &f| Listet alle Infos der Verteilerkiste auf.",
+				"&c/ash distributionchest info [ID/Name] &f| Lists all the information in the distribution box");
 		argumentInput("ash_dc_list", "list", "ash.cmd.distributionchest.list",
-				"/ash distributionchest list", "/ash distributionchest list ", 
-				"&c/ash distributionchest list &f| Listet alle IDs und Namen deiner Verteilerkistena auf.", 
-				"&c/ash distributionchest list &f| Lists all IDs and names of your distribution boxes.");
+				"/ash distributionchest list [pagenumber] ", "/ash distributionchest list ", 
+				"&c/ash distributionchest list [Seitenzahl] &f| Listet alle IDs und Namen deiner Verteilerkistena auf.", 
+				"&c/ash distributionchest list [pagenumber] &f| Lists all IDs and names of your distribution boxes.");
 		argumentInput("ash_dc_member", "member", "ash.cmd.distributionchest.member",
 				"/ash distributionchest member <playername>", "/ash distributionchest member ", 
 				"&c/ash distributionchest member <Spielername> &f| Fügt einen Spieler der Mitgliedsliste hinzu oder entfernt ihn.",
 				"&c/ash distributionchest member <playername> &f| Add or remove a player from the member list.");
 		argumentInput("ash_dc_openoption", "openoption", "ash.cmd.distributionchest.openoption",
 				"/ash distributionchest openoption [ID/Chestname]", "/ash distributionchest openoption ", 
-				"&c/ash distributionchest openoption [ID/Chestname] &f| Öffnet das Options Menu der Verteilerkiste.",
+				"&c/ash distributionchest openoption [ID/Kistenname] &f| Öffnet das Options Menu der Verteilerkiste.",
 				"&c/ash distributionchest openoption [ID/Chestname] &f| Opens the Options menu of the distribution chest.");
 		argumentInput("ash_dc_remotetriggeranimation", "remotetriggeranimation", "ash.cmd.distributionchest.remotetriggeranimation",
 				"/ash distributionchest remotetriggeranimation [id/Chestname]", "/ash distributionchest remotetriggeranimation ", 
 				"&c/ash distributionchest remotetriggeranimation [id/Kistenname] &f| Löst die Kistenanimation fern aus.",
 				"&c/ash distributionchest remotetriggeranimation [id/Chestname] &f| Triggered remote the chestanimation.");
 		argumentInput("ash_dc_select", "select", "ash.cmd.distributionchest.select",
-				"/ash distributionchest select <Name> [PlayerName]", "/ash distributionchest select ", 
-				"&c/ash distributionchest select <ID> &f| Wählt eine Verteilerkiste aus.", 
-				"&c/ash distributionchest select <ID> &f| Selects a distribution box.");
+				"/ash distributionchest select <ID/Name> [PlayerName]", "/ash distributionchest select ", 
+				"&c/ash distributionchest select <ID/Name> [Spielername] &f| Wählt eine Verteilerkiste aus.", 
+				"&c/ash distributionchest select <ID/Name> [PlayerName] &f| Selects a distribution box.");
 		argumentInput("ash_dc_search", "search", "ash.cmd.distributionchest.search",
 				"/ash distributionchest search", "/ash distributionchest search ", 
-				"&c/ash distributionchest search &f| Sucht die ausgewählte Verteilerkiste.", 
-				"&c/ash distributionchest search &f| Searches the selected distribution box.");
+				"&c/ash distributionchest search &f| Sucht die ausgewählte Verteilerkiste per Kompass.", 
+				"&c/ash distributionchest search &f| Searches the selected distribution box per compass.");
 		argumentInput("ash_dc_switch", "switch", "ash.cmd.distributionchest.switch",
 				"/ash distributionchest switch", "/ash distributionchest switch ", 
 				"&c/ash distributionchest switch &f| Toggelt ob die Prioriäten aufsteigend oder absteigend berücksichtig werden sollen.", 
@@ -450,10 +447,10 @@ public class YamlManager
 				"&c/ash itemfilterset name <Name> &f| Sets a new name for the ItemFilterSet.");
 		argumentInput("ash_itemfilterset_select", "select", "ash.cmd.itemfilterset.select",
 				"/ash itemfilterset select <Name/ID> [Player]", "/ash itemfilterset select ", 
-				"&c/ash itemfilterset select <Name/ID> &f| Wählt einen ItemFilterSet für den Zwischenspeicher aus.", 
-				"&c/ash itemfilterset select <Name/ID> &f| Selects an ItemFilterSet for the cache.");
+				"&c/ash itemfilterset select <Name/ID> [Spielername] &f| Wählt einen ItemFilterSet für den Zwischenspeicher aus.", 
+				"&c/ash itemfilterset select <Name/ID> [Player] &f| Selects an ItemFilterSet for the cache.");
 		argumentInput("ash_itemfilterset_update", "update", "ash.cmd.itemfilterset.update",
-				"/ash itemfilterset update [Player]", "/ash itemfilterset update ", 
+				"/ash itemfilterset update ", "/ash itemfilterset update ", 
 				"&c/ash itemfilterset update &f| Öffnet einen ItemFilterSet zum Verändern.", 
 				"&c/ash itemfilterset update &f| Opens an ItemFilterSet for modification.");
 		argumentInput("ash_mode", "mode", "ash.cmd.mode",
@@ -473,7 +470,7 @@ public class YamlManager
 				"&c/ash storagechest create &f| Setzt den Spieler in den Erstellungsmodus für Lagerkisten.", 
 				"&c/ash storagechest create &f| Put the player in storagechest create mode.");
 		argumentInput("ash_sc_chestname", "chestname", "ash.cmd.storagechest.chestname",
-				"/ash storagechest chestname", "/ash storagechest chestname ", 
+				"/ash storagechest chestname <name> ", "/ash storagechest chestname ", 
 				"&c/ash storagechest chestname <Name> &f| Setzt einen neuen Namen für die Lagerkiste.",
 				"&c/ash storagechest chestname <Name> &f| Sets a new name for the storagechest");
 		argumentInput("ash_sc_delete", "delete", "ash.cmd.storagechest.delete",
@@ -485,12 +482,12 @@ public class YamlManager
 				"&c/ash storagechest info &f| Zeigt alle Informationen zu der ausgewählten Lagerkiste an.",
 				"&c/ash storagechest info &f| Shows all information about the selected storage crate.");
 		argumentInput("ash_sc_list", "list", "ash.cmd.storagechest.list",
-				"/ash storagechest list", "/ash storagechest list ", 
-				"&c/ash storagechest list &f| Listet alle LagerkistenIDs des Spielers auf.", 
-				"&c/ash storagechest list &f| Lists all the players storagechest IDs.");
+				"/ash storagechest list [page] [player] ", "/ash storagechest list ", 
+				"&c/ash storagechest list [Seitenzahl] [Spielername] &f| Listet alle LagerkistenIDs des Spielers auf.", 
+				"&c/ash storagechest list [page] [player] &f| Lists all the players storagechest IDs.");
 		argumentInput("ash_sc_openoption", "openoption", "ash.cmd.storagechest.openoption",
 				"/ash storagechest openoption [ID/Chestname]", "/ash storagechest openoption ", 
-				"&c/ash storagechest openoption [ID/Chestname] &f| Öffnet das Options Menu der Lagerkiste.",
+				"&c/ash storagechest openoption [ID/Kistenname] &f| Öffnet das Options Menu der Lagerkiste.",
 				"&c/ash storagechest openoption [ID/Chestname] &f| Opens the Options menu of the storage chest.");
 		argumentInput("ash_sc_select", "select", "ash.cmd.storagechest.select",
 				"/ash storagechest select <id>", "/ash storagechest select ", 
@@ -498,8 +495,8 @@ public class YamlManager
 				"&c/ash storagechest select <ID> &f| Selects a storage crate.");
 		argumentInput("ash_sc_search", "search", "ash.cmd.storagechest.search",
 				"/ash storagechest search", "/ash storagechest search ", 
-				"&c/ash storagechest update &f| Toggelt den Updatemodus für die Lagerkisten.", 
-				"&c/ash storagechest update &f| Toggles the update mode for the storage crates");
+				"&c/ash storagechest search &f| Sucht per Kompass die Lagerkiste.", 
+				"&c/ash storagechest search &f| Search per compass the storagechest.");
 		/*argumentInput("", "", "",
 				"", "", 
 				"", "");*/
@@ -550,9 +547,9 @@ public class YamlManager
 		commandsKeys.put(path+"OpenOption"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"ash.bypass.openoption"}));
-		commandsKeys.put(path+"IFSOrVisual"
+		commandsKeys.put(path+"Visual"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				"ash.bypass.ifsorvisual"}));
+				"ash.bypass.visual"}));
 		commandsKeys.put(path+"CopyAndPaste"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"ash.bypass.copyandpaste"}));
