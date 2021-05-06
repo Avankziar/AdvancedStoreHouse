@@ -1,2 +1,2 @@
-# AdvanceEconomyPlus
-A Economy Plugin for Spigot and more.
+# AdvancedStoreHouse
+A storage Plugin for Spigot and more.
