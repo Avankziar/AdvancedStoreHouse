@@ -74,7 +74,8 @@ public interface TableIII
 			try 
 			{
 				String sql = "INSERT INTO `" + plugin.getMysqlHandler().tableNameIII 
-						+ "`(`distributionchestid`, `owner_uuid`, `creationdate`, `priority`, `content`,"
+						+ "`(`distributionchestid`, `owner_uuid`, `creationdate`, `priority`,"
+						+ " `content`, `searchcontent`,"
 						+ " `endstorage`,"
 						+ " `server`, `world`, `blockx`, `blocky`, `blockz`,"
 						+ " `chestname`, `optionvoid`, `optiondurability`, `durabilitytype`, `durability`,"
@@ -84,29 +85,30 @@ public interface TableIII
 						+ "?, ?, ?, ?, ?, "
 						+ "?, ?, ?, ?, ?, "
 						+ "?, ?, ?, ?, ?,"
-						+ "?)";
+						+ "?, ?)";
 				preparedStatement = conn.prepareStatement(sql);
 				preparedStatement.setInt(1, cu.getDistributionChestID());
 		        preparedStatement.setString(2, cu.getOwneruuid());
 		        preparedStatement.setLong(3, cu.getCreationDate());
 		        preparedStatement.setInt(4, cu.getPriorityNumber());
 		        preparedStatement.setString(5, ConvertHandler.ToBase64itemStackArray(cu.getContents()));
-		        preparedStatement.setBoolean(6, cu.isEndstorage());
-		        preparedStatement.setString(7, cu.getServer());
-		        preparedStatement.setString(8, cu.getWorld());
-		        preparedStatement.setInt(9, cu.getBlockX());
-		        preparedStatement.setInt(10, cu.getBlockY());
-		        preparedStatement.setInt(11, cu.getBlockZ());
-		        preparedStatement.setString(12, cu.getChestName());
-		        preparedStatement.setBoolean(13, cu.isOptionVoid());
-		        preparedStatement.setBoolean(14, cu.isOptionDurability());
-		        preparedStatement.setString(15, cu.getDurabilityType().toString());
-		        preparedStatement.setInt(16, cu.getDurability());
-		        preparedStatement.setBoolean(17, cu.isOptionRepair());
-		        preparedStatement.setString(18, cu.getRepairType().toString());
-		        preparedStatement.setInt(19, cu.getRepairCost());
-		        preparedStatement.setBoolean(20, cu.isOptionEnchantment());
-		        preparedStatement.setBoolean(21, cu.isOptionMaterial());
+		        preparedStatement.setString(6, String.join("@|@", cu.getSearchContents()));
+		        preparedStatement.setBoolean(7, cu.isEndstorage());
+		        preparedStatement.setString(8, cu.getServer());
+		        preparedStatement.setString(9, cu.getWorld());
+		        preparedStatement.setInt(10, cu.getBlockX());
+		        preparedStatement.setInt(11, cu.getBlockY());
+		        preparedStatement.setInt(12, cu.getBlockZ());
+		        preparedStatement.setString(13, cu.getChestName());
+		        preparedStatement.setBoolean(14, cu.isOptionVoid());
+		        preparedStatement.setBoolean(15, cu.isOptionDurability());
+		        preparedStatement.setString(16, cu.getDurabilityType().toString());
+		        preparedStatement.setInt(17, cu.getDurability());
+		        preparedStatement.setBoolean(18, cu.isOptionRepair());
+		        preparedStatement.setString(19, cu.getRepairType().toString());
+		        preparedStatement.setInt(20, cu.getRepairCost());
+		        preparedStatement.setBoolean(21, cu.isOptionEnchantment());
+		        preparedStatement.setBoolean(22, cu.isOptionMaterial());
 		        
 		        preparedStatement.executeUpdate();
 		        return true;
@@ -149,7 +151,8 @@ public interface TableIII
 			try 
 			{
 				String data = "UPDATE `" + plugin.getMysqlHandler().tableNameIII
-						+ "` SET `distributionchestid` = ?, `owner_uuid` = ?, `creationdate` = ?, `priority` = ?, `content` = ?," 
+						+ "` SET `distributionchestid` = ?, `owner_uuid` = ?, `creationdate` = ?, `priority` = ?, `content` = ?,"
+						+ " `searchcontent` = ?, " 
 						+ " `endstorage` = ?, `server` = ?, `world` = ?, `blockx` = ?, `blocky` = ?, `blockz` = ?,"
 						+ " `chestname` = ?, `optionvoid` = ?, `optiondurability` = ?, `durabilitytype` = ?, `durability` = ?," 
 						+ "	`optionrepair` = ?, `repairtype` = ?, `repaircost` = ?, `optionenchantments` = ?, `optionmaterial` = ?" 
@@ -160,24 +163,25 @@ public interface TableIII
 		        preparedStatement.setLong(3, cu.getCreationDate());
 		        preparedStatement.setInt(4, cu.getPriorityNumber());
 		        preparedStatement.setString(5, ConvertHandler.ToBase64itemStackArray(cu.getContents()));
-		        preparedStatement.setBoolean(6, cu.isEndstorage());
-		        preparedStatement.setString(7, cu.getServer());
-		        preparedStatement.setString(8, cu.getWorld());
-		        preparedStatement.setInt(9, cu.getBlockX());
-		        preparedStatement.setInt(10, cu.getBlockY());
-		        preparedStatement.setInt(11, cu.getBlockZ());
-		        preparedStatement.setString(12, cu.getChestName());
-		        preparedStatement.setBoolean(13, cu.isOptionVoid());
-		        preparedStatement.setBoolean(14, cu.isOptionDurability());
-		        preparedStatement.setString(15, cu.getDurabilityType().toString());
-		        preparedStatement.setInt(16, cu.getDurability());
-		        preparedStatement.setBoolean(17, cu.isOptionRepair());
-		        preparedStatement.setString(18, cu.getRepairType().toString());
-		        preparedStatement.setInt(19, cu.getRepairCost());
-		        preparedStatement.setBoolean(20, cu.isOptionEnchantment());
-		        preparedStatement.setBoolean(21, cu.isOptionMaterial());
+		        preparedStatement.setString(6, String.join("@|@", cu.getSearchContents()));
+		        preparedStatement.setBoolean(7, cu.isEndstorage());
+		        preparedStatement.setString(8, cu.getServer());
+		        preparedStatement.setString(9, cu.getWorld());
+		        preparedStatement.setInt(10, cu.getBlockX());
+		        preparedStatement.setInt(11, cu.getBlockY());
+		        preparedStatement.setInt(12, cu.getBlockZ());
+		        preparedStatement.setString(13, cu.getChestName());
+		        preparedStatement.setBoolean(14, cu.isOptionVoid());
+		        preparedStatement.setBoolean(15, cu.isOptionDurability());
+		        preparedStatement.setString(16, cu.getDurabilityType().toString());
+		        preparedStatement.setInt(17, cu.getDurability());
+		        preparedStatement.setBoolean(18, cu.isOptionRepair());
+		        preparedStatement.setString(19, cu.getRepairType().toString());
+		        preparedStatement.setInt(20, cu.getRepairCost());
+		        preparedStatement.setBoolean(21, cu.isOptionEnchantment());
+		        preparedStatement.setBoolean(22, cu.isOptionMaterial());
 		        
-		        int i = 22;
+		        int i = 23;
 		        for(Object o : whereObject)
 		        {
 		        	preparedStatement.setObject(i, o);
@@ -231,6 +235,7 @@ public interface TableIII
 		        			result.getInt("priority"),
 		        			result.getLong("creationdate"),
 		        			ConvertHandler.FromBase64itemStackArray(result.getString("content")),
+		        			result.getString("searchcontent").split("@|@"),
 		        			result.getBoolean("endstorage"),
 		        			result.getString("server"),
 		        			result.getString("world"),
@@ -305,7 +310,7 @@ public interface TableIII
 		return false;
 	}
 	
-	default int lastIDIII(AdvancedStoreHouse plugin)
+	default int lastIDIII(AdvancedStoreHouse plugin, String whereColumn, Object...whereObject)
 	{
 		PreparedStatement preparedStatement = null;
 		ResultSet result = null;
@@ -314,9 +319,15 @@ public interface TableIII
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameIII + "` ORDER BY `id` DESC LIMIT 1";
+				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameIII 
+						+ "` WHERE "+whereColumn+" ORDER BY `id` DESC LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
-		        
+		        int i = 1;
+		        for(Object o : whereObject)
+		        {
+		        	preparedStatement.setObject(i, o);
+		        	i++;
+		        }
 		        result = preparedStatement.executeQuery();
 		        while(result.next())
 		        {
@@ -483,6 +494,7 @@ public interface TableIII
 		        			result.getInt("priority"),
 		        			result.getLong("creationdate"),
 		        			ConvertHandler.FromBase64itemStackArray(result.getString("content")),
+		        			result.getString("searchcontent").split("@|@"),
 		        			result.getBoolean("endstorage"),
 		        			result.getString("server"),
 		        			result.getString("world"),
@@ -549,6 +561,7 @@ public interface TableIII
 		        			result.getInt("priority"),
 		        			result.getLong("creationdate"),
 		        			ConvertHandler.FromBase64itemStackArray(result.getString("content")),
+		        			result.getString("searchcontent").split("@|@"),
 		        			result.getBoolean("endstorage"),
 		        			result.getString("server"),
 		        			result.getString("world"),
@@ -592,7 +605,7 @@ public interface TableIII
 		return null;
 	}
 	
-	default ArrayList<StorageChest> getAllListAtIII(AdvancedStoreHouse plugin, String orderByColumn, boolean desc,
+	default ArrayList<StorageChest> getAllListAtIII(AdvancedStoreHouse plugin, String orderByColumn, Boolean desc,
 			String whereColumn, Object...whereObject) throws IOException
 	{
 		PreparedStatement preparedStatement = null;
@@ -629,6 +642,7 @@ public interface TableIII
 		        			result.getInt("priority"),
 		        			result.getLong("creationdate"),
 		        			ConvertHandler.FromBase64itemStackArray(result.getString("content")),
+		        			result.getString("searchcontent").split("@|@"),
 		        			result.getBoolean("endstorage"),
 		        			result.getString("server"),
 		        			result.getString("world"),

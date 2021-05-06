@@ -333,6 +333,7 @@ public class InteractSubHandler
 					return;
 				}
 				user.setStorageChestID(sclist.get(0).getId());
+				user.addSelectedStorageChest(sclist.get(0).getId());
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Select.SelectSC")
 						.replace("%idsc%", String.valueOf(sclist.get(0).getId()))
 						.replace("%namesc%", sclist.get(0).getChestName())
@@ -452,6 +453,113 @@ public class InteractSubHandler
 						new ChestAnimation(ChestHandler.getLocationDistributionChest(dc))
 						.startSingleChestAnimation(animationLenght+(1+sclist.size()/(wait*animationPerTick)), particledc);
 					}
+				}
+				if(sclist.size() == 0)
+				{
+					cancel();
+					return;
+				}
+				while(countGlobal < sclist.size())
+				{
+					int rest = (count == 0 ? 1 : count) % (animationPerTick*wait);
+					if(rest == 0)
+					{
+						count = 0;
+						break;
+					}
+					StorageChest sc = sclist.get(countGlobal);
+					debug(player, "countGlobal: "+countGlobal+" | count: "+count+" | sc.list.sizee: "+sclist.size());
+					if(sc.isOptionVoid())
+					{
+						new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
+						.startSingleChestAnimation(animationLenght, particlescvoid);
+					} else if(sc.isEndstorage())
+					{
+						new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
+						.startSingleChestAnimation(animationLenght, particlescend);
+					} else
+					{
+						new ChestAnimation(ChestHandler.getLocationStorageChest(sc))
+						.startSingleChestAnimation(animationLenght, particlesc);
+					}
+					count++;
+					countGlobal++;
+				}
+				count = 0;
+				if(countGlobal >= (sclist.size()-1))
+				{
+					cancel();
+				}
+			}
+		}.runTaskTimer(plugin, 0L, 1L*wait);
+	}
+	
+	public void animation(AdvancedStoreHouse plugin, Player player, DistributionChest dc, ArrayList<StorageChest> sclist) throws IOException
+	{
+		if(chestAnimationCooldown.containsKey(dc.getId()))
+		{
+			if(chestAnimationCooldown.get(dc.getId()) > System.currentTimeMillis())
+			{
+				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.AnimationCooldown"))
+						.replace("%dcid%", String.valueOf(dc.getId()))
+						.replace("%dcname%", dc.getChestName()));
+				return;
+			}
+		}
+		if(!PermissionHandler.canViewIFSOrVisual(player, dc))
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Interact.Option.NoPermission")));
+			return;
+		}
+		long cooldown = System.currentTimeMillis()
+				+ plugin.getYamlHandler().getConfig().getLong("Animation.AdditionalCooldown", 10000)
+				+ (sclist.size()/(plugin.getYamlHandler().getConfig().getInt("Animation.PerTick", 25)*20)*1000)
+				+ plugin.getYamlHandler().getConfig().getLong("Animation.Lenght", 10000);
+		if(chestAnimationCooldown.containsKey(dc.getId()))
+		{
+			chestAnimationCooldown.replace(dc.getId(), cooldown);
+		} else
+		{
+			chestAnimationCooldown.put(dc.getId(), cooldown);
+		}
+		final int wait = 5;
+		new BukkitRunnable()
+		{
+			int count = 0;
+			int countGlobal = 0;
+			int animationPerTick = plugin.getYamlHandler().getConfig().getInt("Animation.PerTick", 25);
+			int animationLenght = plugin.getYamlHandler().getConfig().getInt("Animation.Lenght", 10000);
+			Particle particledc = 
+					Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.DistributionChest", "WATER_DROP"));
+			Particle particledcrandom = 
+					Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.RandomDistributionChest", "END_ROD"));
+			Particle particlesc = 
+					Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.StorageChest", "COMPOSTER"));
+			Particle particlescvoid = 
+					Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.VoidStorageChest", "FLAME"));
+			Particle particlescend = 
+					Particle.valueOf(plugin.getYamlHandler().getConfig().getString("Animation.Particle.EndStorageChest", "SMOKE_LARGE"));
+			
+			@Override
+			public void run()
+			{
+				if(countGlobal == 0)
+				{
+					//Only DistributionChest
+					if(dc.isDistributeRandom())
+					{
+						new ChestAnimation(ChestHandler.getLocationDistributionChest(dc))
+						.startSingleChestAnimation(animationLenght+(1+sclist.size()/(wait*animationPerTick)), particledcrandom);
+					} else
+					{
+						new ChestAnimation(ChestHandler.getLocationDistributionChest(dc))
+						.startSingleChestAnimation(animationLenght+(1+sclist.size()/(wait*animationPerTick)), particledc);
+					}
+				}
+				if(sclist.size() == 0)
+				{
+					cancel();
+					return;
 				}
 				while(countGlobal < sclist.size())
 				{
@@ -821,6 +929,10 @@ public class InteractSubHandler
 	public void checkIfDistributionChest(PlayerInteractEvent event, Player player, PluginUser user) throws IOException
 	{
 		Block block = event.getClickedBlock();
+		if(block == null)
+		{
+			return;
+		}
 		if(block.getState() == null)
 		{
 			debug(event.getPlayer(), "Block.State == null");

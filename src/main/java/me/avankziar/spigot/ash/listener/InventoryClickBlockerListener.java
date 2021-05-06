@@ -5,18 +5,16 @@ import java.util.LinkedHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Lockable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 
-import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
@@ -55,64 +53,24 @@ public class InventoryClickBlockerListener implements Listener
 			}
 		}
 	}
-	@EventHandler
-	 public void onMoveItem(InventoryMoveItemEvent event) throws IOException 
-	 {
-		if(isDcOnCooldown(event.getSource(), "Source"))
-		{
-			event.setCancelled(true);
-			return;
-		}
-		if(isDcOnCooldown(event.getDestination(), "Destination"))
-		{
-			event.setCancelled(true);
-			return;
-		}
-	 }
 	
 	private boolean isDcOnCooldown(final Inventory inv, String target) throws IOException
 	{
-		String server = PluginSettings.settings.getServer();
 		if(inv == null || inv.getLocation() == null)
 		{
-			if(inv != null && inv.getType() == InventoryType.CHEST)
-			{
-				debug(1, target +" Chest == null");
-			}
+			debug(5, "inv == null || inv.Location == null");
 			return true;
 		}
-		if(inv.getType() != InventoryType.CHEST)
+		BlockState bs = inv.getLocation().getBlock().getState(); //Funktioniert
+		if(bs instanceof Lockable)
 		{
-			return false;
-		}
-		final Location loc = inv.getLocation();
-		String s = getLocText(loc);
-		if(isCooldown(s))
-		{
-			if(inv != null && inv.getType() == InventoryType.CHEST)
+			debug(5, "instanceof lockable | locked == "+((Lockable) bs).isLocked());
+			if(((Lockable) bs).isLocked())
 			{
-				debug(1, target+" Chest is Cooldown");
-			}
-			return true;
-		}
-		if(inv instanceof DoubleChestInventory)
-		{
-			DoubleChestInventory dcInv = (DoubleChestInventory) inv;
-			final Location loc2 = ChestHandler.isDoubleChest(AdvancedStoreHouse.getPlugin(), server, loc, dcInv);
-			if(loc2 == null)
-			{
-				return false;
-			}
-			s = getLocText(loc2);
-			if(isCooldown(s))
-			{
-				if(inv != null && inv.getType() == InventoryType.CHEST)
-				{
-					debug(1, target+" Chest is Cooldown");
-				}
+				debug(5, "is locked");
 				return true;
 			}
-		}		
+		}	
 		return false;
 	}
 	
@@ -123,16 +81,6 @@ public class InventoryClickBlockerListener implements Listener
 				+";"+loc.getBlockX()
 				+";"+loc.getBlockY()
 				+";"+loc.getBlockZ();
-	}
-	
-	private boolean isCooldown(String s)
-	{
-		Long l = distributionChestForHopperOnCooldown.get(s);
-		if(l != null && l >= System.currentTimeMillis())
-		{
-			return true;
-		}
-		return false;
 	}
 	
 	public static void setLocationCooldown(Location loc, long time)

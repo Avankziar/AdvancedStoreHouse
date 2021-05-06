@@ -27,6 +27,9 @@ public class YamlHandler
 	private File language = null;
 	private YamlConfiguration lang = new YamlConfiguration();
 	
+	private File limits = null;
+	private YamlConfiguration lim = new YamlConfiguration();
+	
 	private LinkedHashMap<String, File> guifiles = new LinkedHashMap<>();
 	private LinkedHashMap<String, YamlConfiguration> gui = new LinkedHashMap<>();
 
@@ -54,6 +57,11 @@ public class YamlHandler
 	public YamlConfiguration getGui(String guitype)
 	{
 		return gui.get(guitype);
+	}
+	
+	public YamlConfiguration getLimits()
+	{
+		return lim;
 	}
 	
 	public boolean loadYamlHandler()
@@ -125,6 +133,26 @@ public class YamlHandler
 			return false;
 		}
 		writeFile(commands, com, plugin.getYamlManager().getCommandsKey());
+		
+		limits = new File(plugin.getDataFolder(), "limits.yml");
+		if(!limits.exists()) 
+		{
+			AdvancedStoreHouse.log.info("Create limits.yml...");
+			try
+			{
+				//Erstellung einer "leere" config.yml
+				FileUtils.copyToFile(plugin.getResource("default.yml"), limits);
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		if(!loadYamlTask(limits, lim))
+		{
+			return false;
+		}
+		writeFile(limits, lim, plugin.getYamlManager().getLimitsKey());
 		return true;
 	}
 	

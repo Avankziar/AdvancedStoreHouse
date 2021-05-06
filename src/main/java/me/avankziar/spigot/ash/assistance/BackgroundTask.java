@@ -18,7 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.ConvertHandler;
-import main.java.me.avankziar.general.handler.DistributionHandler;
+import main.java.me.avankziar.general.handler.DistributionHandlerII;
 import main.java.me.avankziar.general.handler.TimeHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
@@ -269,7 +269,8 @@ public class BackgroundTask
 				}
 				try
 				{
-					DistributionHandler.distributeStartVersionAutomatic(PluginSettings.settings.getServer(), dc, inventoryc);
+					//FIXME Eventuell wieder auf normalen Handler
+					DistributionHandlerII.distributeStartVersionAutomatic(PluginSettings.settings.getServer(), dc, inventoryc);
 				} catch (IOException e)
 				{
 					e.printStackTrace();

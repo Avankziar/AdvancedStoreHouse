@@ -27,7 +27,7 @@ public class ARGConvert extends ArgumentModule
 		String server = plugin.getYamlHandler().getConfig().getString("Servername");
 		int dis = plugin.getMysqlHandler().getCount(Type.DISTRIBUTIONCHEST, "`id`", "`server` = ?", server);
 		int sto = plugin.getMysqlHandler().getCount(Type.STORAGECHEST, "`id`", "`server` = ?", server);
-		final int count = dis+sto;
+		final int count = dis+dis+sto;
 		long time = (count/60)*1000;
 		if(args.length == 2)
 		{

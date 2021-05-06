@@ -276,7 +276,7 @@ public interface TableII
 		return false;
 	}
 	
-	default int lastIDII(AdvancedStoreHouse plugin)
+	default int lastIDII(AdvancedStoreHouse plugin, String whereColumn, Object...whereObject)
 	{
 		PreparedStatement preparedStatement = null;
 		ResultSet result = null;
@@ -285,9 +285,15 @@ public interface TableII
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameII + "` ORDER BY `id` DESC LIMIT 1";
+				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameII 
+						+ "` WHERE "+whereColumn+" ORDER BY `id` DESC LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
-		        
+		        int i = 1;
+		        for(Object o : whereObject)
+		        {
+		        	preparedStatement.setObject(i, o);
+		        	i++;
+		        }
 		        result = preparedStatement.executeQuery();
 		        while(result.next())
 		        {

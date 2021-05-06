@@ -15,6 +15,7 @@ public class StorageChest
 	private long creationDate;
 	private int priority;
 	private ItemStack[] contents;
+	private String[] searchContents;
 	private boolean endstorage;
 	private String server;
 	private String world;
@@ -33,7 +34,7 @@ public class StorageChest
 	private boolean optionMaterial;
 	
 	public StorageChest(int id, int distributionChestID, String owneruuid, int priority, long creationDate,
-			ItemStack[] contents, boolean endstorage, String server, String world, int blockX, int blockY, int blockZ,
+			ItemStack[] contents, String[] searchContent, boolean endstorage, String server, String world, int blockX, int blockY, int blockZ,
 			String chestname, boolean optionVoid,
 			boolean optionDurability, Type durabilityType, int durability, 
 			boolean optionRepair, Type repairType, int repairCost,
@@ -46,6 +47,7 @@ public class StorageChest
 		setCreationDate(creationDate);
 		setPriorityNumber(priority);
 		setContents(contents);
+		setSearchContents(searchContent);
 		setEndstorage(endstorage);
 		setServer(server);
 		setWorld(world);
@@ -112,6 +114,16 @@ public class StorageChest
 	public void setContents(ItemStack[] contents)
 	{
 		this.contents = contents;
+	}
+
+	public String[] getSearchContents()
+	{
+		return searchContents;
+	}
+
+	public void setSearchContents(String[] searchContents)
+	{
+		this.searchContents = searchContents;
 	}
 
 	public String getServer()

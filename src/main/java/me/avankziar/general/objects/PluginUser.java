@@ -1,5 +1,7 @@
 package main.java.me.avankziar.general.objects;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -20,7 +22,7 @@ public class PluginUser
 	
 	public enum SearchType
 	{
-		COMPASS, TELEPORT, EFFECT, SOUND, GLOWINGENTITY;
+		COMPASS, EFFECT
 	}
 	
 	private String uuid;
@@ -34,13 +36,14 @@ public class PluginUser
 	private Location compassLocation;
 	private Boolean canDistributionChestBreak;
 	private SettingLevel settingLevel;
+	private ArrayList<Integer> selectedStorageChest = new ArrayList<>();
 	
 	public PluginUser(String uuid, String name, SearchType searchType)
 	{
 		setUUID(uuid);
 		setName(name);
 		setMode(Mode.CONSTRUCT);
-		setSearchType(SearchType.COMPASS);
+		setSearchType(searchType);
 		setDistributionChestID(0);
 		setDistributionChestName("unnamed");
 		setStorageChestID(0);
@@ -158,5 +161,23 @@ public class PluginUser
 	public void setSettingLevel(SettingLevel settingLevel)
 	{
 		this.settingLevel = settingLevel;
+	}
+
+	public ArrayList<Integer> getSelectedStorageChest()
+	{
+		return selectedStorageChest;
+	}
+	
+	public void addSelectedStorageChest(int id)
+	{
+		if(!selectedStorageChest.contains(id))
+		{
+			selectedStorageChest.add(id);
+		}
+	}
+
+	public void setSelectedStorageChest(ArrayList<Integer> selectedStorageChest)
+	{
+		this.selectedStorageChest = selectedStorageChest;
 	}
 }

@@ -27,9 +27,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.ConvertHandler;
-import main.java.me.avankziar.general.handler.DistributionHandler;
+import main.java.me.avankziar.general.handler.DistributionHandlerII;
 import main.java.me.avankziar.general.handler.KeyHandler;
-import main.java.me.avankziar.general.handler.PermissionHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
@@ -261,7 +260,8 @@ public class InteractHandler implements Listener
 				return;
 			}
 		}
-		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, 
+		//FIXME Muss das noch bleiben
+		/*int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.DISTRIBUTIONCHEST, 
 				"`owner_uuid` = ?", user.getUUID());
 		if(!PermissionHandler.canCreate(player, Utility.PERMCOUNTDISTRIBUTIONCHEST+"*", Utility.PERMCOUNTDISTRIBUTIONCHEST,
 				amount , plugin.getYamlHandler().getConfig().getInt("MaximumDistributionChest"), false))
@@ -270,8 +270,8 @@ public class InteractHandler implements Listener
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooManyDC")));
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
-		}
-		int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.DISTRIBUTIONCHEST)+1;
+		}*/
+		int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.DISTRIBUTIONCHEST, "?", 1)+1;
 		String name = String.valueOf(last);
 		if(user.getDistributionChestName() != null)
 		{
@@ -284,7 +284,7 @@ public class InteractHandler implements Listener
 				server,
 				loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 		plugin.getMysqlHandler().create(MysqlHandler.Type.DISTRIBUTIONCHEST, dc);
-		last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.DISTRIBUTIONCHEST);
+		last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.DISTRIBUTIONCHEST, "?", 1);
 		dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
 				"`world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 				loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
@@ -322,7 +322,8 @@ public class InteractHandler implements Listener
 				return;
 			}
 		}
-		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST, 
+		//FIXME muss das noch bleiben
+		/*int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST, 
 				"`distributionchestid` = ? AND `owner_uuid` = ?", user.getDistributionChestID(), user.getUUID());
 		if(!PermissionHandler.canCreate(player, Utility.PERMCOUNTSTORAGECHEST+"*", Utility.PERMCOUNTSTORAGECHEST,
 				amount , plugin.getYamlHandler().getConfig().getInt("MaximumStorageChestPerDistributionChest"), false))
@@ -331,7 +332,7 @@ public class InteractHandler implements Listener
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooManySC")));
 			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
-		}
+		}*/
 		String server = plugin.getYamlHandler().getConfig().getString("Servername");
 		Location loc = event.getClickedBlock().getLocation();
 		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
@@ -382,9 +383,11 @@ public class InteractHandler implements Listener
 			return;
 		}
 		event.setCancelled(true);
+		String[] sa = new String[0];
 		StorageChest sc = new StorageChest(0, user.getDistributionChestID(), user.getUUID(),
 				0,
-				System.currentTimeMillis(), Bukkit.createInventory(null, 6*9).getContents(), false,
+				System.currentTimeMillis(), Bukkit.createInventory(null, 6*9).getContents(),
+				sa, false,
 				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(),
 				plugin.getYamlHandler().getConfig().getString("StorageChest.DefaultName", "unnamed"),
 				false, false, Type.LESSTHAN, 0, false, Type.LESSTHAN, 0, false, false);
@@ -440,7 +443,7 @@ public class InteractHandler implements Listener
 				AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig().getString("Simple.Creating")))
 		{
 			plugin.getMysqlHandler().create(MysqlHandler.Type.STORAGECHEST, sc);
-			int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.STORAGECHEST);
+			int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.STORAGECHEST, "?", 1);
 			user.setStorageChestID(last);
 			PluginUserHandler.addUser(user);
 			player.spigot().sendMessage(
@@ -462,7 +465,7 @@ public class InteractHandler implements Listener
 		{
 			sc.setContents(user.getItemFilterSet().getContents());
 			plugin.getMysqlHandler().create(MysqlHandler.Type.STORAGECHEST, sc);
-			int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.STORAGECHEST);
+			int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.STORAGECHEST, "?", 1);
 			user.setStorageChestID(last);
 			PluginUserHandler.addUser(user);
 			player.spigot().sendMessage(
@@ -475,7 +478,7 @@ public class InteractHandler implements Listener
 			dinvContent = getIFSFromInventory(dinvContent);
 			sc.setContents(dinvContent);
 			plugin.getMysqlHandler().create(MysqlHandler.Type.STORAGECHEST, sc);
-			int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.STORAGECHEST);
+			int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.STORAGECHEST, "?", 1);
 			user.setStorageChestID(last);
 			PluginUserHandler.addUser(user);
 			player.spigot().sendMessage(
@@ -607,7 +610,7 @@ public class InteractHandler implements Listener
 				}
 				try
 				{
-					DistributionHandler.distributeStartVersionButton(
+					DistributionHandlerII.distributeStartVersionButton(
 							server, 
 							loc, 
 							inventory,
@@ -727,7 +730,7 @@ public class InteractHandler implements Listener
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Sign.DISTRIBUTE.Start")
 					.replace("%id%", String.valueOf(dc.getId()))
 					.replace("%name%", dc.getChestName())));
-			DistributionHandler.distributeStartVersionRemoteTriggering(dc);
+			DistributionHandlerII.distributeStartVersionRemoteTriggering(dc);
 			return;
 		} else if(MatchApi.isInteger(ChatColor.stripColor(sign.getLine(3))))
 		{

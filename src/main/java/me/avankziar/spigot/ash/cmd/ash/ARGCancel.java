@@ -1,5 +1,7 @@
 package main.java.me.avankziar.spigot.ash.cmd.ash;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -40,6 +42,7 @@ public class ARGCancel extends ArgumentModule
 		Inventory inv = Bukkit.createInventory(null, 6*9);
 		user.setItemFilterSet(new ItemFilterSet(0, "", user.getUUID(), inv.getContents()));
 		user.setStorageChestID(0);
+		user.setSelectedStorageChest(new ArrayList<>());
 		if(user.getCompassLocation() != null)
 		{
 			player.setCompassTarget(user.getCompassLocation());

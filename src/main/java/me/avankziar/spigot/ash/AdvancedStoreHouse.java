@@ -18,6 +18,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,6 +29,7 @@ import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.spigot.ash.assistance.BackgroundTask;
+import main.java.me.avankziar.spigot.ash.assistance.StorageSystemAPI;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.cmd.AshCommandExecutor;
 import main.java.me.avankziar.spigot.ash.cmd.CommandHelper;
@@ -37,6 +39,7 @@ import main.java.me.avankziar.spigot.ash.cmd.ash.ARGBlockInfo;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGCancel;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGCheckUnboundChest;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGConvert;
+import main.java.me.avankziar.spigot.ash.cmd.ash.ARGCutAndPaste;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDebug;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDebug_ItemMeta;
 import main.java.me.avankziar.spigot.ash.cmd.ash.ARGDelete;
@@ -102,6 +105,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 	private static BackgroundTask backgroundtask;
 	private static CommandHelper commandHelper;
 	private static Utility utility;
+	private static StorageSystemAPI stsy;
 	
 	public static ArrayList<String> editorplayers;
 	private ArrayList<String> players;
@@ -159,6 +163,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		try {setupCommandTree();} catch (IOException e)	{}
 		ListenerSetup();
 		setupBstats();
+		setupInterfaceHub();
 	}
 	
 	public void onDisable()
@@ -267,6 +272,8 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor cancel = new ArgumentConstructor(baseCommandI+"_cancel", 0, 0, 0, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.CANCEL, cancel.getCommandString());
 		
+		ArgumentConstructor cap = new ArgumentConstructor(baseCommandI+"_cutandpaste", 0, 0, 0, false, null);
+		
 		ArgumentConstructor checkunboundchest = new ArgumentConstructor(baseCommandI+"_checkunboundchest", 0, 0, 1, false, null);
 		ArgumentConstructor convert = new ArgumentConstructor(baseCommandI+"_convert", 0, 0, 1, false, null);
 		
@@ -292,7 +299,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArgumentConstructor dc_remotetriggeranimation = new ArgumentConstructor(baseCommandI+"_dc_remotetriggeranimation", 1, 1, 2, false, null);
 		ArgumentConstructor dc_select = new ArgumentConstructor(baseCommandI+"_dc_select", 1, 2, 3, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.DC_SELECT, dc_select.getCommandString());
-		ArgumentConstructor dc_search = new ArgumentConstructor(baseCommandI+"_dc_search", 1, 1, 1, false, null);
+		ArgumentConstructor dc_search = new ArgumentConstructor(baseCommandI+"_dc_search", 1, 1, 2, false, null);
 		ArgumentConstructor dc_switch = new ArgumentConstructor(baseCommandI+"_dc_switch", 1, 1, 1, false, null);
 		ArgumentConstructor dc_transfer = new ArgumentConstructor(baseCommandI+"_dc_transfer", 1, 2, 2, false, playerMapII);
 		ArgumentConstructor dc = new ArgumentConstructor(baseCommandI+"_dc", 0, 0, 0, false, null,
@@ -328,12 +335,12 @@ public class AdvancedStoreHouse extends JavaPlugin
 		PluginSettings.settings.getCommands().put(KeyHandler.SC_OPENOPTION, sc_openoption.getCommandString());
 		ArgumentConstructor sc_select = new ArgumentConstructor(baseCommandI+"_sc_select", 1, 2, 2, false, null);
 		PluginSettings.settings.getCommands().put(KeyHandler.SC_SELECT, sc_select.getCommandString());
-		ArgumentConstructor sc_search = new ArgumentConstructor(baseCommandI+"_sc_search", 1, 1, 1, false, null);
+		ArgumentConstructor sc_search = new ArgumentConstructor(baseCommandI+"_sc_search", 1, 1, 2, false, null);
 		ArgumentConstructor sc = new ArgumentConstructor(baseCommandI+"_sc", 0, 0, 0, false, null,
 				sc_create, sc_chestname, sc_delete, sc_info, sc_list, sc_openoption, sc_select, sc_search);
 		
 		CommandConstructor ash = new CommandConstructor(baseCommandI, false,
-				autodistributioninfo, blockinfo, cancel, checkunboundchest, convert, debug, delete, dc, itemfilterset, mode, playerinfo, sc);
+				autodistributioninfo, blockinfo, cancel, cap, checkunboundchest, convert, debug, delete, dc, itemfilterset, mode, playerinfo, sc);
 		
 		cc = ash;
 		
@@ -342,7 +349,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		getCommand(ash.getName()).setTabCompleter(new TabCompletion(plugin));
 		
 		addingHelps(ash,
-				autodistributioninfo, blockinfo, cancel,
+				autodistributioninfo, blockinfo, cancel, cap,
 				checkunboundchest, convert,
 				debug, debug_im,
 				delete,
@@ -358,6 +365,8 @@ public class AdvancedStoreHouse extends JavaPlugin
 		
 		new ARGCheckUnboundChest(plugin, checkunboundchest);
 		new ARGConvert(plugin, convert);
+		
+		new ARGCutAndPaste(plugin, cap);
 		
 		new ARGDebug(plugin, debug);
 		new ARGDebug_ItemMeta(plugin, debug_im);
@@ -482,7 +491,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		ArrayList<PluginUser> cu = ConvertHandler.convertListI(
 				plugin.getMysqlHandler().getTop(MysqlHandler.Type.PLUGINUSER,
 						"`id`", true, 0,
-						plugin.getMysqlHandler().lastID(MysqlHandler.Type.PLUGINUSER)));
+						plugin.getMysqlHandler().lastID(MysqlHandler.Type.PLUGINUSER, "?", 1)));
 		ArrayList<String> cus = new ArrayList<>();
 		for(PluginUser chus : cu) 
 		{
@@ -548,6 +557,21 @@ public class AdvancedStoreHouse extends JavaPlugin
 		}
 	 
 		return commandMap;
+	}
+	
+	private void setupInterfaceHub()
+	{      
+        if (plugin.getServer().getPluginManager().isPluginEnabled("InterfaceHub")) 
+		{
+			stsy = new StorageSystemAPI(plugin);
+            plugin.getServer().getServicesManager().register(
+            		main.java.me.avankziar.interfacehub.spigot.interfaces.StorageSystem.class,
+            		stsy,
+            		this,
+                    ServicePriority.Normal);
+            log.info(pluginName + " detected InterfaceHub. Hooking!");
+            return;
+        }
 	}
 	
 	public boolean existHook(String externPluginName)

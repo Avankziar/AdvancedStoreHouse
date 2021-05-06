@@ -87,6 +87,16 @@ public class ARGPlayerInfo extends ArgumentModule
 						+user.getItemFilterSet().getID()));
 			}
 		}
+		if(!user.getSelectedStorageChest().isEmpty())
+		{
+			String s = "";
+			for(int i : user.getSelectedStorageChest())
+			{
+				s += i+", ";
+			}
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.SelectedStorageChests")
+					+s));
+		}
 		player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.PlayerInfo.SearchType")
 				+user.getSearchType()));
 		return;

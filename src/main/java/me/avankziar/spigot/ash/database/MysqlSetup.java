@@ -187,6 +187,7 @@ public class MysqlSetup
 		        		+ " creationdate bigint,"
 		        		+ " priority int,"
 		        		+ " content mediumtext,"
+		        		+ " searchcontent mediumtext,"
 		        		+ " endstorage boolean,"
 		        		+ " server text,"
 		        		+ " world text,"

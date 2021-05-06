@@ -835,5 +835,46 @@ public class ChestHandler
 		}
 		debug("!isSimilar");
 		return false;
-	}	
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static String getGroundSpecs(ItemStack item)
+	{
+		if (item == null) 
+        {
+            return null;
+        }
+        final ItemStack i = item.clone();
+        if(i.hasItemMeta() == true)
+        {
+        	if(i.getItemMeta() instanceof Damageable)
+    		{
+    			Damageable id = (Damageable) i.getItemMeta();
+    			id.setDamage(0);
+    			i.setItemMeta((ItemMeta) id);
+    		}
+        	if(i.getItemMeta() instanceof Repairable)
+        	{
+        		Repairable ir = (Repairable) i.getItemMeta();
+        		ir.setRepairCost(0);
+        		i.setItemMeta((ItemMeta) ir);
+        	}
+        	if(i.getItemMeta() instanceof EnchantmentStorageMeta)
+        	{
+        		EnchantmentStorageMeta iesm = (EnchantmentStorageMeta) i.getItemMeta();
+        		i.setItemMeta(ChestHandler.orderStorageEnchantments(iesm));
+        	}
+        	if(i.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK)
+        	{
+        		i.setItemMeta(ChestHandler.orderEnchantments(i.getItemMeta()));
+        	}
+        	i.setAmount(1);
+        	return i.toString();
+        } else
+        {
+        	i.setAmount(1);
+        	i.setDurability((short) 0);
+        	return i.toString();
+        }
+	}
 }

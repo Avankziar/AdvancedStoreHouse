@@ -18,7 +18,9 @@ import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.PluginUser;
+import main.java.me.avankziar.general.objects.PluginUser.Mode;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
+import main.java.me.avankziar.spigot.ash.database.MysqlHandler.Type;
 
 public class InventoryClickHandler implements Listener
 {
@@ -44,10 +46,6 @@ public class InventoryClickHandler implements Listener
 		{
 			return;
 		}
-		/*if(event.getAction() != InventoryAction.PICKUP_ALL)
-		{
-			return;
-		}*/ //das führt zum Item Duplizieren
 		Player player = (Player) event.getWhoClicked();
 		PluginUser user = PluginUserHandler.getUser(player.getUniqueId());
 		if(user == null)
@@ -90,6 +88,36 @@ public class InventoryClickHandler implements Listener
 			return;
 		}
 		ItemStack clicked = event.getCurrentItem().clone();
+		if(user.getMode() == Mode.CREATESTORAGE || user.getMode() == Mode.UPDATESTORAGEITEMFILTERSET)
+		{
+			final String type = clicked.getType().toString();
+			final String data = ChestHandler.getGroundSpecs(clicked);
+			final int count = plugin.getMysqlHandler().getCount(Type.STORAGECHEST, "`id`",
+					"`distributionchestid` = ? AND `searchcontent` LIKE ?", user.getDistributionChestID(), "%"+data+"%");
+			if(plugin.getYamlHandler().getLimits().getStringList("StorageChestLimitPerItemTypeExceptionList").contains(type))
+			{
+				final int limit = plugin.getYamlHandler().getLimits().getInt("StorageChestLimitPerItemTypeException", 25);
+				if(count >= limit)
+				{
+					event.setCancelled(true);
+					event.setResult(Result.DENY);
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Limit.StorageChestItemLimit")
+							.replace("%limit%", String.valueOf(limit))));
+					return;
+				}
+			} else
+			{
+				final int limit = plugin.getYamlHandler().getLimits().getInt("StorageChestLimitPerItemType", 25);
+				if(count >= limit)
+				{
+					event.setCancelled(true);
+					event.setResult(Result.DENY);
+					player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Limit.StorageChestItemLimit")
+							.replace("%limit%", String.valueOf(limit))));
+					return;
+				}
+			}
+		}
 		clicked.setAmount(1);
 		if(clicked.getItemMeta() instanceof Damageable)
 		{

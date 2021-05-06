@@ -38,18 +38,26 @@ public class ARGItemFilterSet_Create extends ArgumentModule
 				.replace("%cmd%", "/ash itemfiltersetcreate")));
 			return;
 		}
-		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.ITEMFILTERSET, "`owner_uuid` = ?", user.getUUID());
+		//FIXME muss das noch bleiben
+		/*int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.ITEMFILTERSET, "`owner_uuid` = ?", user.getUUID());
 		if(!PermissionHandler.canCreate(player, Utility.PERMBYPASSITEMFILTERSET, Utility.PERMCOUNTITEMFILTERSET,
 				amount, plugin.getYamlHandler().getConfig().getInt("MaximumItemFilterSet", 500), false))
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetCreate.TooMany")));
 			return;
-		}
+		}*/
 		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.ITEMFILTERSET, 
 				"`itemfiltersetname` = ? AND `owner_uuid` = ?", name, user.getUUID()))
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetCreate.AlreadyExist")
 					.replace("%name%", name)));
+			return;
+		}
+		int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.ITEMFILTERSET, "`owner_uuid` = ?", user.getUUID());
+		if(!PermissionHandler.canCreate(player, Utility.PERMBYPASSITEMFILTERSET, Utility.PERMCOUNTITEMFILTERSET,
+				amount, plugin.getYamlHandler().getLimits().getInt("MaximumItemFilterSet", 500), false))
+		{
+			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.ItemFilterSetCreate.TooMany")));
 			return;
 		}
 		user.setMode(PluginUser.Mode.CREATEITEMFILTERSET);

@@ -1,19 +1,19 @@
 package main.java.me.avankziar.spigot.ash.eventhandler;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
-import main.java.me.avankziar.general.handler.DistributionHandler;
+import main.java.me.avankziar.general.handler.ChestHandler;
+import main.java.me.avankziar.general.handler.DistributionHandlerII;
 import main.java.me.avankziar.general.handler.KeyHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
@@ -93,30 +93,6 @@ public class InventoryCloseHandler implements Listener
 		}
 	}
 	
-	//REMOVEME
-	@EventHandler (priority = EventPriority.HIGHEST)
-	public void onMove(InventoryMoveItemEvent event)
-	{
-		if(event.getSource() != null && event.getSource().getType() == InventoryType.HOPPER)
-		{
-			return;
-		}
-		if(event.getDestination() != null && event.getDestination().getType() == InventoryType.HOPPER)
-		{
-			return;
-		}
-		debug(null,"IMIE fires!");
-		debug(null,"IMIE isCancelled: "+event.isCancelled());
-		debug(null,"IMIE ISType: "+event.getItem().getType().toString());
-		debug(null,"IMIE Source null ? "+(event.getSource() == null));
-		debug(null,"IMIE Source: "+(event.getSource().getType().toString()));
-		debug(null,"IMIE Source: "+(event.getSource().toString()));
-		debug(null,"IMIE Destination null ? "+(event.getDestination() == null));
-		debug(null,"IMIE Destination: "+(event.getDestination().toString()));
-		debug(null,"IMIE Destination: "+(event.getDestination().getType().toString()));
-		//debug(null,"IMIE Result: ");
-	}
-	
 	//Wenn nur rechtsklickt auf kisten gemacht wurden. Verteilung start
 	private void distributionStart(InventoryCloseEvent event, Player player, PluginUser user) throws IOException
 	{
@@ -132,7 +108,7 @@ public class InventoryCloseHandler implements Listener
 			return;
 		}
 		debug(player, "=> Begin Methode distributionStart");
-		DistributionHandler.distributeStartVersionPhysical(PluginSettings.settings.getServer(), loc, event.getInventory());
+		DistributionHandlerII.distributeStartVersionPhysical(PluginSettings.settings.getServer(), loc, event.getInventory());
 	}
 	
 	//Nur eine Update für den ItemFilterSet der Lagerkiste
@@ -154,6 +130,17 @@ public class InventoryCloseHandler implements Listener
 		StorageChest sc = (StorageChest) plugin.getMysqlHandler().getData(
 				MysqlHandler.Type.STORAGECHEST, "`id` = ?", user.getStorageChestID());
 		sc.setContents(contents);
+		ArrayList<String> l = new ArrayList<>();
+		for(ItemStack i : contents)
+		{
+			if(i != null)
+			{
+				l.add(ChestHandler.getGroundSpecs(i));
+			}
+		}
+		String[] ar = new String[l.size()];
+		l.toArray(ar);
+		sc.setSearchContents(ar);
 		plugin.getMysqlHandler().updateData(MysqlHandler.Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
 		if(user.getMode() == Mode.UPDATESTORAGEITEMFILTERSET)
 		{

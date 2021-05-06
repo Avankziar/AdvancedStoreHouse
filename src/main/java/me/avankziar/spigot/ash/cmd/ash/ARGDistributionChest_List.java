@@ -98,7 +98,7 @@ public class ARGDistributionChest_List extends ArgumentModule
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.DistributionChestList.Empty")));
 			return;
 		}
-		int last = plugin.getMysqlHandler().lastID(Type.DISTRIBUTIONCHEST);
+		int last = plugin.getMysqlHandler().lastID(Type.DISTRIBUTIONCHEST, "?", 1);
 		int secondLast = dcList.get(dcList.size()-1).getId();
 		boolean lastpage = false;
 		if(secondLast >= last)

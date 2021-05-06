@@ -52,22 +52,23 @@ Build 4 ========================================================================
 - ++11 Befehl entfernt: /ash gui; /ash distributionchest random; /ash override; /ash storagechest update, sowie positionsänderungsbefehle
       /ash searchtype, /ash distributionchest automaticdistribution, /ash endstorage, /ash priority, /ash storagechest openitemfilterset
 - ++/ash distributionchest openoption, /ash storagechest openoption hinzugefügt
+- +/ash distributionchest/storagechest search [ID/Name], wurde so verändert, dass nun partikel generiert werden.
+- +Ein generelles Limit für Lagerkisten pro Item machen. Dazu noch eine Zweites limit für spezielle items (sand, erde, steine etc.), welche
+  durch eine liste gesetzt werden, welche mehr oder weniger Items führen. limits.yml
+- +Ein Limit für die Automatischen Verteilungen machen. Per permission. (Auf Sc alle LKs in mysql auf 0 setzten für auto verteilung.)
 
 - Mysql Colum hinzufügen:
   Dc: prioritytype, prioritynumber
-  Sc: chestname, optionvoid, optiondurability, durabilitytype, durability, optionrepair, repairtype, repaircost, optionenchantments, optionmaterial
+  Sc: searchcontent, chestname, optionvoid, optiondurability, durabilitytype, durability, optionrepair, repairtype, repaircost, optionenchantments, optionmaterial
   
   Mysql:
-  - Zuerst bei den DistributionChestTable, Reiter 'Struktur', nach "normalpriority" 2 Spalten hinzufügen.
-    - wie bild beschreibt
+  - ALTER TABLE `yourASHDistributionChestTable` ADD `prioritytype` TEXT NOT NULL AFTER `normalpriority`, ADD `prioritynumber` INT NOT NULL DEFAULT '0' AFTER `prioritytype`; 
   - UPDATE `yourASHDistributionChestTable` SET `prioritytype`='SWITCH' WHERE 1; in phpmyadmin unter Sql eingeben
-  - In dem StorageChestTable nach "blockz" 10 Spalten einfügen.
-    - wie bild beschreibt
-  - UPDATE `yourASHStorageChestTable` SET `chestname`='unnamed',`durabilitytype`='LESSTHAN',`repairtype`='LESSTHAN' WHERE 1
+  - ALTER TABLE `yourASHStorageChestTable` ADD `searchcontent` TEXT NOT NULL AFTER `content`, ADD `chestname` TEXT NOT NULL AFTER `blockz`, ADD `optionvoid` TINYINT(1) NOT NULL DEFAULT '0' AFTER `chestname`, ADD `optiondurability` TINYINT(1) NOT NULL DEFAULT '0' AFTER `optionvoid`, ADD `durabilitytype` TEXT NOT NULL AFTER `optiondurability`, ADD `durability` INT NOT NULL AFTER `durabilitytype`, ADD `optionrepair` TINYINT(1) NOT NULL DEFAULT '0' AFTER `durability`, ADD `repairtype` TEXT NOT NULL AFTER `optionrepair`, ADD `repaircost` INT NOT NULL AFTER `repairtype`, ADD `optionenchantments` TINYINT(1) NOT NULL DEFAULT '0' AFTER `repaircost`, ADD `optionmaterial` TINYINT(1) NOT NULL DEFAULT '0' AFTER `optionenchantments`; 
+  - UPDATE `yourASHStorageChestTable` SET `searchcontent`='.',`chestname`='unnamed',`durabilitytype`='LESSTHAN',`repairtype`='LESSTHAN' WHERE 1
   
   - Falls Welten auf andere Server umziehen, so mache:
     UPDATE `yourASHDistributionORStorageChestTable` SET `server`='yourNewServer' WHERE `server`='youroldserver' AND `world`='yourworld'
-    //Void in SC Mülleimer nenne.
   
 
 Build 3 =============================================================================================================================

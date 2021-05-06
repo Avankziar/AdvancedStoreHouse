@@ -23,11 +23,11 @@ import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.DistributionChest.PriorityType;
-import main.java.me.avankziar.general.objects.PluginUser.Mode;
-import main.java.me.avankziar.general.objects.SettingLevel;
 import main.java.me.avankziar.general.objects.ItemFilterSet;
 import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
+import main.java.me.avankziar.general.objects.PluginUser.Mode;
+import main.java.me.avankziar.general.objects.SettingLevel;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.assistance.ItemGenerator;
@@ -237,6 +237,10 @@ public class OptionGuiHandler
 				Type.DISTRIBUTIONCHEST, "`id` = ?", user.getDistributionChestID());
 		event.setCancelled(true);
 		event.setResult(Result.DENY);
+		if(dc == null)
+		{
+			return;
+		}
 		final Location loc = player.getLocation();
 		switch(slot)
 		{
@@ -288,6 +292,30 @@ public class OptionGuiHandler
 			break;
 		case 28:
 			guiSound(loc);
+			if(!dc.getOwneruuid().equals(player.getUniqueId().toString()))
+			{
+				return;
+			}
+			int count = AdvancedStoreHouse.getPlugin().getMysqlHandler().getCount(Type.DISTRIBUTIONCHEST, "`id`",
+					"`owner` = ? AND `automaticdistribution` = ?", player.getUniqueId().toString(), true);
+			int check = 0;
+			for(int i = 500; i > 0; i--)
+			{
+				if(player.hasPermission(AdvancedStoreHouse.getPlugin().getYamlHandler()
+						.getLimits().getString("AutomaticDistributionChestLimitPermission")+i))
+				{
+					check = i;
+					break;
+				}
+			}
+			if(check >= count)
+			{
+				player.closeInventory();
+				player.sendMessage(ChatApi.tl(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang()
+						.getString("CmdAsh.Limit.AutomaticLimit")
+						.replace("%limit%", String.valueOf(check))));
+				return;
+			}
 			if(dc.isAutomaticDistribution())
 			{
 				dc.setAutomaticDistribution(false);
@@ -519,6 +547,10 @@ public class OptionGuiHandler
 				Type.STORAGECHEST, "`id` = ?", user.getStorageChestID());
 		event.setCancelled(true);
 		event.setResult(Result.DENY);
+		if(sc == null)
+		{
+			return;
+		}
 		final Location loc = player.getLocation();
 		switch(slot)
 		{
@@ -748,6 +780,10 @@ public class OptionGuiHandler
 				Type.STORAGECHEST, "`id` = ?", user.getStorageChestID());
 		event.setCancelled(true);
 		event.setResult(Result.DENY);
+		if(sc == null)
+		{
+			return;
+		}
 		final Location loc = player.getLocation();
 		/*
 		 * Slot 4 Alle Infos zur Dc Prioritätzahl
@@ -921,6 +957,10 @@ public class OptionGuiHandler
 				Type.STORAGECHEST, "`id` = ?", user.getStorageChestID());
 		event.setCancelled(true);
 		event.setResult(Result.DENY);
+		if(sc == null)
+		{
+			return;
+		}
 		final Location loc = player.getLocation();
 		/*
 		 * Slot 4 Alle Infos zur Sc Haltbarkeit
@@ -1086,6 +1126,10 @@ public class OptionGuiHandler
 				Type.STORAGECHEST, "`id` = ?", user.getStorageChestID());
 		event.setCancelled(true);
 		event.setResult(Result.DENY);
+		if(sc == null)
+		{
+			return;
+		}
 		final Location loc = player.getLocation();
 		/*
 		 * Slot 4 Alle Infos zur Sc Haltbarkeit

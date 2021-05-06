@@ -19,6 +19,7 @@ public class YamlManager
 	private static LinkedHashMap<String, Language> commandsKeys = new LinkedHashMap<>();
 	private static LinkedHashMap<String, Language> languageKeys = new LinkedHashMap<>();
 	private static LinkedHashMap<String, LinkedHashMap<String, Language>> guiKeys = new LinkedHashMap<>();
+	private static LinkedHashMap<String, Language> limitsKeys = new LinkedHashMap<>();
 	
 	public YamlManager()
 	{
@@ -26,6 +27,7 @@ public class YamlManager
 		initCommands();
 		initLanguage();
 		initGuis();
+		initLimits();
 	}
 	
 	public ISO639_2B getLanguageType()
@@ -61,6 +63,11 @@ public class YamlManager
 	public LinkedHashMap<String, Language> getGuiKeys(String key)
 	{
 		return guiKeys.get(key);
+	}
+	
+	public LinkedHashMap<String, Language> getLimitsKey()
+	{
+		return limitsKeys;
 	}
 
 	public static void setGuiKeys(LinkedHashMap<String, LinkedHashMap<String, Language>> guiKeys)
@@ -223,17 +230,6 @@ public class YamlManager
 		configKeys.put("VoidChestsPerTick"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				10}));
-		
-		//FIXME Werden die 3 nachfolgenden Werte korrekt verarbeitet?
-		configKeys.put("MaximumDistributionChest"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				500}));
-		configKeys.put("MaximumStorageChestPerDistributionChest"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				500}));
-		configKeys.put("MaximumItemFilterSet"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				500}));
 		configKeys.put("BlockBreakDistributionChestDeleteLinkedStorageChest"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				true}));
@@ -357,6 +353,10 @@ public class YamlManager
 				"/ash checkunboundchest", "/afkr checkunboundchest ",
 				"&c/ash checkunboundchest &f| Checkt ob ungenutzte Verteilerkisten oder Lagerkisten ohne Verteilerkiste existieren und löscht diese.",
 				"&c/ash checkunboundchest &f| Checks if there are unused distribution chests or storage chests without distribution chest and deletes them.");
+		argumentInput("ash_cutandpaste", "cutandpaste", "ash.cmd.cutandpaste",
+				"/ash cutandpaste ", "/ash cutandpaste ", 
+				"&c/ash cutandpaste &f| Schneidet vorher ausgewählte Lagerkisten aus und fügt sie zu einer bestehenden Verteilerkiste hinzu.",
+				"&c/ash cutandpaste &f| Cuts previously selected storage boxes and adds them to an existing distribution chest.");
 		argumentInput("ash_debug", "debug", "ash.cmd.debug",
 				"/ash debug", "/ash debug ", 
 				"&c/ash debug &f| Zwischenbefehl",
@@ -414,9 +414,9 @@ public class YamlManager
 				"&c/ash distributionchest select <ID/Name> [Spielername] &f| Wählt eine Verteilerkiste aus.", 
 				"&c/ash distributionchest select <ID/Name> [PlayerName] &f| Selects a distribution box.");
 		argumentInput("ash_dc_search", "search", "ash.cmd.distributionchest.search",
-				"/ash distributionchest search", "/ash distributionchest search ", 
-				"&c/ash distributionchest search &f| Sucht die ausgewählte Verteilerkiste per Kompass.", 
-				"&c/ash distributionchest search &f| Searches the selected distribution box per compass.");
+				"/ash distributionchest search [ID/Name] ", "/ash distributionchest search ", 
+				"&c/ash distributionchest search [ID/Name] &f| Sucht die ausgewählte Verteilerkiste per Partikel.", 
+				"&c/ash distributionchest search [ID/Name] &f| Searches the selected distribution box per particel.");
 		argumentInput("ash_dc_switch", "switch", "ash.cmd.distributionchest.switch",
 				"/ash distributionchest switch", "/ash distributionchest switch ", 
 				"&c/ash distributionchest switch &f| Toggelt ob die Prioriäten aufsteigend oder absteigend berücksichtig werden sollen.", 
@@ -494,9 +494,9 @@ public class YamlManager
 				"&c/ash storagechest select <ID> &f| Wählt eine Lagerkiste aus.", 
 				"&c/ash storagechest select <ID> &f| Selects a storage crate.");
 		argumentInput("ash_sc_search", "search", "ash.cmd.storagechest.search",
-				"/ash storagechest search", "/ash storagechest search ", 
-				"&c/ash storagechest search &f| Sucht per Kompass die Lagerkiste.", 
-				"&c/ash storagechest search &f| Search per compass the storagechest.");
+				"/ash storagechest search [ID/Name] ", "/ash storagechest search ", 
+				"&c/ash storagechest search [ID/Name] &f| Sucht Lagerkisten per Partikel. Sollte ein Item in der Hand sein, so werden alle Lagerkisten gesucht, welches dieses Item sortieren.", 
+				"&c/ash storagechest search [ID/Name] &f| Searches storage boxes by particle. If an item is in the hand, all storage boxes are searched, which sort this item.");
 		/*argumentInput("", "", "",
 				"", "", 
 				"", "");*/
@@ -562,7 +562,7 @@ public class YamlManager
 		commandsKeys.put(path+"CreateDropper"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"ash.bypass.createdropper"}));
-		path = "Custom.";
+		/*path = "Custom.";
 		commandsKeys.put(path+"DistributionChest"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"ash.count.distributionchest."}));
@@ -571,7 +571,7 @@ public class YamlManager
 				"ash.count.itemfilterset."}));
 		commandsKeys.put(path+"StorageChest"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				"ash.count.storagechest."}));
+				"ash.count.storagechest."}));*/
 		/*commandsKeys.put(path+""
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				""}));*/
@@ -812,8 +812,8 @@ public class YamlManager
 		
 		languageKeys.put("CmdAsh.Convert.PleaseConfirm",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cAchtung! &eDer Konvertierungsprozess wird bei &f%count% &eDatensätzen etwa &f%time% &elang dauern. Pro Sekunde werden etwa 60 Datensätze bearbeitet. Bitte bestätige den start mit einem &fbestätigen &eam ende des Befehls!",
-						"&cAttention! &eTThe conversion process will take about &f%time% &elong for &f%count% &edatasets. About 60 data records are processed per second. Please confirm the start with a &fconfirm &eam end of the command!"}));
+						"&cAchtung! &eDer Konvertierungsprozess wird bei &f%count% &eDatensätzen etwa &f%time% &e(+- ein paar Minuten) lang dauern. Pro Sekunde werden etwa 60 Datensätze bearbeitet. Bitte bestätige den start mit einem &fbestätigen &eam ende des Befehls!",
+						"&cAttention! &eTThe conversion process will take about &f%time% &e(+- a few minutes) long for &f%count% &edatasets. About 60 data records are processed per second. Please confirm the start with a &fconfirm &eam end of the command!"}));
 		languageKeys.put("CmdAsh.Convert.Start",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cKonvertierungsprozess startet. Ende des Prozess etwa: %time%",
@@ -896,6 +896,18 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cEs können nur Kisten und Fäßer als Lagerkisten registriert werden!",
 						"&cOnly chests and barrels can be registered as storage crates!"}));
+		languageKeys.put("CmdAsh.CutAndPaste.NoDcSelected",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cDu hast keine Verteilerkiste ausgewählt!",
+						"&cYou have not selected a distributionchest!"}));
+		languageKeys.put("CmdAsh.CutAndPaste.NoScSelected",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cDu hast keine Lagerkisten ausgewählt!",
+						"&cYou have not selected a storagechests!"}));
+		languageKeys.put("CmdAsh.CutAndPaste.Finished",
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eEs wurden &f%amount% &eLagerkisten von den alten Lagersystem ausgeschnitten und bei der Verteilerkiste &f%dc% &eeingefügt.",
+						"&eThere were &f%amount% &estoragechest cut out from the old storagesystem and inserted at the distributionchest &f%dc%&e."}));
 		languageKeys.put("CmdAsh.Delete.IsDeleted", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eVerteiler- und Lagerkisten welche sich auf dem Server &f%server% &eund in der Welt &f%world% &ebefanden, wurden gelöscht!",
@@ -1127,6 +1139,14 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cAchtung! &eDir gehört das Original ItemFilterSet nicht! Es wurde daher eine Kopie auf deinen Namen erstellt!",
 						"&cAttention! &eYou do not own the original ItemFilterSet! Therefore a copy has been made in your name!"}));
+		languageKeys.put("CmdAsh.Limit.StorageChestItemLimit", 
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cDieses Item darf nur %limit% mal in den Lagerkisten des gleichen Lagersystem vorhanden sein!",
+						"&cThis item may only be present %limit% times in the storage boxes of the same storage system!"}));
+		languageKeys.put("CmdAsh.Limit.AutomaticLimit", 
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&cDu darfst nur %limit% von deinen Verteilerkisten auf Automatische Verteilung stellen!",
+						"&cYou may only set %limit% of your distribution chests to Automatic distribution!"}));
 		languageKeys.put("CmdAsh.Mode.SetMode", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&eModus &f%mode% &egesetzt!",
@@ -1159,6 +1179,10 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cSuchtyp: &f",
 						"&cSearch type: &f"}));
+		languageKeys.put("CmdAsh.PlayerInfo.SelectedStorageChests", 
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&4Ausgewählte Lagerkisten: &f",
+						"&4Selected storagechests: &f"}));
 		languageKeys.put("CmdAsh.PlayerInfo.CHANGEITEMFILTERSET",
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"ItemFilterSet Änderungsmodus (Das ItemFilterSet wird gerade bearbeitet)",
@@ -1215,10 +1239,18 @@ public class YamlManager
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cDie ausgewählte Lagerkiste existiert nicht!",
 						"&cThe selected stock box does not exist!"}));
-		languageKeys.put("CmdAsh.Search.Compass", 
+		languageKeys.put("CmdAsh.Search.SearchDc", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eDie Kiste wurde als Ziel für deinen Kompass gesetzt! Position ist: &f%world% %x% %y% %z%",
-						"&eThe box has been set as the target for your compass! Position is: &f%world% %x% %y% %z%"}));
+						"&eUm die Verteilerkiste &f%dcid% | %dcname% &ewerden nun Partikel generiert.",
+						"&eParticles are now generated around the distributionchest &f%dcid% | %dcname%&e."}));
+		languageKeys.put("CmdAsh.Search.SearchSc", 
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eUm die Lagerkiste &f%scid% | %scname% &eder Verteilerkiste &f%dcid% | %dcname% &ewerden nun Partikel generiert.",
+						"&eParticles are now generated around the storagechest &f%scid% | %scname% &eof the distributionchest &f%dcid% | %dcname%&e."}));
+		languageKeys.put("CmdAsh.Search.SearchItem", 
+				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
+						"&eUm die Lagerkisten der Verteilerkiste &f%dcid% | %dcname%&e, welche das &r%item% &r&esortieren, werden nun Partikel generiert. Anzahl: &f%count%",
+						"&eParticles are now generated around the storagechests of the distributionchest &f%dcid% | %dcname% &ethat &sort% the &r%item%&r&e. Quantity: &f%count%"}));
 		languageKeys.put("CmdAsh.StorageChest.OtherCmd", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"&cBitte nutze den Befehl, mit einem weiteren Argument aus der Tabliste!",
@@ -2308,5 +2340,26 @@ public class YamlManager
 				null,
 				null,
 				null);
+	}
+	
+	public void initLimits() //INFO:Limits
+	{
+		limitsKeys.put("MaximumItemFilterSet"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				500}));
+		limitsKeys.put("AutomaticDistributionChestLimitPermission"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						"ash.automatic.limit."}));
+		limitsKeys.put("StorageChestLimitPerItemType"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						25}));
+		limitsKeys.put("StorageChestLimitPerItemTypeException"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						50}));
+		limitsKeys.put("StorageChestLimitPerItemTypeExceptionList"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+						"STONE",
+						"SAND",
+						"DIRT"}));
 	}
 }
