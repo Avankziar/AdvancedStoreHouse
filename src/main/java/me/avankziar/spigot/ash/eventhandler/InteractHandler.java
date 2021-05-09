@@ -190,6 +190,7 @@ public class InteractHandler implements Listener
 			createDistributionChest(event, player, user);
 			return;
 		case CREATESTORAGE:
+			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
 			return;
 		case UPDATESTORAGEITEMFILTERSET:
 		case CREATEITEMFILTERSET:

@@ -569,7 +569,6 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		        			String[] ar = new String[list.size()];
 		        			list.toArray(ar);
 		        			subconvertIII(id, String.join("@|@", ar));
-		        			i++;
 		        		}
 		        	}
 		        }

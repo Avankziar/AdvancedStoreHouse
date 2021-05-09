@@ -40,8 +40,6 @@ Build 4 ========================================================================
     Zeile 4: Entweder das Wort Switch ODER die Priorität als Zahl zur Zuweisung ODER das Wort "Verteilen" um den verteilungsprozess fern zu aktivieren.
     Die Schilder müssen NUR auf dem gleichen Server sein. (Aka nicht an der Kiste selbst)
 - ++Namen für Lagerkisten
-- ++Die Visualisierung soll in Schritten passieren. Bspw. immer 10 Lagerkisten werden per Hologram angezeigt. Dabei werden dann Verteilerkistename, ID der Lagerkiste und dessen Priorität.
-- -Per befehl kann man den nächsten/vorherigen Schritt der Visualisierung triggern. Durch eine Option kann man auch nur bestimmte Prioritäten angezeigt.
 - +Bugfix: Positionsupdate für Lager- und Verteilerkisten
 - +Bugfix: Interner Fehler = Nullpointer ChatColor InteractHandler.java:509
 - +Bugfix: Interner Fehler = InteractHandler.java:728
