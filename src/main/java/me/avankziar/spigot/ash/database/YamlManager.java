@@ -1145,7 +1145,7 @@ public class YamlManager
 						"&cThis item may only be present %limit% times in the storage boxes of the same storage system!"}));
 		languageKeys.put("CmdAsh.Limit.AutomaticLimit", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDu darfst nur %limit% von deinen Verteilerkisten auf Automatische Verteilung stellen!",
+						"&cDu darfst nur %limit%, Anzahl momentan %amount%, von deinen Verteilerkisten auf Automatische Verteilung stellen!",
 						"&cYou may only set %limit% of your distribution chests to Automatic distribution!"}));
 		languageKeys.put("CmdAsh.Mode.SetMode", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {

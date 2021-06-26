@@ -79,6 +79,8 @@ public class ARGStorageChest_OpenOption extends ArgumentModule
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 			return;
 		}
+		user.setStorageChestID(sc.getId());
+		PluginUserHandler.addUser(user);
 		new OptionGuiHandler().openScGuiMain(player, user, sc, null);
 		return;
 	}

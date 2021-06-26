@@ -323,17 +323,6 @@ public class InteractHandler implements Listener
 				return;
 			}
 		}
-		//FIXME muss das noch bleiben
-		/*int amount = plugin.getMysqlHandler().countWhereID(MysqlHandler.Type.STORAGECHEST, 
-				"`distributionchestid` = ? AND `owner_uuid` = ?", user.getDistributionChestID(), user.getUUID());
-		if(!PermissionHandler.canCreate(player, Utility.PERMCOUNTSTORAGECHEST+"*", Utility.PERMCOUNTSTORAGECHEST,
-				amount , plugin.getYamlHandler().getConfig().getInt("MaximumStorageChestPerDistributionChest"), false))
-		{
-			debug(event.getPlayer(), "TooMany StorageChest");
-			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Create.TooManySC")));
-			PluginUserHandler.cancelAction(player, user, user.getMode(), plugin.getYamlHandler().getLang().getString("CancelAction"));
-			return;
-		}*/
 		String server = plugin.getYamlHandler().getConfig().getString("Servername");
 		Location loc = event.getClickedBlock().getLocation();
 		if(plugin.getMysqlHandler().exist(MysqlHandler.Type.STORAGECHEST,
@@ -465,6 +454,40 @@ public class InteractHandler implements Listener
 				(AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig().getString("Simple.CreateDirectWithIFS")))
 		{
 			sc.setContents(user.getItemFilterSet().getContents());
+			ArrayList<String> l = new ArrayList<>();
+			for(ItemStack i : user.getItemFilterSet().getContents())
+			{
+				if(i != null)
+				{
+					final String type = i.getType().toString();
+					final String data = ChestHandler.getGroundSpecs(i);
+					final int count = plugin.getMysqlHandler().getCount(MysqlHandler.Type.STORAGECHEST, "`id`",
+							"`distributionchestid` = ? AND `searchcontent` LIKE ?", user.getDistributionChestID(), "%"+data+"%");
+					if(plugin.getYamlHandler().getLimits().getStringList("StorageChestLimitPerItemTypeExceptionList").contains(type))
+					{
+						final int limit = plugin.getYamlHandler().getLimits().getInt("StorageChestLimitPerItemTypeException", 25);
+						if(count >= limit)
+						{
+							player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Limit.StorageChestItemLimit")
+									.replace("%limit%", String.valueOf(limit))));
+							return;
+						}
+					} else
+					{
+						final int limit = plugin.getYamlHandler().getLimits().getInt("StorageChestLimitPerItemType", 25);
+						if(count >= limit)
+						{
+							player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Limit.StorageChestItemLimit")
+									.replace("%limit%", String.valueOf(limit))));
+							return;
+						}
+					}
+					l.add(data);
+				}
+			}
+			String[] ar = new String[l.size()];
+			l.toArray(ar);
+			sc.setSearchContents(ar);
 			plugin.getMysqlHandler().create(MysqlHandler.Type.STORAGECHEST, sc);
 			int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.STORAGECHEST, "?", 1);
 			user.setStorageChestID(last);
@@ -478,6 +501,40 @@ public class InteractHandler implements Listener
 		{
 			dinvContent = getIFSFromInventory(dinvContent);
 			sc.setContents(dinvContent);
+			ArrayList<String> l = new ArrayList<>();
+			for(ItemStack i : dinvContent)
+			{
+				if(i != null)
+				{
+					final String type = i.getType().toString();
+					final String data = ChestHandler.getGroundSpecs(i);
+					final int count = plugin.getMysqlHandler().getCount(MysqlHandler.Type.STORAGECHEST, "`id`",
+							"`distributionchestid` = ? AND `searchcontent` LIKE ?", user.getDistributionChestID(), "%"+data+"%");
+					if(plugin.getYamlHandler().getLimits().getStringList("StorageChestLimitPerItemTypeExceptionList").contains(type))
+					{
+						final int limit = plugin.getYamlHandler().getLimits().getInt("StorageChestLimitPerItemTypeException", 25);
+						if(count >= limit)
+						{
+							player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Limit.StorageChestItemLimit")
+									.replace("%limit%", String.valueOf(limit))));
+							return;
+						}
+					} else
+					{
+						final int limit = plugin.getYamlHandler().getLimits().getInt("StorageChestLimitPerItemType", 25);
+						if(count >= limit)
+						{
+							player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Limit.StorageChestItemLimit")
+									.replace("%limit%", String.valueOf(limit))));
+							return;
+						}
+					}
+					l.add(ChestHandler.getGroundSpecs(i));
+				}
+			}
+			String[] ar = new String[l.size()];
+			l.toArray(ar);
+			sc.setSearchContents(ar);
 			plugin.getMysqlHandler().create(MysqlHandler.Type.STORAGECHEST, sc);
 			int last = plugin.getMysqlHandler().lastID(MysqlHandler.Type.STORAGECHEST, "?", 1);
 			user.setStorageChestID(last);
@@ -496,9 +553,9 @@ public class InteractHandler implements Listener
 		//ItemStack[] ia = content.clone();
 		for(int i = 0; i < content.length; i++)
 		{
-			ItemStack is = content[i];
-			if(is != null && is.getType() != Material.AIR)
+			if(content[i] != null && content[i].getType() != Material.AIR)
 			{
+				ItemStack is = content[i].clone();
 				is.setAmount(1);
 				list.add(is);
 			}

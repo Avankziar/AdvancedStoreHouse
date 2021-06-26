@@ -1,8 +1,8 @@
 main: main.java.me.avankziar.spigot.ash.AdvancedStoreHouse
 name: AdvancedStoreHouse
-version: 4
+version: 5
 load: STARTUP
-api-version: 1.16
+api-version: 1.17
 description: a Storage System Plugin
 author: Avankziar
 softdepend: [Vault]

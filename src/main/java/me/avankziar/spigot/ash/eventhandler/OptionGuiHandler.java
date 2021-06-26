@@ -296,31 +296,32 @@ public class OptionGuiHandler
 			{
 				return;
 			}
-			int count = AdvancedStoreHouse.getPlugin().getMysqlHandler().getCount(Type.DISTRIBUTIONCHEST, "`id`",
-					"`owner` = ? AND `automaticdistribution` = ?", player.getUniqueId().toString(), true);
-			int check = 0;
-			for(int i = 500; i > 0; i--)
-			{
-				if(player.hasPermission(AdvancedStoreHouse.getPlugin().getYamlHandler()
-						.getLimits().getString("AutomaticDistributionChestLimitPermission")+i))
-				{
-					check = i;
-					break;
-				}
-			}
-			if(check >= count)
-			{
-				player.closeInventory();
-				player.sendMessage(ChatApi.tl(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang()
-						.getString("CmdAsh.Limit.AutomaticLimit")
-						.replace("%limit%", String.valueOf(check))));
-				return;
-			}
 			if(dc.isAutomaticDistribution())
 			{
 				dc.setAutomaticDistribution(false);
 			} else
 			{
+				final int count = AdvancedStoreHouse.getPlugin().getMysqlHandler().getCount(Type.DISTRIBUTIONCHEST, "`id`",
+						"`owner_uuid` = ? AND `automaticdistribution` = ?", player.getUniqueId().toString(), true);
+				int check = 0;
+				for(int i = 500; i > 0; i--)
+				{
+					if(player.hasPermission(AdvancedStoreHouse.getPlugin().getYamlHandler()
+							.getLimits().getString("AutomaticDistributionChestLimitPermission")+i))
+					{
+						check = i;
+						break;
+					}
+				}
+				if(count >= check)
+				{
+					player.closeInventory();
+					player.sendMessage(ChatApi.tl(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang()
+							.getString("CmdAsh.Limit.AutomaticLimit")
+							.replace("%amount%", String.valueOf(count))
+							.replace("%limit%", String.valueOf(check))));
+					return;
+				}
 				dc.setAutomaticDistribution(true);
 			}
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());

@@ -73,6 +73,8 @@ public class ARGDistributionChest_OpenOption extends ArgumentModule
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwnerOrMember")));
 			return;
 		}
+		user.setDistributionChestID(dc.getId());
+		PluginUserHandler.addUser(user);
 		new OptionGuiHandler().openDcGuiMain(player, user, dc, null);
 		return;
 	}
