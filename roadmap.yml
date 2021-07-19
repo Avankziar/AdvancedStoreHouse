@@ -3,6 +3,9 @@ Future =========================================================================
 - Die Option "MoneyPrinter" zu den Lagerkisten hinzufügen. Der MoneyPrinter sorgt dafür, dass alle Item, welche in diese kommen sollten, in Geld (per yaml) umgewandelt werden.
 - Mit IFH ein Interface aufbauen, um bspw. alle Verteilerkisten oder Lagerkisten per Spieler per Server per World und innerhalb eines bereichs
   zugänglich machen.
+  
+Build 5 ============================================================================================================================
+- Minecraft 1.17 und Java 16 Support.
 
 Build 4 =============================================================================================================================
 - +/ash blockinfo, gibt nun per Chat clickbare id und Chestname aller Verteiler- und lagerkisten, vom block, welchen man gerade ansieht.

@@ -5,5 +5,5 @@ load: STARTUP
 api-version: 1.17
 description: a Storage System Plugin
 author: Avankziar
-softdepend: [Vault]
+softdepend: [Vault, InterfaceHub]
 website: https://www.spigotmc.org/resources/advancedstorehouse.82337/
