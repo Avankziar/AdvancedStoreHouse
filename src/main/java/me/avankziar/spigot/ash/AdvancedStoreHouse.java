@@ -565,7 +565,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		{
 			stsy = new StorageSystemAPI(plugin);
             plugin.getServer().getServicesManager().register(
-            		main.java.me.avankziar.interfacehub.spigot.interfaces.StorageSystem.class,
+            		main.java.me.avankziar.ifh.spigot.interfaces.StorageSystem.class,
             		stsy,
             		this,
                     ServicePriority.Normal);

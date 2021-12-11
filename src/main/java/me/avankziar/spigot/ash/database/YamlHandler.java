@@ -2,6 +2,8 @@ package main.java.me.avankziar.spigot.ash.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
@@ -9,7 +11,6 @@ import java.util.List;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.Language.ISO639_2B;
@@ -94,20 +95,21 @@ public class YamlHandler
 		if(!config.exists()) 
 		{
 			AdvancedStoreHouse.log.info("Create config.yml...");
-			try
+			try(InputStream in = plugin.getResource("default.yml"))
 			{
 				//Erstellung einer "leere" config.yml
-				FileUtils.copyToFile(plugin.getResource("default.yml"), config);
+				Files.copy(in, config.toPath());
 			} catch (IOException e)
 			{
 				e.printStackTrace();
 			}
 		}
 		//Laden der config.yml
-		if(!loadYamlTask(config, cfg))
-		{
-			return false;
-		}
+		cfg = loadYamlTask(config, cfg);
+        if(cfg == null)
+        {
+        	return false;
+        }
 		
 		//Niederschreiben aller Werte für die Datei
 		writeFile(config, cfg, plugin.getYamlManager().getConfigKey());
@@ -118,40 +120,42 @@ public class YamlHandler
 		if(!commands.exists()) 
 		{
 			AdvancedStoreHouse.log.info("Create commands.yml...");
-			try
+			try(InputStream in = plugin.getResource("default.yml"))
 			{
 				//Erstellung einer "leere" config.yml
-				FileUtils.copyToFile(plugin.getResource("default.yml"), commands);
+				Files.copy(in, commands.toPath());
 			} catch (IOException e)
 			{
 				e.printStackTrace();
 			}
 		}
 		
-		if(!loadYamlTask(commands, com))
-		{
-			return false;
-		}
+		com = loadYamlTask(commands, com);
+        if(com == null)
+        {
+        	return false;
+        }
 		writeFile(commands, com, plugin.getYamlManager().getCommandsKey());
 		
 		limits = new File(plugin.getDataFolder(), "limits.yml");
 		if(!limits.exists()) 
 		{
 			AdvancedStoreHouse.log.info("Create limits.yml...");
-			try
+			try(InputStream in = plugin.getResource("default.yml"))
 			{
 				//Erstellung einer "leere" config.yml
-				FileUtils.copyToFile(plugin.getResource("default.yml"), limits);
+				Files.copy(in, limits.toPath());
 			} catch (IOException e)
 			{
 				e.printStackTrace();
 			}
 		}
 		
-		if(!loadYamlTask(limits, lim))
-		{
-			return false;
-		}
+		lim = loadYamlTask(limits, lim);
+        if(lim == null)
+        {
+        	return false;
+        }
 		writeFile(limits, lim, plugin.getYamlManager().getLimitsKey());
 		return true;
 	}
@@ -196,19 +200,20 @@ public class YamlHandler
 		if(!language.exists()) 
 		{
 			AdvancedStoreHouse.log.info("Create %lang%.yml...".replace("%lang%", languageString));
-			try
+			try(InputStream in = plugin.getResource("default.yml"))
 			{
-				FileUtils.copyToFile(plugin.getResource("default.yml"), language);
+				Files.copy(in, language.toPath());
 			} catch (IOException e)
 			{
 				e.printStackTrace();
 			}
 		}
 		//Laden der Datei
-		if(!loadYamlTask(language, lang))
-		{
-			return false;
-		}
+		lang = loadYamlTask(language, lang);
+        if(lang == null)
+        {
+        	return false;
+        }
 		//Niederschreiben aller Werte in die Datei
 		writeFile(language, lang, plugin.getYamlManager().getLanguageKey());
 		return true;
@@ -236,9 +241,9 @@ public class YamlHandler
 			if(!guifile.exists()) 
 			{
 				AdvancedStoreHouse.log.info("Create %file%.yml...".replace("%file%", g));
-				try
+				try(InputStream in = plugin.getResource("default.yml"))
 				{
-					FileUtils.copyToFile(plugin.getResource("default.yml"), guifile);
+					Files.copy(in, guifile.toPath());
 				} catch (IOException e)
 				{
 					e.printStackTrace();
@@ -246,10 +251,11 @@ public class YamlHandler
 			}
 			YamlConfiguration gyaml = new YamlConfiguration();
 			//Laden der Datei
-			if(!loadYamlTask(guifile, gyaml))
-			{
-				return false;
-			}
+			gyaml = loadYamlTask(guifile, gyaml);
+	        if(gyaml == null)
+	        {
+	        	return false;
+	        }
 			//Niederschreiben aller Werte in die Datei
 			writeFile(guifile, gyaml, plugin.getYamlManager().getGuiKeys(g));
 			gui.put(g, gyaml);
@@ -257,7 +263,7 @@ public class YamlHandler
 		return true;
 	}
 	
-	private boolean loadYamlTask(File file, YamlConfiguration yaml)
+	private YamlConfiguration loadYamlTask(File file, YamlConfiguration yaml)
 	{
 		try 
 		{
@@ -268,9 +274,8 @@ public class YamlHandler
 					"Could not load the %file% file! You need to regenerate the %file%! Error: ".replace("%file%", file.getName())
 					+ e.getMessage());
 			e.printStackTrace();
-			return false;
 		}
-		return true;
+		return yaml;
 	}
 	
 	private boolean writeFile(File file, YamlConfiguration yml, LinkedHashMap<String, Language> keyMap)

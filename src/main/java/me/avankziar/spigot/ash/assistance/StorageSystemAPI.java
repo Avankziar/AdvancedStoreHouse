@@ -13,7 +13,7 @@ import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.ConvertHandler;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.StorageChest;
-import main.java.me.avankziar.interfacehub.spigot.interfaces.StorageSystem;
+import main.java.me.avankziar.ifh.spigot.interfaces.StorageSystem;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler.Type;

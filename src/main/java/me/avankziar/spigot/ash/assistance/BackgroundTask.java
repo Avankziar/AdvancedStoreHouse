@@ -329,7 +329,17 @@ public class BackgroundTask
 						return;
 					}
 					StorageChest sc = voidchest.get(ii);
-					Block b = new Location(Bukkit.getWorld(sc.getWorld()), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ()).getBlock();
+					
+					World world = null;
+					try
+					{
+						world = Bukkit.getWorld(sc.getWorld());
+					} catch(NullPointerException e)
+					{
+						System.out.println("Dc: "+sc.getDistributionChestID()+" | Sc: "+sc.getId());
+						System.out.println("Server: "+sc.getServer()+" | World: "+sc.getWorld());
+					}
+					Block b = new Location(world, sc.getBlockX(), sc.getBlockY(), sc.getBlockZ()).getBlock();
 					if(b == null || b.getState() == null || !(b.getState() instanceof Container))
 					{
 						continue;

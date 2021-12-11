@@ -695,21 +695,21 @@ public class OptionGuiHandler
 			ItemFilterSet ifs = user.getItemFilterSet();
 			if(ifs == null || ifs.getContents() == null)
 			{
-				player.sendMessage(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Gui.Sc.IFSIsNull"));
+				player.sendMessage(ChatApi.tl(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Gui.Sc.IFSIsNull")));
 				player.closeInventory();
 				return;
 			}
 			sc.setContents(ifs.getContents());
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().updateData(MysqlHandler.Type.STORAGECHEST, sc, "`id` = ?", sc.getId());
-			player.sendMessage(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Gui.Sc.IFSIsOverriden"));
+			player.sendMessage(ChatApi.tl(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("Gui.Sc.IFSIsOverriden")));
 			break;
 		case 45:
 			guiSound(loc);
 			final int id = sc.getId();
 			AdvancedStoreHouse.getPlugin().getMysqlHandler().deleteData(Type.STORAGECHEST, "`id` = ?", sc.getId());
 			player.closeInventory();
-			player.sendMessage(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("CmdAsh.BlockBreak.DeleteSC")
-					.replace("%id%", String.valueOf(id)));
+			player.sendMessage(ChatApi.tl(AdvancedStoreHouse.getPlugin().getYamlHandler().getLang().getString("CmdAsh.BlockBreak.DeleteSC")
+					.replace("%id%", String.valueOf(id))));
 			break;
 		}
 	}

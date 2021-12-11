@@ -3,7 +3,20 @@ Future =========================================================================
 - Die Option "MoneyPrinter" zu den Lagerkisten hinzufügen. Der MoneyPrinter sorgt dafür, dass alle Item, welche in diese kommen sollten, in Geld (per yaml) umgewandelt werden.
 - Mit IFH ein Interface aufbauen, um bspw. alle Verteilerkisten oder Lagerkisten per Spieler per Server per World und innerhalb eines bereichs
   zugänglich machen.
-  
+- Als IDEE, eine Autoverteilung machen, wo pro Server die VK verteilt werden in einem festen Zyklus (bspw. pro Min).
+  in der datenbank hat jede VK einen boolean. Sobald diese verteilt wurde, bekommt sie eine 1.
+  Sobalt alle VK im Server eine 1 haben, werden die genullt.
+- Überprüfung, dass wenn ein Spieler x Tage nicht mehr on war, werden alle Lagersysteme gelöscht, wo dieser Spieler Eigentümer war.
+- Bungee wie Spigot MysqlSetup connection und Reconnection treiber updaten, siehe Scc
+- IFH als softdepend oder depend angeben
+- Ash, erstellung von Lagertruhen mit einer Redstonekiste limitieren/prüfen,
+- Halbbefüllung der Lagertruhen tritt nur ein wenn der chunk nicht geladen wird wenn der chunk geladen ist wird die gesammte DK befüllt
+
+Build 6 ============================================================================================================================
+- +Beim Gui ist nun der ColorCode richtig
+- Mit Blockinfo cmd klappt es mit mehreren die open gui funktion nicht richtig. Mit dem Ofen geht es.
+- Material und Verz. Option scheinen nicht richtig zu funktionieren.
+ 
 Build 5 ============================================================================================================================
 - Minecraft 1.17 und Java 16 Support.
 
