@@ -156,7 +156,7 @@ public class ARGDistributionChest_Search extends ArgumentModule
 				? (is.getItemMeta().hasDisplayName() ? is.getItemMeta().getDisplayName() : is.getType().toString()) 
 				: is.getType().toString();
 		ArrayList<StorageChest> sclist = ConvertHandler.convertListIII(
-				plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`id`", false,
+				plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`id` ASC",
 						"`distributionchestid` = ? AND `server` = ? AND `searchcontent` LIKE ?",
 						dc.getId(), server, "%"+data+"%"));
 		player.spigot().sendMessage(ChatApi.apiChatItem(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.SearchItem")

@@ -280,16 +280,16 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 	}
 	
 	public ArrayList<?> getAllListAt(Type type, String orderByColumn,
-			Boolean desc, String whereColumn, Object...whereObject) throws IOException
+			String whereColumn, Object...whereObject) throws IOException
 	{
 		switch(type)
 		{
 		case PLUGINUSER:
 			return TableI.super.getAllListAtI(plugin, orderByColumn, whereColumn, whereObject);
 		case DISTRIBUTIONCHEST:
-			return TableII.super.getAllListAtII(plugin, orderByColumn, desc, whereColumn, whereObject);
+			return TableII.super.getAllListAtII(plugin, orderByColumn, whereColumn, whereObject);
 		case STORAGECHEST:
-			return TableIII.super.getAllListAtIII(plugin, orderByColumn, desc, whereColumn, whereObject);
+			return TableIII.super.getAllListAtIII(plugin, orderByColumn, whereColumn, whereObject);
 		case ITEMFILTERSET:
 			return TableIV.super.getAllListAtIV(plugin, orderByColumn, whereColumn, whereObject);
 		case TRANSFERLOG:

@@ -150,9 +150,9 @@ public class DistributionHandlerII
 			debug(2, "Normal Dc Content is Empty | Normal End");
 			return;
 		}
+		String order = !dc.isNormalPriority() == true ? "`priority` DESC, `id` ASC" : "`priority` ASC, `id ASC`";
 		final ArrayList<StorageChest> endList = ConvertHandler.convertListIII(
-				AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`priority`",
-						!dc.isNormalPriority(),
+				AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, order, 
 						"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), true, server));
 		LinkedHashMap<String, LinkedHashMap<Integer, ItemStack>> map = new LinkedHashMap<>();
 		ChestHandler.setDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc, 100, inv.getLocation());
@@ -216,18 +216,17 @@ public class DistributionHandlerII
 		{
 			debug(2, "Data: "+data);
 			ArrayList<StorageChest> prioList = new ArrayList<>();
+			String orderII = !dc.isNormalPriority() == true ? "`priority` DESC, `id` ASC" : "`priority` ASC, `id ASC`";
 			if(dc.getPriorityType() == PriorityType.SWITCH)
 			{
 				prioList = ConvertHandler.convertListIII(
-						AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`priority`",
-								!dc.isNormalPriority(),
+						AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, orderII,
 								"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ? AND `searchcontent` LIKE ?",
 								dc.getId(), false, server, "%"+data+"%"));
 			} else
 			{
 				prioList = ConvertHandler.convertListIII(
-						AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`priority`",
-								!dc.isNormalPriority(),
+						AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, orderII,
 								"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ? AND `priority` = ? AND `searchcontent` LIKE ?",
 								dc.getId(), false, server, dc.getPriorityNumber(), "%"+data+"%"));
 			}

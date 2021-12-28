@@ -558,7 +558,7 @@ public interface TableII
 	}
 	
 	default ArrayList<DistributionChest> getAllListAtII(AdvancedStoreHouse plugin, String orderByColumn,
-			boolean desc, String whereColumn, Object...whereObject)
+			String whereColumn, Object...whereObject)
 	{
 		PreparedStatement preparedStatement = null;
 		ResultSet result = null;
@@ -567,16 +567,8 @@ public interface TableII
 		{
 			try 
 			{		
-				String sql = "";
-				if(desc)
-				{
-					sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameII
-							+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC";
-				} else
-				{
-					sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameII
-							+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" ASC";
-				}
+				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameII
+						+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn;
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
 		        for(Object o : whereObject)

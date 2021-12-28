@@ -185,7 +185,7 @@ public class InteractSubHandler
 				{
 					sclist = ConvertHandler.convertListIII(
 							plugin.getMysqlHandler().getAllListAt(Type.STORAGECHEST,
-									"`id`", false, "`distributionchestid` = ?", dc.getId()));
+									"`id` ASC", "`distributionchestid` = ?", dc.getId()));
 				} catch (IOException e)
 				{
 					e.printStackTrace();
@@ -236,7 +236,7 @@ public class InteractSubHandler
 			try
 			{
 				dclist = ConvertHandler.convertListII(
-						plugin.getMysqlHandler().getAllListAt(Type.DISTRIBUTIONCHEST, "`id`", false,
+						plugin.getMysqlHandler().getAllListAt(Type.DISTRIBUTIONCHEST, "`id` ASC",
 								"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 								server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
 			} catch (IOException e)
@@ -306,7 +306,7 @@ public class InteractSubHandler
 			try
 			{
 				sclist = ConvertHandler.convertListIII(
-						plugin.getMysqlHandler().getAllListAt(Type.STORAGECHEST, "`id`", false,
+						plugin.getMysqlHandler().getAllListAt(Type.STORAGECHEST, "`id` ASC",
 								"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 								server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
 			} catch (IOException e)
@@ -408,7 +408,7 @@ public class InteractSubHandler
 			return;
 		}
 		ArrayList<StorageChest> sclist = ConvertHandler.convertListIII(plugin.getMysqlHandler()
-				.getAllListAt(Type.STORAGECHEST, "`id`", false, "`distributionchestid` = ?", dc.getId()));
+				.getAllListAt(Type.STORAGECHEST, "`id` ASC", "`distributionchestid` = ?", dc.getId()));
 		long cooldown = System.currentTimeMillis()
 				+ plugin.getYamlHandler().getConfig().getLong("Animation.AdditionalCooldown", 10000)
 				+ (sclist.size()/(plugin.getYamlHandler().getConfig().getInt("Animation.PerTick", 25)*20)*1000)
@@ -607,7 +607,7 @@ public class InteractSubHandler
 			try
 			{
 				dclist = ConvertHandler.convertListII(
-						plugin.getMysqlHandler().getAllListAt(Type.DISTRIBUTIONCHEST, "`id`", false,
+						plugin.getMysqlHandler().getAllListAt(Type.DISTRIBUTIONCHEST, "`id` ASC",
 								"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 								server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
 			} catch (IOException e)
@@ -675,7 +675,7 @@ public class InteractSubHandler
 			try
 			{
 				sclist = ConvertHandler.convertListIII(
-						plugin.getMysqlHandler().getAllListAt(Type.STORAGECHEST, "`id`", false,
+						plugin.getMysqlHandler().getAllListAt(Type.STORAGECHEST, "`id` ASC",
 								"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 								server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
 			} catch (IOException e)

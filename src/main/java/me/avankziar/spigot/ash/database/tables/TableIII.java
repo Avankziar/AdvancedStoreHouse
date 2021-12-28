@@ -605,7 +605,7 @@ public interface TableIII
 		return null;
 	}
 	
-	default ArrayList<StorageChest> getAllListAtIII(AdvancedStoreHouse plugin, String orderByColumn, Boolean desc,
+	default ArrayList<StorageChest> getAllListAtIII(AdvancedStoreHouse plugin, String orderByColumn,
 			String whereColumn, Object...whereObject) throws IOException
 	{
 		PreparedStatement preparedStatement = null;
@@ -615,16 +615,8 @@ public interface TableIII
 		{
 			try 
 			{			
-				String sql = "";
-				if(desc)
-				{
-					sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameIII
-							+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC";
-				} else
-				{
-					sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameIII
-							+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" ASC";
-				}
+				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameIII
+						+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn;
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
 		        for(Object o : whereObject)

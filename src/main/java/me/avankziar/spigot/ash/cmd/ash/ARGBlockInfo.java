@@ -68,11 +68,11 @@ public class ARGBlockInfo extends ArgumentModule
 				try
 				{
 					dclist = ConvertHandler.convertListII(
-							plugin.getMysqlHandler().getAllListAt(Type.DISTRIBUTIONCHEST, "`id`", false,
+							plugin.getMysqlHandler().getAllListAt(Type.DISTRIBUTIONCHEST, "`id` ASC",
 									"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 									server, world, x, y, z));
 					sclist = ConvertHandler.convertListIII(
-							plugin.getMysqlHandler().getAllListAt(Type.STORAGECHEST, "`id`", false,
+							plugin.getMysqlHandler().getAllListAt(Type.STORAGECHEST, "`id` ASC",
 									"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 									server, world, x, y, z));
 				} catch (IOException e)

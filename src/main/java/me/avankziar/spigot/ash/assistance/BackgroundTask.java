@@ -146,7 +146,7 @@ public class BackgroundTask
 					{
 						dcList = ConvertHandler.convertListII(
 								plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.DISTRIBUTIONCHEST,
-										"`id`", false, "`automaticdistribution` = ? AND `server` = ?", true,
+										"`id` ASC", "`automaticdistribution` = ? AND `server` = ?", true,
 										PluginSettings.settings.getServer()));
 						debug("Server: "+PluginSettings.settings.getServer());
 					} catch (IOException e) {}
@@ -297,7 +297,7 @@ public class BackgroundTask
 				{
 					voidchest = ConvertHandler.convertListIII(
 							plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST,
-							"`id`", false, "`server` = ? AND `optionvoid` = ?", PluginSettings.settings.getServer(), true));
+									"`id` ASC", "`server` = ? AND `optionvoid` = ?", PluginSettings.settings.getServer(), true));
 				} catch (IOException e)
 				{
 					e.printStackTrace();

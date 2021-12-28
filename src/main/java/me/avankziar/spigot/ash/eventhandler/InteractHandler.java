@@ -601,7 +601,7 @@ public class InteractHandler implements Listener
 			ArrayList<DistributionChest> dclist = ConvertHandler.convertListII(
 					plugin.getMysqlHandler().getAllListAt(
 							MysqlHandler.Type.DISTRIBUTIONCHEST,
-							"`id`", false, "`server` = ? AND `world` = ?"
+							"`id` ASC", "`server` = ? AND `world` = ?"
 							+ " AND `blockx` <= ? AND `blockx` >= ?"
 							+ " AND `blocky` <= ? AND `blocky` >= ?"
 							+ " AND `blockz` <= ? AND `blockz` >= ?",

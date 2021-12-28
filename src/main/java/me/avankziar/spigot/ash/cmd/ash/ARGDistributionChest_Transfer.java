@@ -88,7 +88,7 @@ public class ARGDistributionChest_Transfer extends ArgumentModule
 				try
 				{
 					sclist = ConvertHandler.convertListIII(
-							plugin.getMysqlHandler().getAllListAt(Type.STORAGECHEST, "`id`", false, "`distributionchestid` = ?", id));
+							plugin.getMysqlHandler().getAllListAt(Type.STORAGECHEST, "`id` ASC", "`distributionchestid` = ?", id));
 				} catch (IOException e){}
 				player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.Transfer.TransferScStart")
 						.replace("%amount%", String.valueOf(sclist.size()))));

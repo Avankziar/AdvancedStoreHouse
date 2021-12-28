@@ -146,7 +146,7 @@ public class StorageSystemAPI implements StorageSystem
 			dclist = ConvertHandler.convertListII(
 					plugin.getMysqlHandler().getAllListAt(
 							MysqlHandler.Type.DISTRIBUTIONCHEST,
-							"`id`", false, "`server` = ? AND `world` = ?"
+							"`id` ASC", "`server` = ? AND `world` = ?"
 							+ " AND `blockx` = ?"
 							+ " AND `blocky` = ?"
 							+ " AND `blockz` = ?",
@@ -175,7 +175,7 @@ public class StorageSystemAPI implements StorageSystem
 			dclist = ConvertHandler.convertListII(
 					plugin.getMysqlHandler().getAllListAt(
 							MysqlHandler.Type.DISTRIBUTIONCHEST,
-							"`id`", false, "`server` = ? AND `world` = ?"
+							"`id` ASC", "`server` = ? AND `world` = ?"
 							+ " AND `blockx` <= ? AND `blockx` >= ?"
 							+ " AND `blocky` <= ? AND `blocky` >= ?"
 							+ " AND `blockz` <= ? AND `blockz` >= ?",
@@ -349,7 +349,7 @@ public class StorageSystemAPI implements StorageSystem
 			sclist = ConvertHandler.convertListIII(
 					plugin.getMysqlHandler().getAllListAt(
 							MysqlHandler.Type.STORAGECHEST,
-							"`id`", false, "`server` = ? AND `world` = ?"
+							"`id` ASC", "`server` = ? AND `world` = ?"
 							+ " AND `blockx` = ?"
 							+ " AND `blocky` = ?"
 							+ " AND `blockz` = ?",
@@ -378,7 +378,7 @@ public class StorageSystemAPI implements StorageSystem
 			sclist = ConvertHandler.convertListIII(
 					plugin.getMysqlHandler().getAllListAt(
 							MysqlHandler.Type.STORAGECHEST,
-							"`id`", false, "`server` = ? AND `world` = ?"
+							"`id` ASC", "`server` = ? AND `world` = ?"
 							+ " AND `blockx` <= ? AND `blockx` >= ?"
 							+ " AND `blocky` <= ? AND `blocky` >= ?"
 							+ " AND `blockz` <= ? AND `blockz` >= ?",
@@ -542,7 +542,7 @@ public class StorageSystemAPI implements StorageSystem
 			sclist = ConvertHandler.convertListIII(
 					plugin.getMysqlHandler().getAllListAt(
 							MysqlHandler.Type.STORAGECHEST,
-							"`id`", false, "`searchcontent` LIKE ?",
+							"`id` ASC", "`searchcontent` LIKE ?",
 							"%"+data+"%"));
 		} catch (IOException e)
 		{
@@ -568,7 +568,7 @@ public class StorageSystemAPI implements StorageSystem
 			sclist = ConvertHandler.convertListIII(
 					plugin.getMysqlHandler().getAllListAt(
 							MysqlHandler.Type.STORAGECHEST,
-							"`id`", false, "`distributionchestid` = ? AND `searchcontent` LIKE ?",
+							"`id` ASC", "`distributionchestid` = ? AND `searchcontent` LIKE ?",
 							distributionchestid, "%"+data+"%"));
 		} catch (IOException e)
 		{
@@ -594,7 +594,7 @@ public class StorageSystemAPI implements StorageSystem
 			sclist = ConvertHandler.convertListIII(
 					plugin.getMysqlHandler().getAllListAt(
 							MysqlHandler.Type.STORAGECHEST,
-							"`id`", false, "`owner_uuid` = ? AND `searchcontent` LIKE ?",
+							"`id` ASC", "`owner_uuid` = ? AND `searchcontent` LIKE ?",
 							player.getUniqueId().toString(), "%"+data+"%"));
 		} catch (IOException e)
 		{

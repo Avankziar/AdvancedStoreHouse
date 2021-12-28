@@ -204,7 +204,7 @@ public class ChestHandler
 			{
 				ArrayList<DistributionChest> allAt = ConvertHandler.convertListII(
 						plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.DISTRIBUTIONCHEST,
-						"`id`", false, 
+						"`id` ASC", 
 						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 						sc.getServer(), sc.getWorld(), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ()));
 				chain.addAll(allAt);
@@ -251,7 +251,7 @@ public class ChestHandler
 					}
 					ArrayList<DistributionChest> allAt = ConvertHandler.convertListII(
 							plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.DISTRIBUTIONCHEST,
-							"`id`", false, 
+							"`id` ASC", 
 							"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 							sc.getServer(), lo.getWorld().getName(), lo.getBlockX(), lo.getBlockY(), lo.getBlockZ()));
 					chain.addAll(allAt);
@@ -272,7 +272,7 @@ public class ChestHandler
 			{
 				ArrayList<DistributionChest> allAt = ConvertHandler.convertListII(
 						plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.DISTRIBUTIONCHEST,
-						"`id`", false, 
+						"`id` ASC", 
 						"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 						sc.getServer(), sc.getWorld(), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ()));
 				chain.addAll(allAt);
@@ -319,7 +319,7 @@ public class ChestHandler
 					}
 					ArrayList<DistributionChest> allAt = ConvertHandler.convertListII(
 							plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.DISTRIBUTIONCHEST,
-							"`id`", false, 
+							"`id` ASC", 
 							"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 							sc.getServer(), lo.getWorld().getName(), lo.getBlockX(), lo.getBlockY(), lo.getBlockZ()));
 					chain.addAll(allAt);
