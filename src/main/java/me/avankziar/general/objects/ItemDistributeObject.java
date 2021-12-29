@@ -76,26 +76,15 @@ public class ItemDistributeObject
 	public static void debug(int level, String s)
 	{
 		boolean bo = false;
-		int l = 0;
-		if(bo)
+		int l = -1;
+		if(bo && level >= l
+				)
 		{
-			if(level >= l)
+			AdvancedStoreHouse.log.info(s);
+			for(Player player : Bukkit.getOnlinePlayers())
 			{
-				AdvancedStoreHouse.log.info(s);
-				for(Player player : Bukkit.getOnlinePlayers())
-				{
-					player.spigot().sendMessage(ChatApi.tctl(s));
-				}	
-			}	
-		}
-	}
-	
-	public static void debug(boolean bo, String s)
-	{
-		//boolean bo = false;
-		if(bo)
-		{
-			AdvancedStoreHouse.log.info(s);		
+				player.spigot().sendMessage(ChatApi.tctl(s));
+			}
 		}
 	}
 	
@@ -306,7 +295,7 @@ public class ItemDistributeObject
 			ArrayList<StorageChest> prioList, ArrayList<StorageChest> endList,
 			String server, boolean isRandom, String debug)
 	{
-		debug(2, "priolist: "+prioList.size()+" | endlist: "+endList.size());
+		debug(0, "priolist: "+prioList.size()+" | endlist: "+endList.size());
 		new BukkitRunnable()
 		{
 			int i = 0;

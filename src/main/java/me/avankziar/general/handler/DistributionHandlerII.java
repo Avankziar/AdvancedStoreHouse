@@ -38,9 +38,10 @@ public class DistributionHandlerII
 {
 	public static void debug(int lvl, String s)
 	{
-		int level = 3;
+		int level = 0;
 		boolean bo = false;
-		if(bo && lvl >= level)
+		if(bo && lvl <= level
+				)
 		{
 			AdvancedStoreHouse.log.info(s);
 			for(Player player : Bukkit.getOnlinePlayers())
@@ -74,7 +75,7 @@ public class DistributionHandlerII
 				return;
 			}
 		}
-		debug(3, "Distrute VersionPhysical start");
+		debug(0, "Distrute VersionPhysical start");
 		DistributionChest dc = (DistributionChest) AdvancedStoreHouse.getPlugin().getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
 				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
 				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
@@ -144,13 +145,13 @@ public class DistributionHandlerII
 	
 	private static void distributeMiddle(String server, DistributionChest dc, Inventory inv, boolean activateChain, String debug) throws IOException
 	{
-		debug(3, "DistruteMiddle start");
+		debug(0, "DistruteMiddle start");
 		if(ChestHandler.isContentEmpty(inv.getContents()))
 		{
-			debug(2, "Normal Dc Content is Empty | Normal End");
+			debug(0, "Normal Dc Content is Empty | Normal End");
 			return;
 		}
-		String order = !dc.isNormalPriority() == true ? "`priority` DESC, `id` ASC" : "`priority` ASC, `id ASC`";
+		String order = !dc.isNormalPriority() == true ? "`priority` DESC, `id` ASC" : "`priority` ASC, `id` ASC";
 		final ArrayList<StorageChest> endList = ConvertHandler.convertListIII(
 				AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, order, 
 						"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), true, server));
@@ -169,7 +170,7 @@ public class DistributionHandlerII
 					i++;
 					continue;
 				}
-				String data = ChestHandler.getGroundSpecs(is);
+				String data = is.getType().toString();//Muss das Material sein, Verz. Option
 				if(map.containsKey(data))
 				{
 					LinkedHashMap<Integer, ItemStack> submap = map.get(data);
@@ -194,7 +195,7 @@ public class DistributionHandlerII
 					i++;
 					continue;
 				}
-				String data = ChestHandler.getGroundSpecs(is);
+				String data = is.getType().toString();//Muss das Material sein, Verz. Option
 				if(map.containsKey(data))
 				{
 					LinkedHashMap<Integer, ItemStack> submap = map.get(data);
@@ -210,13 +211,14 @@ public class DistributionHandlerII
 				i++;
 			}
 		}
-		debug(2, "Counted "+count+" different ItemStacks");
+		debug(0, "Counted "+count+" different ItemStacks");
 		int lastScChestAmount = 0;
 		for(String data : map.keySet())
 		{
-			debug(2, "Data: "+data);
+			debug(0, "Data: "+data);
 			ArrayList<StorageChest> prioList = new ArrayList<>();
-			String orderII = !dc.isNormalPriority() == true ? "`priority` DESC, `id` ASC" : "`priority` ASC, `id ASC`";
+			String orderII = !dc.isNormalPriority() == true ? "`priority` DESC, `id` ASC" : "`priority` ASC, `id` ASC";
+			debug(0, "orderII : "+orderII);
 			if(dc.getPriorityType() == PriorityType.SWITCH)
 			{
 				prioList = ConvertHandler.convertListIII(
@@ -230,7 +232,7 @@ public class DistributionHandlerII
 								"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ? AND `priority` = ? AND `searchcontent` LIKE ?",
 								dc.getId(), false, server, dc.getPriorityNumber(), "%"+data+"%"));
 			}
-			debug(3, "Amount PrioList: "+prioList.size()+" | Amount Endlist: "+endList.size());
+			debug(0, "Amount PrioList: "+prioList.size()+" | Amount Endlist: "+endList.size());
 			int actuallyScAmount = prioList.size()+endList.size();
 			ChestHandler.setDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc, actuallyScAmount, inv.getLocation());
 			distributionPost(server, dc, inv, map.get(data), prioList, endList, actuallyScAmount, lastScChestAmount, activateChain,
@@ -245,7 +247,7 @@ public class DistributionHandlerII
 			boolean activateChain, String debug)
 	{
 		int wait = (int)((double)((double)storagechestamount+(double)waitextra)/(double)PluginSettings.settings.getWaitBeforStartFactor());
-		debug(3, "DistributionPost start | Wait: "+wait);
+		debug(0, "DistributionPost start | Wait: "+wait);
 		new BukkitRunnable()
 		{
 			ArrayList<StorageChest> prioList = prioListPre;
@@ -285,7 +287,7 @@ public class DistributionHandlerII
 					{
 						debug(0, "SupposeCooldown: "+storagechestamount+"/"+PluginSettings.settings.getChestsPerTick()+"+"+
 						+PluginSettings.settings.getDelayChainChest()+"*"+1000+"/"+50);
-						debug(3, "SupposeCooldown: "+(long)supposeCooldown);
+						debug(0, "SupposeCooldown: "+(long)supposeCooldown);
 						distributeChain(server, (long)supposeCooldown, prioList, endList);
 					} catch (IOException e) 
 					{
@@ -479,31 +481,28 @@ public class DistributionHandlerII
 	        
 	        if(optionMaterial)
 	        {
-	        	//FIXME Flussbild noch korrigieren
 	        	if(i.getType() == f.getType())
 		        {
-	        		debug(0, "OpMaterial >> i & f getType == || i:"+i.getType()+" | f:"+f.getType());
+	        		debug(-1, "OpMaterial >> i & f getType == || i:"+i.getType()+" | f:"+f.getType());
 	        		return true;
 		        } else
 		        {
-		        	debug(0, "OpMaterial >> i & f getType != || i:"+i.getType()+" | f:"+f.getType());
+		        	debug(-1, "OpMaterial >> i & f getType != || i:"+i.getType()+" | f:"+f.getType());
 		        	continue;
 		        }
 	        }
 	        if(i.getType() != f.getType())
 	        {
-	        	debug(0, "i & f getType != || i:"+i.getType()+" | f:"+f.getType());
+	        	debug(-1, "i & f getType != || i:"+i.getType()+" | f:"+f.getType());
 	        	continue;
-	        } else
-	        {
-	        	debug(0, "i & f getType == || i:"+i.getType()+" | f:"+f.getType());
 	        }
+	        debug(-1, "i & f getType == || i:"+i.getType()+" | f:"+f.getType());
 	        if(i.hasItemMeta() == true && f.hasItemMeta() == true)
 	        {
-	        	debug(0, "i & f hasItemMeta == true");
+	        	debug(-1, "i & f hasItemMeta == true");
 	        	if(i.getItemMeta() != null && f.getItemMeta() != null)
 	        	{
-	        		debug(0, "i & f getItemMeta != null");
+	        		debug(-1, "i & f getItemMeta != null");
 	        		if(i.getItemMeta() instanceof Damageable && f.getItemMeta() instanceof Damageable)
 	        		{
 	        			Damageable id = (Damageable) i.getItemMeta();
@@ -520,14 +519,14 @@ public class DistributionHandlerII
 	        				//the percentage muss be OVER the value, to be distributed!
 	        				if(durabilityType == Type.LESSTHAN)
 	        				{
-	        					debug(0, "similar Long OpDur LESSTHAN; "+percent+" % < "+durability+" == "+(percent < durability));
+	        					debug(-1, "similar Long OpDur LESSTHAN; "+percent+" % < "+durability+" == "+(percent < durability));
 	        					if(percent > durability)
 		        				{
 			        				continue;
 		        				}
 	        				} else
 	        				{
-	        					debug(0, "similar Long OpDur LARGERTHAN; "+percent+" % > "+durability+" == "+(percent > durability));
+	        					debug(-1, "similar Long OpDur LARGERTHAN; "+percent+" % > "+durability+" == "+(percent > durability));
 	        					if(percent < durability)
 		        				{
 			        				continue;
@@ -545,11 +544,11 @@ public class DistributionHandlerII
 	            		Repairable ir = (Repairable) i.getItemMeta();
 	            		if(optionRepair)
 	            		{
-	            			debug(0, "similar Long is Option Repair");
+	            			debug(-1, "similar Long is Option Repair");
 	            			final int rc = ir.getRepairCost()+1;
 	            			if(repairType == Type.LESSTHAN)
 	            			{
-	            				debug(0, "similar Long OpRep LESSTHAN; "+rc+" lvl < "
+	            				debug(-1, "similar Long OpRep LESSTHAN; "+rc+" lvl < "
 	            						+repaircost+" == "+(rc < repaircost));
 	            				if(rc > repaircost)
 		            			{
@@ -557,7 +556,7 @@ public class DistributionHandlerII
 		            			}
 	            			} else
 	            			{
-	            				debug(0, "similar Long OpRep LARGERTHAN; "+rc+" lvl > "
+	            				debug(-1, "similar Long OpRep LARGERTHAN; "+rc+" lvl > "
 	            						+repaircost+" == "+(rc > repaircost));
 	            				if(ir.getRepairCost() < repaircost)
 		            			{
@@ -573,15 +572,15 @@ public class DistributionHandlerII
 	            	}
 		        	if(i.getItemMeta() instanceof EnchantmentStorageMeta && f.getItemMeta() instanceof EnchantmentStorageMeta)
 		        	{
-		        		debug(0, "similar is EnchantmentStorageMeta");
+		        		debug(-1, "similar Long is EnchantmentStorageMeta");
 		        		EnchantmentStorageMeta iesm = (EnchantmentStorageMeta) i.getItemMeta();
 		        		EnchantmentStorageMeta fesm = (EnchantmentStorageMeta) f.getItemMeta();
 		        		if(optionEnchantments)
 		        		{
-		        			debug(0, "similar is Option Enchantment");
-		        			if(!iesm.hasStoredEnchants())
+		        			debug(-1, "similar Long is Option Enchantment");
+		        			if(!iesm.hasStoredEnchants() && !fesm.hasStoredEnchants())
 		        			{
-		        				debug(0, "similar has no StoreEnchants");
+		        				debug(-1, "similarLong has no StoreEnchants");
 		        				continue;
 		        			} else
 		        			{
@@ -589,11 +588,12 @@ public class DistributionHandlerII
 		        				{
 		        					if(iesm.hasStoredEnchant(e))
 		        					{
-		        						debug(0, "similar OpEnch: StoredEnch."+e.getKey().getKey());
+		        						debug(-1, "similar Long OpEnch: iesm StoredEnch."+e.getKey().getKey());
 		        						iesm.removeStoredEnchant(e);
 		        					}
 		        					if(fesm.hasStoredEnchant(e))
 		        					{
+		        						debug(-1, "similar Long OpEnch: fesm StoredEnch."+e.getKey().getKey());
 		        						fesm.removeStoredEnchant(e);
 		        					}
 		        				}
@@ -602,21 +602,21 @@ public class DistributionHandlerII
 		        			}
 		        		} else
 		        		{
-		        			debug(0, "similar no OpEnch");
+		        			debug(-1, "similar no OpEnch");
 		        			i.setItemMeta(ChestHandler.orderStorageEnchantments(iesm));
 			        		f.setItemMeta(ChestHandler.orderStorageEnchantments(fesm));
 		        		}
 		        	}
 		        	if(i.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK 
-		        			&& f.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK
+		        			&& f.getItemMeta().hasEnchants() && f.getType() != Material.ENCHANTED_BOOK
 		        			)
 		        	{
-		        		debug(0, "similar is normal Enchantment");
+		        		debug(-1, "similar Long is normal Enchantment");
 		        		if(optionEnchantments)
 		        		{
 		        			ItemMeta im = i.getItemMeta();
 		        			ItemMeta fm = f.getItemMeta();
-		        			if(!im.hasEnchants())
+		        			if(!im.hasEnchants() && !fm.hasEnchants())
 		        			{
 		        				continue;
 		        			} else
@@ -625,10 +625,12 @@ public class DistributionHandlerII
 		        				{
 		        					if(im.hasEnchant(e))
 		        					{
+		        						debug(-1, "similar Long OpEnch: im Ench."+e.getKey().getKey());
 		        						im.removeEnchant(e);
 		        					}
 		        					if(fm.hasEnchant(e))
 		        					{
+		        						debug(-1, "similar Long OpEnch: fm Ench."+e.getKey().getKey());
 		        						fm.removeEnchant(e);
 		        					}
 		        				}
@@ -645,99 +647,148 @@ public class DistributionHandlerII
 		        	f.setAmount(1);
 		        	if(i.getItemMeta().toString().equals(f.getItemMeta().toString()))
 		        	{
-		        		debug(0, "isSimliar : long");
+		        		debug(-1, "isSimliar : long");
 		        		return true;
 		        	}
 	        	}
-	        } else
-	        {
-	        	if(i.hasItemMeta() && !f.hasItemMeta())
-	        	{
-	        		if(i.getItemMeta() instanceof Damageable)
-	        		{
-	        			Damageable id = (Damageable) i.getItemMeta();
-	        			if(optionDurability)
-	        			{
-	        				int percent = ChestHandler.getMaxDamage(i.getType())/(id.getDamage() == 0 ? 1 : id.getDamage());
-	        				debug(0, "similar Middle is Option Durability");
-	        				//the percentage muss be OVER the value, to be distributed!
-	        				if(durabilityType == Type.LESSTHAN)
+	        } else if(i.hasItemMeta() && !f.hasItemMeta())
+        	{
+        		if(i.getItemMeta() instanceof Damageable)
+        		{
+        			Damageable id = (Damageable) i.getItemMeta();
+        			if(optionDurability)
+        			{
+        				int percent = ChestHandler.getMaxDamage(i.getType())/(id.getDamage() == 0 ? 1 : id.getDamage());
+        				debug(-1, "similar Middle is Option Durability");
+        				//the percentage muss be OVER the value, to be distributed!
+        				if(durabilityType == Type.LESSTHAN)
+        				{
+        					debug(-1, "similar Middle OpDur LESSTHAN; "+percent+" % < "+durability+" == "+(percent < durability));
+        					if(percent > durability)
 	        				{
-	        					debug(0, "similar Middle OpDur LESSTHAN; "+percent+" % < "+durability+" == "+(percent < durability));
-	        					if(percent > durability)
-		        				{
-			        				continue;
-		        				}
-	        				} else
-	        				{
-	        					debug(0, "similar Middle OpDur LARGERTHAN; "+percent+" % > "+durability+" == "+(percent > durability));
-	        					if(percent < durability)
-		        				{
-			        				continue;
-		        				}
+		        				continue;
 	        				}
-	        			}
-	        			debug(0,"i.toString == f.toString : "+(i.toString().equals(f.toString())));
-	        			debug(0,"im.toString : "+i.getItemMeta().toString());
-	        			debug(0,"fm.toString : "+f.getItemMeta().toString());
-	        			debug(0,"1. im.toString == fm.toString : "+(i.getItemMeta().toString().equals(f.getItemMeta().toString())));
-	        			id.setDamage(0);
-	        			i.setItemMeta((ItemMeta) id);
-	        			debug(0,"im.toString : "+i.getItemMeta().toString());
-	        			debug(0,"2. im.toString == fm.toString : "+(i.getItemMeta().toString().equals(f.getItemMeta().toString())));
-	        		}        			
-        			if(i.getItemMeta() instanceof Repairable)
-	            	{
-	            		Repairable ir = (Repairable) i.getItemMeta();
-	            		if(optionRepair)
-	            		{
-	            			debug(0, "similar Middle is Option Repair");
-	            			final int rc = ir.getRepairCost()+1;
-	            			if(repairType == Type.LESSTHAN)
+        				} else
+        				{
+        					debug(-1, "similar Middle OpDur LARGERTHAN; "+percent+" % > "+durability+" == "+(percent > durability));
+        					if(percent < durability)
+	        				{
+		        				continue;
+	        				}
+        				}
+        			}
+        			debug(-1,"i.toString == f.toString : "+(i.toString().equals(f.toString())));
+        			debug(-1,"im.toString : "+i.getItemMeta().toString());
+        			debug(-1,"fm.toString : "+f.getItemMeta().toString());
+        			debug(-1,"1. im.toString == fm.toString : "+(i.getItemMeta().toString().equals(f.getItemMeta().toString())));
+        			id.setDamage(0);
+        			i.setItemMeta((ItemMeta) id);
+        			debug(-1,"im.toString : "+i.getItemMeta().toString());
+        			debug(-1,"2. im.toString == fm.toString : "+(i.getItemMeta().toString().equals(f.getItemMeta().toString())));
+        		}        			
+    			if(i.getItemMeta() instanceof Repairable)
+            	{
+            		Repairable ir = (Repairable) i.getItemMeta();
+            		if(optionRepair)
+            		{
+            			debug(-1, "similar Middle is Option Repair");
+            			final int rc = ir.getRepairCost()+1;
+            			if(repairType == Type.LESSTHAN)
+            			{
+            				debug(-1, "similar Middle OpRep LESSTHAN; "+rc+" lvl < "
+            						+repaircost+" == "+(rc < repaircost));
+            				if(rc > repaircost)
 	            			{
-	            				debug(0, "similar Middle OpRep LESSTHAN; "+rc+" lvl < "
-	            						+repaircost+" == "+(rc < repaircost));
-	            				if(rc > repaircost)
-		            			{
-		            				continue;
-		            			}
-	            			} else
-	            			{
-	            				debug(0, "similar Middle OpRep LARGERTHAN; "+rc+" lvl > "
-	            						+repaircost+" == "+(rc > repaircost));
-	            				if(ir.getRepairCost() < repaircost)
-		            			{
-		            				continue;
-		            			}
+	            				continue;
 	            			}
-	            		}
-	            		debug(0,"i.toString == f.toString : "+(i.toString().equals(f.toString())));
-	        			debug(0,"im.toString : "+i.getItemMeta().toString());
-	        			debug(0,"fm.toString : "+f.getItemMeta().toString());
-	        			debug(0,"1. im.toString == fm.toString : "+(i.getItemMeta().toString().equals(f.getItemMeta().toString())));
-	            		ir.setRepairCost(0);
-	            		i.setItemMeta((ItemMeta) ir);
-	            		debug(0,"im.toString : "+i.getItemMeta().toString());
-	        			debug(0,"2. im.toString == fm.toString : "+(i.getItemMeta().toString().equals(f.getItemMeta().toString())));
-	            	}
-        			if(i.getItemMeta().toString().equals(f.getItemMeta().toString()))
-		        	{
-		        		debug(0, "isSimliar : middle");
-		        		return true;
-		        	}
-	        	} else
+            			} else
+            			{
+            				debug(-1, "similar Middle OpRep LARGERTHAN; "+rc+" lvl > "
+            						+repaircost+" == "+(rc > repaircost));
+            				if(ir.getRepairCost() < repaircost)
+	            			{
+	            				continue;
+	            			}
+            			}
+            		}
+            		debug(-1,"i.toString == f.toString : "+(i.toString().equals(f.toString())));
+        			debug(-1,"im.toString : "+i.getItemMeta().toString());
+        			debug(-1,"fm.toString : "+f.getItemMeta().toString());
+        			debug(-1,"1. im.toString == fm.toString : "+(i.getItemMeta().toString().equals(f.getItemMeta().toString())));
+            		ir.setRepairCost(0);
+            		i.setItemMeta((ItemMeta) ir);
+            		debug(-1,"im.toString : "+i.getItemMeta().toString());
+        			debug(-1,"2. im.toString == fm.toString : "+(i.getItemMeta().toString().equals(f.getItemMeta().toString())));
+            	}
+    			if(i.getItemMeta() instanceof EnchantmentStorageMeta )
 	        	{
-	        		i.setAmount(1);
-		        	f.setAmount(1);
-		        	i.setDurability((short) 0);
-		        	f.setDurability((short) 0);
-		        	if(i.toString().equals(f.toString()))
-		        	{
-		        		debug(0, "isSimliar : short");
-		        		return true;
-		        	}
+	        		debug(-1, "similar middle is EnchantmentStorageMeta");
+	        		EnchantmentStorageMeta iesm = (EnchantmentStorageMeta) i.getItemMeta();
+	        		if(optionEnchantments)
+	        		{
+	        			debug(-1, "similar middle is Option Enchantment");
+	        			if(!iesm.hasStoredEnchants())
+	        			{
+	        				debug(-1, "similar middle has no StoreEnchants");
+	        				continue;
+	        			} else
+	        			{
+	        				for(Enchantment e : ChestHandler.enchantments)
+	        				{
+	        					if(iesm.hasStoredEnchant(e))
+	        					{
+	        						debug(-1, "similar middle OpEnch: StoredEnch."+e.getKey().getKey());
+	        						iesm.removeStoredEnchant(e);
+	        					}
+	        				}
+	        				i.setItemMeta(iesm);
+	        			}
+	        		}
 	        	}
-	        }
+	        	if(i.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK)
+	        	{
+	        		debug(-1, "similar middle is normal Enchantment");
+	        		if(optionEnchantments)
+	        		{
+	        			ItemMeta im = i.getItemMeta();
+	        			if(!im.hasEnchants())
+	        			{
+	        				continue;
+	        			} else
+	        			{
+	        				for(Enchantment e : ChestHandler.enchantments)
+	        				{
+	        					if(im.hasEnchant(e))
+	        					{
+	        						debug(-1, "similar middle OpEnch: Ench."+e.getKey().getKey());
+	        						im.removeEnchant(e);
+	        					}
+	        				}
+	        				i.setItemMeta(im);
+	        			}
+	        		}
+	        	}
+    			if(i.getItemMeta().toString().equals(f.getItemMeta().toString()))
+	        	{
+	        		debug(0, "isSimliar : middle");
+	        		return true;
+	        	}
+        	} else
+        	{
+        		if(optionEnchantments)
+        		{
+        			continue;
+        		}
+        		i.setAmount(1);
+	        	f.setAmount(1);
+	        	i.setDurability((short) 0);
+	        	f.setDurability((short) 0);
+	        	if(i.toString().equals(f.toString()))
+	        	{
+	        		debug(0, "isSimliar : short");
+	        		return true;
+	        	}
+        	}
 	        debug(0, "!isSimilar");
 		}
 		return false;
