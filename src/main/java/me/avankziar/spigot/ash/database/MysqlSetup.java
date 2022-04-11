@@ -83,20 +83,18 @@ public class MysqlSetup
             		plugin.getYamlHandler().getConfig().getBoolean("Mysql.SSLEnabled", false) + "");
             properties.setProperty("requireSSL", 
             		plugin.getYamlHandler().getConfig().getBoolean("Mysql.SSLEnabled", false) + "");
+            properties.setProperty("allowPublicKeyRetrieval", true+"");
             //Connect to database
             conn = DriverManager.getConnection("jdbc:mysql://" + plugin.getYamlHandler().getConfig().getString("Mysql.Host") 
             		+ ":" + plugin.getYamlHandler().getConfig().getInt("Mysql.Port", 3306) + "/" 
             		+ plugin.getYamlHandler().getConfig().getString("Mysql.DatabaseName"), properties);
            
-          } catch (ClassNotFoundException e) 
+        } catch (Throwable e) 
 		{
-        	  AdvancedStoreHouse.log.severe("Could not locate drivers for mysql! Error: " + e.getMessage());
+        	  AdvancedStoreHouse.log.severe("Could not locate drivers for mysql! Error: ");
+        	  e.printStackTrace();
             return false;
-          } catch (SQLException e) 
-		{
-        	  AdvancedStoreHouse.log.severe("Could not connect to mysql database! Error: " + e.getMessage());
-            return false;
-          }
+        }
 		AdvancedStoreHouse.log.info("Database connection successful!");
 		return true;
 	}
@@ -386,10 +384,12 @@ public class MysqlSetup
 				AdvancedStoreHouse.log.warning("Connection is closed. Reconnecting...");
 				reConnect();
 			}
-		} catch (Exception e) 
+		} catch (Throwable e) 
 		{
-			AdvancedStoreHouse.log.severe("Could not reconnect to Database! Error: " + e.getMessage());
-		}
+      	  AdvancedStoreHouse.log.severe("Could not locate drivers for mysql! Error: ");
+      	  e.printStackTrace();
+          return;
+      }
 	}
 	
 	public boolean reConnect() 
@@ -427,6 +427,7 @@ public class MysqlSetup
             		plugin.getYamlHandler().getConfig().getBoolean("Mysql.SSLEnabled", false) + "");
             properties.setProperty("requireSSL", 
             		plugin.getYamlHandler().getConfig().getBoolean("Mysql.SSLEnabled", false) + "");
+            properties.setProperty("allowPublicKeyRetrieval", true+"");
             //Connect to database
             conn = DriverManager.getConnection("jdbc:mysql://" + plugin.getYamlHandler().getConfig().getString("Mysql.Host") 
             		+ ":" + plugin.getYamlHandler().getConfig().getInt("Mysql.Port", 3306) + "/" 
@@ -435,11 +436,12 @@ public class MysqlSetup
 		    AdvancedStoreHouse.log.info("Connection to MySQL server established!");
 		    AdvancedStoreHouse.log.info("Connection took " + ((end - start)) + "ms!");
             return true;
-		} catch (Exception e) 
+		} catch (Throwable e) 
 		{
-			AdvancedStoreHouse.log.severe("Error re-connecting to the database! Error: " + e.getMessage());
-			return false;
-		}
+      	  AdvancedStoreHouse.log.severe("Could not locate drivers for mysql! Error: ");
+      	  e.printStackTrace();
+          return false;
+      }
 	}
 	
 	public void closeConnection() 
