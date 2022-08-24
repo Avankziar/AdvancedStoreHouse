@@ -45,6 +45,7 @@ Build 6-2-0
 - MC 1.19.2 support
 - IFH Administration implementiert
 - MysqlSetup aktualisiert
+- Tabellennamen sind nun statisch.
 
 Build 6-1-0 ==================================================================================================================
 - MC 1.19 support
