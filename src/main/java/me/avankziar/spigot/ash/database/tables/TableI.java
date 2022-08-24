@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.general.objects.PluginUser.SearchType;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
+import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 
 public interface TableI
 {
@@ -21,7 +22,7 @@ public interface TableI
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameI 
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.PLUGINUSER.getValue() 
 						+ "` WHERE "+whereColumn+" LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -72,7 +73,7 @@ public interface TableI
 		if (conn != null) {
 			try 
 			{
-				String sql = "INSERT INTO `" + plugin.getMysqlHandler().tableNameI 
+				String sql = "INSERT INTO `" + MysqlHandler.Type.PLUGINUSER.getValue() 
 						+ "`(`player_uuid`, `player_name`, `searchtype`) " 
 						+ "VALUES(?, ?, ?)";
 				preparedStatement = conn.prepareStatement(sql);
@@ -120,7 +121,7 @@ public interface TableI
 		{
 			try 
 			{
-				String data = "UPDATE `" + plugin.getMysqlHandler().tableNameI
+				String data = "UPDATE `" + MysqlHandler.Type.PLUGINUSER.getValue()
 						+ "` SET `player_uuid` = ?, `player_name` = ?, `searchtype` = ?" 
 						+ " WHERE "+whereColumn;
 				preparedStatement = conn.prepareStatement(data);
@@ -163,7 +164,7 @@ public interface TableI
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameI 
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.PLUGINUSER.getValue() 
 						+ "` WHERE "+whereColumn+" LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -211,7 +212,7 @@ public interface TableI
 		Connection conn = plugin.getMysqlSetup().getConnection();
 		try 
 		{
-			String sql = "DELETE FROM `" + plugin.getMysqlHandler().tableNameI + "` WHERE "+whereColumn;
+			String sql = "DELETE FROM `" + MysqlHandler.Type.PLUGINUSER.getValue() + "` WHERE "+whereColumn;
 			preparedStatement = conn.prepareStatement(sql);
 			int i = 1;
 	        for(Object o : whereObject)
@@ -247,7 +248,7 @@ public interface TableI
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameI + "` ORDER BY `id` DESC LIMIT 1";
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.PLUGINUSER.getValue() + "` ORDER BY `id` DESC LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        
 		        result = preparedStatement.executeQuery();
@@ -289,7 +290,7 @@ public interface TableI
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameI
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.PLUGINUSER.getValue()
 						+ "` WHERE "+whereColumn
 						+ " ORDER BY `id` DESC";
 		        preparedStatement = conn.prepareStatement(sql);
@@ -340,7 +341,7 @@ public interface TableI
 		{
 			try 
 			{
-				String sql = " SELECT count(*) FROM `"+plugin.getMysqlHandler().tableNameI
+				String sql = " SELECT count(*) FROM `"+MysqlHandler.Type.PLUGINUSER.getValue()
 						+"` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -389,7 +390,7 @@ public interface TableI
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameI
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.PLUGINUSER.getValue()
 						+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC LIMIT "+start+", "+end;
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -442,7 +443,7 @@ public interface TableI
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameI 
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.PLUGINUSER.getValue() 
 						+ "` ORDER BY "+orderByColumn+" DESC LIMIT "+start+", "+end;
 		        preparedStatement = conn.prepareStatement(sql);
 		        
@@ -491,7 +492,7 @@ public interface TableI
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameI
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.PLUGINUSER.getValue()
 						+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;

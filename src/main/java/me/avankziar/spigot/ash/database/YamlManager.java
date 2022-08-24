@@ -159,24 +159,6 @@ public class YamlManager
 		configKeys.put("Mysql.Password"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"not_0123456789"}));
-		configKeys.put("Mysql.TableNameI"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				"ashPluginUser"}));
-		configKeys.put("Mysql.TableNameII"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				"ashDistributionChest"}));
-		configKeys.put("Mysql.TableNameIII"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				"ashStorageChest"}));
-		configKeys.put("Mysql.TableNameIV"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				"ashItemFilterSet"}));
-		configKeys.put("Mysql.TableNameV"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				"ashTransferLog"}));
-		configKeys.put("Mysql.TableNameVI"
-				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
-				"ashCrossServerTransfer"}));
 		//Scheduler to automatic distribute. If false nothing running.
 		configKeys.put("IsAutomaticDistribution"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {

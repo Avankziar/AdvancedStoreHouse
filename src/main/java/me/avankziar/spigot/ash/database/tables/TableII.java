@@ -10,6 +10,7 @@ import java.util.Arrays;
 import main.java.me.avankziar.general.objects.DistributionChest;
 import main.java.me.avankziar.general.objects.DistributionChest.PriorityType;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
+import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 
 public interface TableII
 {
@@ -22,7 +23,7 @@ public interface TableII
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameII
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue()
 						+ "` WHERE "+whereColumn+" LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -73,7 +74,7 @@ public interface TableII
 		if (conn != null) {
 			try 
 			{
-				String sql = "INSERT INTO `" + plugin.getMysqlHandler().tableNameII 
+				String sql = "INSERT INTO `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue() 
 						+ "`(`owner_uuid`, `memberlist`, `creationdate`, `chestname`, `normalpriority`,"
 						+ " `prioritytype`, `prioritynumber`, `automaticdistribution`, `random`, `server`, `world`, `blockx`, `blocky`, `blockz`) " 
 						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -133,7 +134,7 @@ public interface TableII
 		{
 			try 
 			{
-				String data = "UPDATE `" + plugin.getMysqlHandler().tableNameII
+				String data = "UPDATE `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue()
 						+ "` SET `owner_uuid` = ?, `memberlist` = ?, `creationdate` = ?, `chestname` = ?, `normalpriority` = ?," 
 						+ " `prioritytype` = ?, `prioritynumber` = ?, `automaticdistribution` = ?, `random` = ?,"
 						+ " `server` = ?, `world` = ?, `blockx` = ?, `blocky` = ?, `blockz` = ?" 
@@ -189,7 +190,7 @@ public interface TableII
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameII 
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue() 
 						+ "` WHERE "+whereColumn+" LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -249,7 +250,7 @@ public interface TableII
 		Connection conn = plugin.getMysqlSetup().getConnection();
 		try 
 		{
-			String sql = "DELETE FROM `" + plugin.getMysqlHandler().tableNameII + "` WHERE "+whereColumn;
+			String sql = "DELETE FROM `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue() + "` WHERE "+whereColumn;
 			preparedStatement = conn.prepareStatement(sql);
 			int i = 1;
 	        for(Object o : whereObject)
@@ -285,7 +286,7 @@ public interface TableII
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameII 
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue() 
 						+ "` WHERE "+whereColumn+" ORDER BY `id` DESC LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -333,7 +334,7 @@ public interface TableII
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameII
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue()
 						+ "` WHERE "+whereColumn
 						+ " ORDER BY `id` DESC";
 		        preparedStatement = conn.prepareStatement(sql);
@@ -384,7 +385,7 @@ public interface TableII
 		{
 			try 
 			{
-				String sql = " SELECT count(*) FROM `"+plugin.getMysqlHandler().tableNameII
+				String sql = " SELECT count(*) FROM `"+MysqlHandler.Type.DISTRIBUTIONCHEST.getValue()
 						+"` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -436,11 +437,11 @@ public interface TableII
 				String sql = "";
 				if(desc)
 				{
-					sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameII
+					sql = "SELECT * FROM `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue()
 							+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC LIMIT "+start+", "+end;
 				} else
 				{
-					sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameII
+					sql = "SELECT * FROM `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue()
 							+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" ASC LIMIT "+start+", "+end;
 				}
 		        preparedStatement = conn.prepareStatement(sql);
@@ -506,7 +507,7 @@ public interface TableII
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameII 
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue() 
 						+ "` ORDER BY "+orderByColumn+" DESC LIMIT "+start+", "+end;
 		        preparedStatement = conn.prepareStatement(sql);
 		        
@@ -567,7 +568,7 @@ public interface TableII
 		{
 			try 
 			{		
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameII
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue()
 						+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn;
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;

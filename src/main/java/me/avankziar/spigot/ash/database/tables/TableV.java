@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import main.java.me.avankziar.general.handler.ConvertHandler;
 import main.java.me.avankziar.general.objects.TransferLog;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
+import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 
 public interface TableV
 {
@@ -22,7 +23,7 @@ public interface TableV
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameV 
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.TRANSFERLOG.getValue() 
 						+ "` WHERE "+whereColumn+" LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -73,7 +74,7 @@ public interface TableV
 		if (conn != null) {
 			try 
 			{
-				String sql = "INSERT INTO `" + plugin.getMysqlHandler().tableNameV 
+				String sql = "INSERT INTO `" + MysqlHandler.Type.TRANSFERLOG.getValue() 
 						+ "`(`datum`, `distributionchestid`, `storagechestid`, `distributedcontent`) " 
 						+ "VALUES(?, ?, ?, ?)";
 				preparedStatement = conn.prepareStatement(sql);
@@ -122,7 +123,7 @@ public interface TableV
 		{
 			try 
 			{
-				String data = "UPDATE `" + plugin.getMysqlHandler().tableNameV
+				String data = "UPDATE `" + MysqlHandler.Type.TRANSFERLOG.getValue()
 						+ "` SET `datum` = ?, `distributionchestid` = ?, `storagechestid` = ?, `distributedcontent` = ?" 
 						+ " WHERE "+whereColumn;
 				preparedStatement = conn.prepareStatement(data);
@@ -166,7 +167,7 @@ public interface TableV
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameV 
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.TRANSFERLOG.getValue() 
 						+ "` WHERE "+whereColumn+" LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -214,7 +215,7 @@ public interface TableV
 		Connection conn = plugin.getMysqlSetup().getConnection();
 		try 
 		{
-			String sql = "DELETE FROM `" + plugin.getMysqlHandler().tableNameV + "` WHERE "+whereColumn;
+			String sql = "DELETE FROM `" + MysqlHandler.Type.TRANSFERLOG.getValue() + "` WHERE "+whereColumn;
 			preparedStatement = conn.prepareStatement(sql);
 			int i = 1;
 	        for(Object o : whereObject)
@@ -250,7 +251,7 @@ public interface TableV
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameV + "` ORDER BY `id` DESC LIMIT 1";
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.TRANSFERLOG.getValue() + "` ORDER BY `id` DESC LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        
 		        result = preparedStatement.executeQuery();
@@ -292,7 +293,7 @@ public interface TableV
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameV
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.TRANSFERLOG.getValue()
 						+ "` WHERE "+whereColumn
 						+ " ORDER BY `id` DESC";
 		        preparedStatement = conn.prepareStatement(sql);
@@ -344,7 +345,7 @@ public interface TableV
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameV
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.TRANSFERLOG.getValue()
 						+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC LIMIT "+start+", "+end;
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -397,7 +398,7 @@ public interface TableV
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameV 
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.TRANSFERLOG.getValue() 
 						+ "` ORDER BY "+orderByColumn+" DESC LIMIT "+start+", "+end;
 		        preparedStatement = conn.prepareStatement(sql);
 		        
@@ -446,7 +447,7 @@ public interface TableV
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameV
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.TRANSFERLOG.getValue()
 						+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;

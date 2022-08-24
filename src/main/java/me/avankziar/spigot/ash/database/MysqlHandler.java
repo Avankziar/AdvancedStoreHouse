@@ -27,57 +27,32 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 {
 	public enum Type
 	{
-		PLUGINUSER, DISTRIBUTIONCHEST, STORAGECHEST, ITEMFILTERSET, TRANSFERLOG, //CROSSSERVERTRANSFER
+		PLUGINUSER("ashPluginUser"), 
+		DISTRIBUTIONCHEST("ashDistributionChest"),
+		STORAGECHEST("ashStorageChest"), 
+		ITEMFILTERSET("ashItemFilterSet"), 
+		TRANSFERLOG("ashTransferLog"),
+		//CROSSSERVERTRANSFER("ashCrossServerTransfer")
 		;
+		
+		private Type(String value)
+		{
+			this.value = value;
+		}
+		
+		private final String value;
+
+		public String getValue()
+		{
+			return value;
+		}
 	}
 	
 	private AdvancedStoreHouse plugin;
-	public String tableNameI; //PluginUser
-	public String tableNameII; //Verteilerkiste
-	public String tableNameIII; //Lagerkiste
-	public String tableNameIV; //ItemFilterSet
-	public String tableNameV; //TransferLog
-	public String tableNameVI; //CrossServerTransfer
 	
 	public MysqlHandler(AdvancedStoreHouse plugin) 
 	{
 		this.plugin = plugin;
-		loadMysqlHandler();
-	}
-	
-	public boolean loadMysqlHandler()
-	{
-		tableNameI = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameI");
-		if(tableNameI == null)
-		{
-			return false;
-		}
-		tableNameII = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameII");
-		if(tableNameII == null)
-		{
-			return false;
-		}
-		tableNameIII = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameIII");
-		if(tableNameIII == null)
-		{
-			return false;
-		}
-		tableNameIV = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameIV");
-		if(tableNameIV == null)
-		{
-			return false;
-		}
-		tableNameV = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameV");
-		if(tableNameV == null)
-		{
-			return false;
-		}
-		tableNameVI = plugin.getYamlHandler().getConfig().getString("Mysql.TableNameVI");
-		if(tableNameVI == null)
-		{
-			return false;
-		}
-		return true;
 	}
 	
 	public boolean exist(Type type, String whereColumn, Object... whereObject)
@@ -334,7 +309,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		{
 			try 
 			{			
-				String sql = "SELECT `id`,`world`,`blockx`,`blocky`,`blockz` FROM `" + tableNameII + "` WHERE `server` = ? ORDER BY `id` ASC LIMIT "+start+", "+amount;
+				String sql = "SELECT `id`,`world`,`blockx`,`blocky`,`blockz` FROM `" + Type.DISTRIBUTIONCHEST.getValue()
+						+ "` WHERE `server` = ? ORDER BY `id` ASC LIMIT "+start+", "+amount;
 		        
 				preparedUpdateStatement = conn.prepareStatement(sql);
 		        preparedUpdateStatement.setString(1, server);
@@ -424,7 +400,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 			try 
 			{			
 				String sql = "SELECT `id`,`world`,`blockx`,`blocky`,`blockz` FROM `" 
-						+ tableNameII + "` WHERE `server` = ? ORDER BY `id` ASC LIMIT "+start+", "+amount;
+						+ Type.DISTRIBUTIONCHEST.getValue()
+						+ "` WHERE `server` = ? ORDER BY `id` ASC LIMIT "+start+", "+amount;
 		        
 				preparedUpdateStatement = conn.prepareStatement(sql);
 		        preparedUpdateStatement.setString(1, server);
@@ -526,7 +503,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 			try 
 			{			
 				String sql = "SELECT `id`,`content`,`searchcontent`,`world`,`blockx`,`blocky`,`blockz` FROM `" 
-						+ tableNameIII + "` WHERE `server` = ? ORDER BY `id` ASC LIMIT "+start+", "+amount;
+						+ Type.STORAGECHEST.getValue()
+						+ "` WHERE `server` = ? ORDER BY `id` ASC LIMIT "+start+", "+amount;
 		        
 				preparedUpdateStatement = conn.prepareStatement(sql);
 		        preparedUpdateStatement.setString(1, server);
@@ -603,7 +581,7 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 		{
 			try 
 			{
-				String data = "UPDATE `" + plugin.getMysqlHandler().tableNameIII
+				String data = "UPDATE `" + Type.STORAGECHEST.getValue()
 						+ "` SET `searchcontent` = ?" 
 						+ " WHERE `id` = ?";
 				preparedStatement = conn.prepareStatement(data);
@@ -640,7 +618,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 			try 
 			{			
 				String sql = "SELECT `id` FROM `" 
-						+ tableNameII + "` ORDER BY `id` ASC LIMIT "+start+", "+amount;
+						+ Type.DISTRIBUTIONCHEST.getValue()
+						+ "` ORDER BY `id` ASC LIMIT "+start+", "+amount;
 		        
 				preparedUpdateStatement = conn.prepareStatement(sql);
 		        result = preparedUpdateStatement.executeQuery();
@@ -687,7 +666,8 @@ public class MysqlHandler implements TableI, TableII, TableIII, TableIV, TableV/
 			try 
 			{			
 				String sql = "SELECT `id`,`distributionchestid` FROM `" 
-						+ tableNameIII + "` ORDER BY `id` ASC LIMIT "+start+", "+amount;
+						+ Type.STORAGECHEST.getValue()
+						+ "` ORDER BY `id` ASC LIMIT "+start+", "+amount;
 		        
 				preparedUpdateStatement = conn.prepareStatement(sql);
 		        result = preparedUpdateStatement.executeQuery();

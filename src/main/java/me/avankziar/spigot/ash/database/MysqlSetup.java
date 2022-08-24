@@ -11,8 +11,6 @@ import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 
 public class MysqlSetup 
 {
-	private AdvancedStoreHouse plugin;
-	private Connection conn = null;
 	private String host;
 	private int port;
 	private String database;
@@ -24,7 +22,6 @@ public class MysqlSetup
 	
 	public MysqlSetup(AdvancedStoreHouse plugin)
 	{
-		this.plugin = plugin;
 		boolean adm = plugin.getYamlHandler().getConfig().getBoolean("useIFHAdministration", false);
 		if(plugin.getAdministration() == null)
 		{
@@ -49,6 +46,73 @@ public class MysqlSetup
 		isSSLEnabled = adm ? plugin.getAdministration().useSSL(path)
 				: plugin.getYamlHandler().getConfig().getBoolean("Mysql.SSLEnabled", false);
 		loadMysqlSetup();
+	}
+	
+	public boolean connectToDatabase() 
+	{
+		AdvancedStoreHouse.log.info("Connecting to the database...");
+		Connection conn = getConnection();
+		if(conn != null)
+		{
+			AdvancedStoreHouse.log.info("Database connection successful!");
+		} else
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	public Connection getConnection()
+	{
+		return reConnect();
+	}
+	
+	private Connection reConnect() 
+	{
+		boolean bool = false;
+	    try
+	    {
+	    	// Load new Drivers for papermc
+	    	Class.forName("com.mysql.cj.jdbc.Driver");
+	    	bool = true;
+	    } catch (Exception e)
+	    {
+	    	bool = false;
+	    } 
+	    try
+	    {
+	    	if (bool == false)
+	    	{
+	    		// Load old Drivers for spigot
+	    		Class.forName("com.mysql.jdbc.Driver");
+	    	}
+            Properties properties = new Properties();
+            properties.setProperty("user", user);
+            properties.setProperty("password", password);
+            properties.setProperty("autoReconnect", String.valueOf(isAutoConnect));
+            properties.setProperty("verifyServerCertificate", String.valueOf(isVerifyServerCertificate));
+            properties.setProperty("useSSL", String.valueOf(isSSLEnabled));
+            properties.setProperty("requireSSL", String.valueOf(isSSLEnabled));
+            //Connect to database
+            Connection conn = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, properties);
+            return conn;
+		} catch (Exception e) 
+		{
+			AdvancedStoreHouse.log.severe("Error (re-)connecting to the database! Error: " + e.getMessage());
+			return null;
+		}
+	}
+	
+	private boolean baseSetup(String data) 
+	{
+		try (Connection conn = getConnection(); PreparedStatement query = conn.prepareStatement(data))
+		{
+			query.execute();
+		} catch (SQLException e) 
+		{
+			AdvancedStoreHouse.log.log(Level.WARNING, "Could not build data source. Or connection is null", e);
+		}
+		return true;
 	}
 	
 	public boolean loadMysqlSetup()
@@ -84,46 +148,9 @@ public class MysqlSetup
 		return true;
 	}
 	
-	public boolean connectToDatabase() 
-	{
-		AdvancedStoreHouse.log.info("Connecting to the database...");
-		boolean bool = false;
-	    try
-	    {
-	    	// Load new Drivers for papermc
-	    	Class.forName("com.mysql.cj.jdbc.Driver");
-	    	bool = true;
-	    } catch (Exception e)
-	    {
-	    	bool = false;
-	    } 
-	    try
-	    {
-	    	if (bool == false)
-	    	{
-	    		// Load old Drivers for spigot
-	    		Class.forName("com.mysql.jdbc.Driver");
-	    	}
-	        Properties properties = new Properties();
-            properties.setProperty("user", user);
-            properties.setProperty("password", password);
-            properties.setProperty("autoReconnect", String.valueOf(isAutoConnect));
-            properties.setProperty("verifyServerCertificate", String.valueOf(isVerifyServerCertificate));
-            properties.setProperty("useSSL", String.valueOf(isSSLEnabled));
-            properties.setProperty("requireSSL", String.valueOf(isSSLEnabled));
-            conn = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, properties);
-            AdvancedStoreHouse.log.info("Database connection successful!");
-            return true;
-        } catch (Exception e) 
-	    {
-        	AdvancedStoreHouse.log.severe("Could not locate drivers for mysql! Error: " + e.getMessage());
-            return false;
-        }
-	}
-	
 	public boolean setupDatabaseI() 
 	{
-		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameI
+		String data = "CREATE TABLE IF NOT EXISTS `" + MysqlHandler.Type.PLUGINUSER.getValue()
         		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
         		+ " player_uuid char(36) NOT NULL UNIQUE,"
         		+ " player_name varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,"
@@ -134,7 +161,7 @@ public class MysqlSetup
 	
 	public boolean setupDatabaseII() 
 	{
-		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameII
+		String data = "CREATE TABLE IF NOT EXISTS `" + MysqlHandler.Type.DISTRIBUTIONCHEST.getValue()
         		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
         		+ " owner_uuid char(36) NOT NULL,"
         		+ " memberlist mediumtext,"
@@ -156,7 +183,7 @@ public class MysqlSetup
 	
 	public boolean setupDatabaseIII() 
 	{
-		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameIII
+		String data = "CREATE TABLE IF NOT EXISTS `" + MysqlHandler.Type.STORAGECHEST.getValue()
         		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
         		+ " distributionchestid int,"
         		+ " owner_uuid text,"
@@ -188,7 +215,7 @@ public class MysqlSetup
 	
 	public boolean setupDatabaseIV() 
 	{
-		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameIV
+		String data = "CREATE TABLE IF NOT EXISTS `" + MysqlHandler.Type.ITEMFILTERSET.getValue()
         		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
         		+ " itemfiltersetname text,"
         		+ " owner_uuid text,"
@@ -199,7 +226,7 @@ public class MysqlSetup
 	
 	public boolean setupDatabaseV() 
 	{
-		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameV
+		String data = "CREATE TABLE IF NOT EXISTS `" + MysqlHandler.Type.TRANSFERLOG.getValue()
         		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
         		+ " datum bigint,"
         		+ " distributionchestid int,"
@@ -209,9 +236,9 @@ public class MysqlSetup
 		return true;
 	}
 	
-	public boolean setupDatabaseVI() //TODO
+	/*public boolean setupDatabaseVI() //TODO
 	{
-		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameVI
+		String data = "CREATE TABLE IF NOT EXISTS `" + MysqlHandler.Type.CROSSSERVER
         		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
         		+ " channel_name TEXT NOT NULL,"
         		+ " creator TEXT NOT NULL,"
@@ -224,83 +251,5 @@ public class MysqlSetup
         		+ " chatcolor TEXT);";
 		baseSetup(data);
 		return true;
-	}
-	
-	private boolean baseSetup(String data) 
-	{
-		try (Connection conn = getConnection(); PreparedStatement query = conn.prepareStatement(data))
-		{
-			query.execute();
-		} catch (SQLException e) 
-		{
-			AdvancedStoreHouse.log.log(Level.WARNING, "Could not build data source. Or connection is null", e);
-		}
-		return true;
-	}
-	
-	public Connection getConnection() 
-	{
-		checkConnection();
-		return conn;
-	}
-	
-	public void checkConnection() 
-	{
-		try {
-			if (conn == null) 
-			{
-				//MIM.log.warning("Connection failed. Reconnecting...");
-				reConnect();
-			}
-			if (!conn.isValid(3)) 
-			{
-				//MIM.log.warning("Connection is idle or terminated. Reconnecting...");
-				reConnect();
-			}
-			if (conn.isClosed() == true) 
-			{
-				//MIM.log.warning("Connection is closed. Reconnecting...");
-				reConnect();
-			}
-		} catch (Exception e) 
-		{
-			AdvancedStoreHouse.log.severe("Could not reconnect to Database! Error: " + e.getMessage());
-		}
-	}
-	
-	public boolean reConnect() 
-	{
-		boolean bool = false;
-	    try
-	    {
-	    	// Load new Drivers for papermc
-	    	Class.forName("com.mysql.cj.jdbc.Driver");
-	    	bool = true;
-	    } catch (Exception e)
-	    {
-	    	bool = false;
-	    } 
-	    try
-	    {
-	    	if (bool == false)
-	    	{
-	    		// Load old Drivers for spigot
-	    		Class.forName("com.mysql.jdbc.Driver");
-	    	}
-            Properties properties = new Properties();
-            properties.setProperty("user", user);
-            properties.setProperty("password", password);
-            properties.setProperty("autoReconnect", String.valueOf(isAutoConnect));
-            properties.setProperty("verifyServerCertificate", String.valueOf(isVerifyServerCertificate));
-            properties.setProperty("useSSL", String.valueOf(isSSLEnabled));
-            properties.setProperty("requireSSL", String.valueOf(isSSLEnabled));
-            //Connect to database
-            conn = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, properties);
-            return true;
-		} catch (Exception e) 
-		{
-			AdvancedStoreHouse.log.severe("Error re-connecting to the database! Error: " + e.getMessage());
-			return false;
-		}
-	}
+	}*/
 }

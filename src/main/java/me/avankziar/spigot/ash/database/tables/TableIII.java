@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import main.java.me.avankziar.general.handler.ConvertHandler;
 import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
+import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 
 public interface TableIII
 {
@@ -22,7 +23,7 @@ public interface TableIII
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameIII
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.STORAGECHEST.getValue()
 						+ "` WHERE "+whereColumn+" LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -73,7 +74,7 @@ public interface TableIII
 		if (conn != null) {
 			try 
 			{
-				String sql = "INSERT INTO `" + plugin.getMysqlHandler().tableNameIII 
+				String sql = "INSERT INTO `" + MysqlHandler.Type.STORAGECHEST.getValue() 
 						+ "`(`distributionchestid`, `owner_uuid`, `creationdate`, `priority`,"
 						+ " `content`, `searchcontent`,"
 						+ " `endstorage`,"
@@ -150,7 +151,7 @@ public interface TableIII
 		{
 			try 
 			{
-				String data = "UPDATE `" + plugin.getMysqlHandler().tableNameIII
+				String data = "UPDATE `" + MysqlHandler.Type.STORAGECHEST.getValue()
 						+ "` SET `distributionchestid` = ?, `owner_uuid` = ?, `creationdate` = ?, `priority` = ?, `content` = ?,"
 						+ " `searchcontent` = ?, " 
 						+ " `endstorage` = ?, `server` = ?, `world` = ?, `blockx` = ?, `blocky` = ?, `blockz` = ?,"
@@ -216,7 +217,7 @@ public interface TableIII
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameIII 
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.STORAGECHEST.getValue() 
 						+ "` WHERE "+whereColumn+" LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -283,7 +284,7 @@ public interface TableIII
 		Connection conn = plugin.getMysqlSetup().getConnection();
 		try 
 		{
-			String sql = "DELETE FROM `" + plugin.getMysqlHandler().tableNameIII + "` WHERE "+whereColumn;
+			String sql = "DELETE FROM `" + MysqlHandler.Type.STORAGECHEST.getValue() + "` WHERE "+whereColumn;
 			preparedStatement = conn.prepareStatement(sql);
 			int i = 1;
 	        for(Object o : whereObject)
@@ -319,7 +320,7 @@ public interface TableIII
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameIII 
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.STORAGECHEST.getValue() 
 						+ "` WHERE "+whereColumn+" ORDER BY `id` DESC LIMIT 1";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -367,7 +368,7 @@ public interface TableIII
 		{
 			try 
 			{			
-				String sql = "SELECT `id` FROM `" + plugin.getMysqlHandler().tableNameIII
+				String sql = "SELECT `id` FROM `" + MysqlHandler.Type.STORAGECHEST.getValue()
 						+ "` WHERE "+whereColumn
 						+ " ORDER BY `id` DESC";
 		        preparedStatement = conn.prepareStatement(sql);
@@ -418,7 +419,7 @@ public interface TableIII
 		{
 			try 
 			{
-				String sql = " SELECT count(*) FROM `"+plugin.getMysqlHandler().tableNameIII
+				String sql = " SELECT count(*) FROM `"+MysqlHandler.Type.STORAGECHEST.getValue()
 						+"` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC";
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
@@ -470,11 +471,11 @@ public interface TableIII
 				String sql = "";
 				if(desc)
 				{
-					sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameIII
+					sql = "SELECT * FROM `" + MysqlHandler.Type.STORAGECHEST.getValue()
 							+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" DESC LIMIT "+start+", "+end;
 				} else
 				{
-					sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameIII
+					sql = "SELECT * FROM `" + MysqlHandler.Type.STORAGECHEST.getValue()
 							+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn+" ASC LIMIT "+start+", "+end;
 				}
 		        preparedStatement = conn.prepareStatement(sql);
@@ -547,7 +548,7 @@ public interface TableIII
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameIII 
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.STORAGECHEST.getValue() 
 						+ "` ORDER BY "+orderByColumn+" DESC LIMIT "+start+", "+end;
 		        preparedStatement = conn.prepareStatement(sql);
 		        
@@ -615,7 +616,7 @@ public interface TableIII
 		{
 			try 
 			{			
-				String sql = "SELECT * FROM `" + plugin.getMysqlHandler().tableNameIII
+				String sql = "SELECT * FROM `" + MysqlHandler.Type.STORAGECHEST.getValue()
 						+ "` WHERE "+whereColumn+" ORDER BY "+orderByColumn;
 		        preparedStatement = conn.prepareStatement(sql);
 		        int i = 1;
