@@ -43,6 +43,8 @@ Entweder sind beide aus, oder nur genau eine von beiden kann aktiv sein.
 
 Build 6-2-0
 - MC 1.19.2 support
+- IFH Administration implementiert
+- MysqlSetup aktualisiert
 
 Build 6-1-0 ==================================================================================================================
 - MC 1.19 support

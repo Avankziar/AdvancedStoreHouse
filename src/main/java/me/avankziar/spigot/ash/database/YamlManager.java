@@ -117,6 +117,12 @@ public class YamlManager
 	
 	public void initConfig() //INFO:Config
 	{
+		configKeys.put("useIFHAdministration"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				true}));
+		configKeys.put("IFHAdministrationPath"
+				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
+				"ash"}));
 		configKeys.put("Language"
 				, new Language(new ISO639_2B[] {ISO639_2B.GER}, new Object[] {
 				"ENG"}));

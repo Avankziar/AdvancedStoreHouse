@@ -18,9 +18,11 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.ConvertHandler;
@@ -28,6 +30,7 @@ import main.java.me.avankziar.general.handler.KeyHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
+import main.java.me.avankziar.ifh.spigot.administration.Administration;
 import main.java.me.avankziar.spigot.ash.assistance.BackgroundTask;
 import main.java.me.avankziar.spigot.ash.assistance.StorageSystemAPI;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
@@ -107,6 +110,8 @@ public class AdvancedStoreHouse extends JavaPlugin
 	private static Utility utility;
 	private static StorageSystemAPI stsy;
 	
+	private static Administration administrationConsumer;
+	
 	public static ArrayList<String> editorplayers;
 	private ArrayList<String> players;
 	
@@ -140,6 +145,8 @@ public class AdvancedStoreHouse extends JavaPlugin
 		argumentMap = new LinkedHashMap<>();
 		helpList = new ArrayList<>();
 		
+		setupIFHAdministration();
+		
 		PluginUserHandler.setUserList(new ArrayList<>());
 		ChestHandler.initEnchantments();
 		yamlHandler = new YamlHandler(this);
@@ -169,16 +176,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 	public void onDisable()
 	{
 		Bukkit.getScheduler().cancelTasks(this);
-		HandlerList.unregisterAll(this);
-		if(yamlHandler.getConfig().getBoolean("Mysql.Status", false))
-		{
-			if (mysqlSetup.getConnection() != null) 
-			{
-				//backgroundtask.onShutDownDataSave();
-				mysqlSetup.closeConnection();
-			}
-		}
-		
+		HandlerList.unregisterAll(this);		
 		log.info(pluginName + " is disabled!");
 	}
 	
@@ -572,6 +570,48 @@ public class AdvancedStoreHouse extends JavaPlugin
             log.info(pluginName + " detected InterfaceHub. Hooking!");
             return;
         }
+	}
+	
+	private void setupIFHAdministration()
+	{ 
+		if(!plugin.getServer().getPluginManager().isPluginEnabled("InterfaceHub")) 
+	    {
+	    	return;
+	    }
+		new BukkitRunnable()
+        {
+        	int i = 0;
+			@Override
+			public void run()
+			{
+			    if(i == 20)
+			    {
+				cancel();
+				return;
+			    }
+			    try
+			    {
+			    	RegisteredServiceProvider<main.java.me.avankziar.ifh.spigot.administration.Administration> rsp = 
+	                         getServer().getServicesManager().getRegistration(Administration.class);
+				    if (rsp == null) 
+				    {
+				    	i++;
+				        return;
+				    }
+				    administrationConsumer = rsp.getProvider();
+				    log.info(pluginName + " detected InterfaceHub >>> Administration.class is consumed!");
+			    } catch(NoClassDefFoundError e) 
+			    {
+			    	cancel();
+			    }		    
+			    cancel();
+			}
+        }.runTaskTimer(plugin,  0L, 20*2);
+	}
+	
+	public Administration getAdministration()
+	{
+		return administrationConsumer;
 	}
 	
 	public boolean existHook(String externPluginName)

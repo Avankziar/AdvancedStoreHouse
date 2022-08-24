@@ -114,7 +114,9 @@ public class YamlHandler
 		//Niederschreiben aller Werte für die Datei
 		writeFile(config, cfg, plugin.getYamlManager().getConfigKey());
 		
-		languages = cfg.getString("Language", "ENG").toUpperCase();
+		languages = plugin.getAdministration() == null 
+				? cfg.getString("Language", "ENG").toUpperCase() 
+				: plugin.getAdministration().getLanguage();
 		
 		commands = new File(plugin.getDataFolder(), "commands.yml");
 		if(!commands.exists()) 
@@ -278,6 +280,7 @@ public class YamlHandler
 		return yaml;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private boolean writeFile(File file, YamlConfiguration yml, LinkedHashMap<String, Language> keyMap)
 	{
 		yml.options().header(" For more explanation see \n https://www.spigotmc.org/resources/AdvancedStoreHouse.80677/");

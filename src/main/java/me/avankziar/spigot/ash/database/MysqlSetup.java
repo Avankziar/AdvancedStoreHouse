@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 
@@ -12,10 +13,41 @@ public class MysqlSetup
 {
 	private AdvancedStoreHouse plugin;
 	private Connection conn = null;
+	private String host;
+	private int port;
+	private String database;
+	private String user;
+	private String password;
+	private boolean isAutoConnect;
+	private boolean isVerifyServerCertificate;
+	private boolean isSSLEnabled;
 	
 	public MysqlSetup(AdvancedStoreHouse plugin)
 	{
 		this.plugin = plugin;
+		boolean adm = plugin.getYamlHandler().getConfig().getBoolean("useIFHAdministration", false);
+		if(plugin.getAdministration() == null)
+		{
+			adm = false;
+		}
+		String path = plugin.getYamlHandler().getConfig().getString("IFHAdministrationPath");
+		
+		host = adm ? plugin.getAdministration().getHost(path)
+				: plugin.getYamlHandler().getConfig().getString("Mysql.Host");
+		port = adm ? plugin.getAdministration().getPort(path)
+				: plugin.getYamlHandler().getConfig().getInt("Mysql.Port", 3306);
+		database = adm ? plugin.getAdministration().getDatabase(path)
+				: plugin.getYamlHandler().getConfig().getString("Mysql.DatabaseName");
+		user = adm ? plugin.getAdministration().getUsername(path)
+				: plugin.getYamlHandler().getConfig().getString("Mysql.User");
+		password = adm ? plugin.getAdministration().getPassword(path)
+				: plugin.getYamlHandler().getConfig().getString("Mysql.Password");
+		isAutoConnect = adm ? plugin.getAdministration().isAutoReconnect(path)
+				: plugin.getYamlHandler().getConfig().getBoolean("Mysql.AutoReconnect", true);
+		isVerifyServerCertificate = adm ? plugin.getAdministration().isVerifyServerCertificate(path)
+				: plugin.getYamlHandler().getConfig().getBoolean("Mysql.VerifyServerCertificate", false);
+		isSSLEnabled = adm ? plugin.getAdministration().useSSL(path)
+				: plugin.getYamlHandler().getConfig().getBoolean("Mysql.SSLEnabled", false);
 		loadMysqlSetup();
 	}
 	
@@ -73,170 +105,82 @@ public class MysqlSetup
 	    		Class.forName("com.mysql.jdbc.Driver");
 	    	}
 	        Properties properties = new Properties();
-            properties.setProperty("user", plugin.getYamlHandler().getConfig().getString("Mysql.User"));
-            properties.setProperty("password", plugin.getYamlHandler().getConfig().getString("Mysql.Password"));
-            properties.setProperty("autoReconnect", 
-            		plugin.getYamlHandler().getConfig().getBoolean("Mysql.AutoReconnect", true) + "");
-            properties.setProperty("verifyServerCertificate", 
-            		plugin.getYamlHandler().getConfig().getBoolean("Mysql.VerifyServerCertificate", false) + "");
-            properties.setProperty("useSSL", 
-            		plugin.getYamlHandler().getConfig().getBoolean("Mysql.SSLEnabled", false) + "");
-            properties.setProperty("requireSSL", 
-            		plugin.getYamlHandler().getConfig().getBoolean("Mysql.SSLEnabled", false) + "");
-            properties.setProperty("allowPublicKeyRetrieval", true+"");
-            //Connect to database
-            conn = DriverManager.getConnection("jdbc:mysql://" + plugin.getYamlHandler().getConfig().getString("Mysql.Host") 
-            		+ ":" + plugin.getYamlHandler().getConfig().getInt("Mysql.Port", 3306) + "/" 
-            		+ plugin.getYamlHandler().getConfig().getString("Mysql.DatabaseName"), properties);
-           
-        } catch (Throwable e) 
-		{
-        	  AdvancedStoreHouse.log.severe("Could not locate drivers for mysql! Error: ");
-        	  e.printStackTrace();
+            properties.setProperty("user", user);
+            properties.setProperty("password", password);
+            properties.setProperty("autoReconnect", String.valueOf(isAutoConnect));
+            properties.setProperty("verifyServerCertificate", String.valueOf(isVerifyServerCertificate));
+            properties.setProperty("useSSL", String.valueOf(isSSLEnabled));
+            properties.setProperty("requireSSL", String.valueOf(isSSLEnabled));
+            conn = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, properties);
+            AdvancedStoreHouse.log.info("Database connection successful!");
+            return true;
+        } catch (Exception e) 
+	    {
+        	AdvancedStoreHouse.log.severe("Could not locate drivers for mysql! Error: " + e.getMessage());
             return false;
         }
-		AdvancedStoreHouse.log.info("Database connection successful!");
-		return true;
 	}
 	
 	public boolean setupDatabaseI() 
 	{
-		if (conn != null) 
-		{
-			PreparedStatement query = null;
-		      try 
-		      {	        
-		        String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameI
-		        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
-		        		+ " player_uuid char(36) NOT NULL UNIQUE,"
-		        		+ " player_name varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,"
-		        		+ " searchtype text);";
-		        query = conn.prepareStatement(data);
-		        query.execute();
-		      } catch (SQLException e) 
-		      {
-		        e.printStackTrace();
-		        AdvancedStoreHouse.log.severe("Error creating tables! Error: " + e.getMessage());
-		        return false;
-		      } finally 
-		      {
-		    	  try 
-		    	  {
-		    		  if (query != null) 
-		    		  {
-		    			  query.close();
-		    		  }
-		    	  } catch (Exception e) 
-		    	  {
-		    		  e.printStackTrace();
-		    		  return false;
-		    	  }
-		      }
-		}
+		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameI
+        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
+        		+ " player_uuid char(36) NOT NULL UNIQUE,"
+        		+ " player_name varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,"
+        		+ " searchtype text);";
+		baseSetup(data);
 		return true;
 	}
 	
 	public boolean setupDatabaseII() 
 	{
-		if (conn != null) 
-		{
-			PreparedStatement query = null;
-		      try 
-		      {	        
-		        String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameII
-		        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
-		        		+ " owner_uuid char(36) NOT NULL,"
-		        		+ " memberlist mediumtext,"
-		        		+ " creationdate bigint,"
-		        		+ " chestname text,"
-		        		+ " normalpriority boolean,"
-		        		+ " prioritytype text,"
-		        		+ " prioritynumber int,"
-		        		+ " automaticdistribution boolean,"
-		        		+ " random boolean,"
-		        		+ " server text,"
-		        		+ " world text,"
-		        		+ " blockx int,"
-		        		+ " blocky int,"
-		        		+ " blockz int);";
-		        query = conn.prepareStatement(data);
-		        query.execute();
-		      } catch (SQLException e) 
-		      {
-		        e.printStackTrace();
-		        AdvancedStoreHouse.log.severe("Error creating tables! Error: " + e.getMessage());
-		        return false;
-		      } finally 
-		      {
-		    	  try 
-		    	  {
-		    		  if (query != null) 
-		    		  {
-		    			  query.close();
-		    		  }
-		    	  } catch (Exception e) 
-		    	  {
-		    		  e.printStackTrace();
-		    		  return false;
-		    	  }
-		      }
-		}
+		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameII
+        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
+        		+ " owner_uuid char(36) NOT NULL,"
+        		+ " memberlist mediumtext,"
+        		+ " creationdate bigint,"
+        		+ " chestname text,"
+        		+ " normalpriority boolean,"
+        		+ " prioritytype text,"
+        		+ " prioritynumber int,"
+        		+ " automaticdistribution boolean,"
+        		+ " random boolean,"
+        		+ " server text,"
+        		+ " world text,"
+        		+ " blockx int,"
+        		+ " blocky int,"
+        		+ " blockz int);";
+		baseSetup(data);
 		return true;
 	}
 	
 	public boolean setupDatabaseIII() 
 	{
-		if (conn != null) 
-		{
-			PreparedStatement query = null;
-		      try 
-		      {	        
-		        String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameIII
-		        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
-		        		+ " distributionchestid int,"
-		        		+ " owner_uuid text,"
-		        		+ " creationdate bigint,"
-		        		+ " priority int,"
-		        		+ " content mediumtext,"
-		        		+ " searchcontent mediumtext,"
-		        		+ " endstorage boolean,"
-		        		+ " server text,"
-		        		+ " world text,"
-		        		+ " blockx int,"
-		        		+ " blocky int,"
-		        		+ " blockz int,"
-		        		+ " chestname text,"
-		        		+ " optionvoid boolean,"
-		        		+ " optiondurability boolean,"
-		        		+ " durabilitytype text,"
-		        		+ " durability int,"
-		        		+ " optionrepair boolean,"
-		        		+ " repairtype text,"
-		        		+ " repaircost int,"
-		        		+ " optionenchantments boolean,"
-		        		+ " optionmaterial boolean);";
-		        query = conn.prepareStatement(data);
-		        query.execute();
-		      } catch (SQLException e) 
-		      {
-		        e.printStackTrace();
-		        AdvancedStoreHouse.log.severe("Error creating tables! Error: " + e.getMessage());
-		        return false;
-		      } finally 
-		      {
-		    	  try 
-		    	  {
-		    		  if (query != null) 
-		    		  {
-		    			  query.close();
-		    		  }
-		    	  } catch (Exception e) 
-		    	  {
-		    		  e.printStackTrace();
-		    		  return false;
-		    	  }
-		      }
-		}
+		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameIII
+        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
+        		+ " distributionchestid int,"
+        		+ " owner_uuid text,"
+        		+ " creationdate bigint,"
+        		+ " priority int,"
+        		+ " content mediumtext,"
+        		+ " searchcontent mediumtext,"
+        		+ " endstorage boolean,"
+        		+ " server text,"
+        		+ " world text,"
+        		+ " blockx int,"
+        		+ " blocky int,"
+        		+ " blockz int,"
+        		+ " chestname text,"
+        		+ " optionvoid boolean,"
+        		+ " optiondurability boolean,"
+        		+ " durabilitytype text,"
+        		+ " durability int,"
+        		+ " optionrepair boolean,"
+        		+ " repairtype text,"
+        		+ " repaircost int,"
+        		+ " optionenchantments boolean,"
+        		+ " optionmaterial boolean);";
+		baseSetup(data);
 		return true;
 	}
 	
@@ -244,118 +188,52 @@ public class MysqlSetup
 	
 	public boolean setupDatabaseIV() 
 	{
-		if (conn != null) 
-		{
-			PreparedStatement query = null;
-		      try 
-		      {	        
-		        String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameIV
-		        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
-		        		+ " itemfiltersetname text,"
-		        		+ " owner_uuid text,"
-		        		+ " content mediumtext);";
-		        query = conn.prepareStatement(data);
-		        query.execute();
-		      } catch (SQLException e) 
-		      {
-		        e.printStackTrace();
-		        AdvancedStoreHouse.log.severe("Error creating tables! Error: " + e.getMessage());
-		        return false;
-		      } finally 
-		      {
-		    	  try 
-		    	  {
-		    		  if (query != null) 
-		    		  {
-		    			  query.close();
-		    		  }
-		    	  } catch (Exception e) 
-		    	  {
-		    		  e.printStackTrace();
-		    		  return false;
-		    	  }
-		      }
-		}
+		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameIV
+        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
+        		+ " itemfiltersetname text,"
+        		+ " owner_uuid text,"
+        		+ " content mediumtext);";
+		baseSetup(data);
 		return true;
 	}
 	
 	public boolean setupDatabaseV() 
 	{
-		if (conn != null) 
-		{
-			PreparedStatement query = null;
-		      try 
-		      {	        
-		        String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameV
-		        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
-		        		+ " datum bigint,"
-		        		+ " distributionchestid int,"
-		        		+ " storagechestid int,"
-		        		+ " distributedcontent mediumtext);";
-		        query = conn.prepareStatement(data);
-		        query.execute();
-		      } catch (SQLException e) 
-		      {
-		        e.printStackTrace();
-		        AdvancedStoreHouse.log.severe("Error creating tables! Error: " + e.getMessage());
-		        return false;
-		      } finally 
-		      {
-		    	  try 
-		    	  {
-		    		  if (query != null) 
-		    		  {
-		    			  query.close();
-		    		  }
-		    	  } catch (Exception e) 
-		    	  {
-		    		  e.printStackTrace();
-		    		  return false;
-		    	  }
-		      }
-		}
+		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameV
+        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
+        		+ " datum bigint,"
+        		+ " distributionchestid int,"
+        		+ " storagechestid int,"
+        		+ " distributedcontent mediumtext);";
+		baseSetup(data);
 		return true;
 	}
 	
 	public boolean setupDatabaseVI() //TODO
 	{
-		if (conn != null) 
+		String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameVI
+        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
+        		+ " channel_name TEXT NOT NULL,"
+        		+ " creator TEXT NOT NULL,"
+        		+ " vice MEDIUMTEXT,"
+        		+ " members MEDIUMTEXT,"
+        		+ " password TEXT,"
+        		+ " banned MEDIUMTEXT,"
+        		+ " symbolextra TEXT,"
+        		+ " namecolor TEXT,"
+        		+ " chatcolor TEXT);";
+		baseSetup(data);
+		return true;
+	}
+	
+	private boolean baseSetup(String data) 
+	{
+		try (Connection conn = getConnection(); PreparedStatement query = conn.prepareStatement(data))
 		{
-			PreparedStatement query = null;
-		      try 
-		      {	        
-		        String data = "CREATE TABLE IF NOT EXISTS `" + plugin.getMysqlHandler().tableNameVI
-		        		+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
-		        		+ " channel_name TEXT NOT NULL,"
-		        		+ " creator TEXT NOT NULL,"
-		        		+ " vice MEDIUMTEXT,"
-		        		+ " members MEDIUMTEXT,"
-		        		+ " password TEXT,"
-		        		+ " banned MEDIUMTEXT,"
-		        		+ " symbolextra TEXT,"
-		        		+ " namecolor TEXT,"
-		        		+ " chatcolor TEXT);";
-		        query = conn.prepareStatement(data);
-		        query.execute();
-		      } catch (SQLException e) 
-		      {
-		        e.printStackTrace();
-		        AdvancedStoreHouse.log.severe("Error creating tables! Error: " + e.getMessage());
-		        return false;
-		      } finally 
-		      {
-		    	  try 
-		    	  {
-		    		  if (query != null) 
-		    		  {
-		    			  query.close();
-		    		  }
-		    	  } catch (Exception e) 
-		    	  {
-		    		  e.printStackTrace();
-		    		  return false;
-		    	  }
-		      }
+			query.execute();
+		} catch (SQLException e) 
+		{
+			AdvancedStoreHouse.log.log(Level.WARNING, "Could not build data source. Or connection is null", e);
 		}
 		return true;
 	}
@@ -371,25 +249,23 @@ public class MysqlSetup
 		try {
 			if (conn == null) 
 			{
-				AdvancedStoreHouse.log.warning("Connection failed. Reconnecting...");
+				//MIM.log.warning("Connection failed. Reconnecting...");
 				reConnect();
 			}
 			if (!conn.isValid(3)) 
 			{
-				AdvancedStoreHouse.log.warning("Connection is idle or terminated. Reconnecting...");
+				//MIM.log.warning("Connection is idle or terminated. Reconnecting...");
 				reConnect();
 			}
 			if (conn.isClosed() == true) 
 			{
-				AdvancedStoreHouse.log.warning("Connection is closed. Reconnecting...");
+				//MIM.log.warning("Connection is closed. Reconnecting...");
 				reConnect();
 			}
-		} catch (Throwable e) 
+		} catch (Exception e) 
 		{
-      	  AdvancedStoreHouse.log.severe("Could not locate drivers for mysql! Error: ");
-      	  e.printStackTrace();
-          return;
-      }
+			AdvancedStoreHouse.log.severe("Could not reconnect to Database! Error: " + e.getMessage());
+		}
 	}
 	
 	public boolean reConnect() 
@@ -410,50 +286,21 @@ public class MysqlSetup
 	    	{
 	    		// Load old Drivers for spigot
 	    		Class.forName("com.mysql.jdbc.Driver");
-	    	}           
-            long start = 0;
-			long end = 0;
-			
-		    start = System.currentTimeMillis();
-		    AdvancedStoreHouse.log.info("Attempting to establish a connection to the MySQL server!");
+	    	}
             Properties properties = new Properties();
-            properties.setProperty("user", plugin.getYamlHandler().getConfig().getString("Mysql.User"));
-            properties.setProperty("password", plugin.getYamlHandler().getConfig().getString("Mysql.Password"));
-            properties.setProperty("autoReconnect", 
-            		plugin.getYamlHandler().getConfig().getBoolean("Mysql.AutoReconnect", true) + "");
-            properties.setProperty("verifyServerCertificate", 
-            		plugin.getYamlHandler().getConfig().getBoolean("Mysql.VerifyServerCertificate", false) + "");
-            properties.setProperty("useSSL", 
-            		plugin.getYamlHandler().getConfig().getBoolean("Mysql.SSLEnabled", false) + "");
-            properties.setProperty("requireSSL", 
-            		plugin.getYamlHandler().getConfig().getBoolean("Mysql.SSLEnabled", false) + "");
-            properties.setProperty("allowPublicKeyRetrieval", true+"");
+            properties.setProperty("user", user);
+            properties.setProperty("password", password);
+            properties.setProperty("autoReconnect", String.valueOf(isAutoConnect));
+            properties.setProperty("verifyServerCertificate", String.valueOf(isVerifyServerCertificate));
+            properties.setProperty("useSSL", String.valueOf(isSSLEnabled));
+            properties.setProperty("requireSSL", String.valueOf(isSSLEnabled));
             //Connect to database
-            conn = DriverManager.getConnection("jdbc:mysql://" + plugin.getYamlHandler().getConfig().getString("Mysql.Host") 
-            		+ ":" + plugin.getYamlHandler().getConfig().getInt("Mysql.Port", 3306) + "/" 
-            		+ plugin.getYamlHandler().getConfig().getString("Mysql.DatabaseName"), properties);
-		    end = System.currentTimeMillis();
-		    AdvancedStoreHouse.log.info("Connection to MySQL server established!");
-		    AdvancedStoreHouse.log.info("Connection took " + ((end - start)) + "ms!");
+            conn = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, properties);
             return true;
-		} catch (Throwable e) 
+		} catch (Exception e) 
 		{
-      	  AdvancedStoreHouse.log.severe("Could not locate drivers for mysql! Error: ");
-      	  e.printStackTrace();
-          return false;
-      }
-	}
-	
-	public void closeConnection() 
-	{
-		try
-		{
-			AdvancedStoreHouse.log.info("Closing database connection...");
-			conn.close();
-			conn = null;
-		} catch (SQLException e) 
-		{
-			e.printStackTrace();
+			AdvancedStoreHouse.log.severe("Error re-connecting to the database! Error: " + e.getMessage());
+			return false;
 		}
 	}
 }
