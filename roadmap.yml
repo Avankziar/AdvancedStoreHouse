@@ -41,6 +41,9 @@ Diese Funktionen scheinen mir vom Prinzip her gleich.
 Es muss dann natürlich drauf geachtet werden, dass die "Namens-Option" und zumindest die "Material-Option" sich gegenseitig ausschließen.
 Entweder sind beide aus, oder nur genau eine von beiden kann aktiv sein.
 
+Build 6-2-0
+- MC 1.19.2 support
+
 Build 6-1-0 ==================================================================================================================
 - MC 1.19 support
 
