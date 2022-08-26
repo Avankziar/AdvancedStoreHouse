@@ -45,7 +45,12 @@ Build 6-2-0
 - MC 1.19.2 support
 - IFH Administration implementiert
 - MysqlSetup aktualisiert
-- Tabellennamen sind nun statisch.
+- Tabellennamen sind nun statisch. Daher müssen sie nun lauten (nur im Falle, ihr hab Sie geändert):
+  ashPluginUser
+  ashDistributionChest
+  ashStorageChest
+  ashItemFilterSet
+  ashTransferLog
 
 Build 6-1-0 ==================================================================================================================
 - MC 1.19 support
