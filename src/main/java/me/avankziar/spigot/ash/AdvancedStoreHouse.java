@@ -153,11 +153,13 @@ public class AdvancedStoreHouse extends JavaPlugin
 		commandHelper = new CommandHelper(this);
 		
 		String path = plugin.getYamlHandler().getConfig().getString("IFHAdministrationPath");
-		boolean check = plugin.getAdministration() != null && plugin.getAdministration().getHost(path) != null;
-		if(check || yamlHandler.getConfig().getBoolean("Mysql.Status", false))
+		boolean adm = plugin.getAdministration() != null 
+				&& plugin.getYamlHandler().getConfig().getBoolean("useIFHAdministration")
+				&& plugin.getAdministration().isMysqlPathActive(path);
+		if(adm || yamlHandler.getConfig().getBoolean("Mysql.Status", false))
 		{
 			mysqlHandler = new MysqlHandler(plugin);
-			mysqlSetup = new MysqlSetup(this);
+			mysqlSetup = new MysqlSetup(this, adm, path);
 		} else
 		{
 			log.severe("MySQL is not set in the Plugin "+pluginName+"!");
