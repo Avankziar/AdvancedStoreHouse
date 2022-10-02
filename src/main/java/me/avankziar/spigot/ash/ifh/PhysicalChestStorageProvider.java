@@ -1,28 +1,33 @@
-package main.java.me.avankziar.spigot.ash.assistance;
+package main.java.me.avankziar.spigot.ash.ifh;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import main.java.me.avankziar.general.handler.ChestHandler;
+import main.java.me.avankziar.general.handler.CollectionHandler;
 import main.java.me.avankziar.general.handler.ConvertHandler;
+import main.java.me.avankziar.general.handler.DistributionHandlerII;
 import main.java.me.avankziar.general.objects.DistributionChest;
+import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.StorageChest;
-import main.java.me.avankziar.ifh.spigot.interfaces.StorageSystem;
+import main.java.me.avankziar.ifh.spigot.storage.PhysicalChestStorage;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler.Type;
 
-public class StorageSystemAPI implements StorageSystem
+public class PhysicalChestStorageProvider implements PhysicalChestStorage
 {
 	private AdvancedStoreHouse plugin;
 	
-	public StorageSystemAPI(AdvancedStoreHouse plugin)
+	public PhysicalChestStorageProvider(AdvancedStoreHouse plugin)
 	{
 		this.plugin = plugin;
 	}
@@ -49,7 +54,6 @@ public class StorageSystemAPI implements StorageSystem
 		}	
 	}
 
-	@Override
 	public boolean deleteDistributionChest(int id, boolean deleteBoundedChest)
 	{
 		if(deleteBoundedChest)
@@ -610,10 +614,118 @@ public class StorageSystemAPI implements StorageSystem
 		return ar;
 	}
 
-	@Override
 	public boolean hasDistributionChests(Player player)
 	{
 		return plugin.getMysqlHandler().exist(Type.DISTRIBUTIONCHEST, "`owner_uuid` = ?", player.getUniqueId().toString());
 	}
-
+	
+	public boolean isOwner(int storageID, UUID uuid)
+	{
+		DistributionChest dc;
+		try
+		{
+			dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+					"`id` = ?", storageID);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		return dc.getOwneruuid().equals(uuid);
+	}
+	
+	/**
+	 * Return the Items, which can not be put into the Storage
+	 * @param itemStack
+	 * @return
+	 */
+	public void putIntoStorageFromShop(int shopID, int storageID, ItemStack itemStack, long amountOfItems)
+	{
+		String server = PluginSettings.settings.getServer();
+		DistributionChest dc;
+		try
+		{
+			dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+					"`id` = ?", storageID);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			return;
+		}
+		if(!server.equals(dc.getServer()))
+		{
+			return;
+		}
+		try
+		{
+			DistributionHandlerII.distributeStartVersionShop(shopID, server, dc, itemStack, amountOfItems);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			return;
+		}
+	}
+	
+	/**
+	 * Return the Items, which comes out of the storage
+	 * @param material
+	 * @return
+	 */
+	public void getOutOfStorageToShop(int shopID, int storageID, Material material)
+	{
+		getOutOfStorageToShop(shopID, storageID, new ItemStack(material), Long.MAX_VALUE);
+	}
+	
+	/**
+	 * Return the Items, which comes out of the storage
+	 * @param itemStack
+	 * @return
+	 */
+	public void getOutOfStorageToShop(int shopID, int storageID, ItemStack itemStack)
+	{
+		getOutOfStorageToShop(shopID, storageID, itemStack, Long.MAX_VALUE);
+	}
+	
+	/**
+	 * Return the Items, which comes out of the storage, with a max amount limit.
+	 * @param material
+	 * @param amountOfItems
+	 * @return
+	 */
+	public void getOutOfStorageToShop(int shopID, int storageID, Material material, long amountOfItems)
+	{
+		getOutOfStorageToShop(shopID, storageID, new ItemStack(material), amountOfItems);
+	}
+	
+	/**
+	 * Return the Items, which comes out of the storage, with a max amount limit.<b
+	 * @param itemStack
+	 * @param amountOfItems
+	 * @return
+	 */
+	public void getOutOfStorageToShop(int shopID, int storageID, ItemStack itemStack, long amountOfItems)
+	{
+		String server = PluginSettings.settings.getServer();
+		DistributionChest dc;
+		try
+		{
+			dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+					"`id` = ?", storageID);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			return;
+		}
+		if(!server.equals(dc.getServer()))
+		{
+			return;
+		}
+		try
+		{
+			CollectionHandler.collectStartVersionShop(shopID, server, dc, itemStack, amountOfItems);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }

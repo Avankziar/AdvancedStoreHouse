@@ -143,6 +143,237 @@ public class DistributionHandlerII
 		distributeMiddle(server, dc, inv, true, "Normal ");
 	}
 	
+	public static void distributeStartVersionShop(int shopID, String server, DistributionChest dc, ItemStack itemStack, long itemStackAmount) throws IOException
+	{
+		debug(3, "Distrute VersionShop start");
+		String order = !dc.isNormalPriority() == true ? "`priority` DESC, `id` ASC" : "`priority` ASC, `id` ASC";
+		final ArrayList<StorageChest> endListPre = ConvertHandler.convertListIII(
+				AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, order, 
+						"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), true, server));
+		String data = itemStack.getType().toString();
+		debug(0, "Data: "+data);
+		ArrayList<StorageChest> prioListPre;
+		String orderII = !dc.isNormalPriority() == true ? "`priority` DESC, `id` ASC" : "`priority` ASC, `id` ASC";
+		debug(0, "orderII : "+orderII);
+		if(dc.getPriorityType() == PriorityType.SWITCH)
+		{
+			prioListPre = ConvertHandler.convertListIII(
+					AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, orderII,
+							"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ? AND `searchcontent` LIKE ?",
+							dc.getId(), false, server, "%"+data+"%"));
+		} else
+		{
+			prioListPre = ConvertHandler.convertListIII(
+					AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, orderII,
+							"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ? AND `priority` = ? AND `searchcontent` LIKE ?",
+							dc.getId(), false, server, dc.getPriorityNumber(), "%"+data+"%"));
+		}
+		debug(0, "Amount PrioList: "+prioListPre.size()+" | Amount Endlist: "+endListPre.size());
+		int storagechestamount = prioListPre.size()+endListPre.size();
+		int waitextra = storagechestamount;
+		//---
+		//int wait = (int)((double)((double)storagechestamount+(double)waitextra)/(double)PluginSettings.settings.getWaitBeforStartFactor());
+		ArrayList<StorageChest> prioList = new ArrayList<>();
+		ArrayList<StorageChest> endList = new ArrayList<>();
+		if(dc.isDistributeRandom())
+		{
+			int[] excludes = new int[0];
+			ArrayList<StorageChest> clonePrioList = new ArrayList<>();
+			for(int i = 0; i < prioListPre.size(); i++)
+			{
+				int n = ChestHandler.getRandomWithExclusion(new Random(), 0, prioList.size()-1, excludes);
+				clonePrioList.add(prioList.get(n));
+			}
+			prioList = clonePrioList;
+			int[] excludesEnd = new int[0];
+			ArrayList<StorageChest> cloneEndList = new ArrayList<>();
+			for(int i = 0; i < endList.size(); i++)
+			{
+				int n = ChestHandler.getRandomWithExclusion(new Random(), 0, endList.size()-1, excludesEnd);
+				cloneEndList.add(endList.get(n));
+			}
+			endList = cloneEndList;
+		}
+		ArrayList<StorageChest> prList = prioList;
+		ArrayList<StorageChest> eList = endList;
+		new BukkitRunnable()
+		{
+			int i = 0;
+			int j = 0;
+			int loop = PluginSettings.settings.getChestsPerTick()*PluginSettings.settings.getDelayedTicks();
+			int loopi = loop-1;
+			int loopj = loop-1;
+			String debug = "Shop ";
+			long isAmount = itemStackAmount;
+			@Override
+			public void run()
+			{
+				boolean li = false;
+				boolean lj = false;
+				while(i <= loopi && j <= loopj)
+				{
+					if(i < prList.size())
+					{
+						li = true;
+						StorageChest sc = prList.get(i);
+						debug(1, debug+"distribution normalchest "+i+" "+sc.getChestName());
+						Block block = new Location(Bukkit.getWorld(sc.getWorld()),
+								sc.getBlockX(), sc.getBlockY(), sc.getBlockZ()).getBlock();
+						if(block == null)
+						{
+							debug(1, debug+"distribution block == null");
+							i++;
+							continue;
+						}
+						if(block.getState() == null)
+						{
+							debug(1, debug+"distribution block.State == null");
+							i++;
+							continue;
+						}
+						if(!(block.getState() instanceof Container))
+						{
+							debug(1, debug+"distribution not Container");
+							i++;
+							continue;
+						}
+						//ChainDc, is this already in Use, no distribution to this chest
+						DistributionChest chaindc = null;
+						try
+						{
+							chaindc = (DistributionChest) AdvancedStoreHouse.getPlugin()
+									.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+									"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+									server, sc.getWorld(), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ());
+						} catch (IOException e) {}
+						if(chaindc != null)
+						{
+							if(ChestHandler.isDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), chaindc))
+							{
+								debug(1, debug+"StorageChest is Distributionchest and on cooldown!");
+								i++;
+								continue;
+							}
+						}
+						Container container = (Container) block.getState();
+						Inventory cinv = container.getInventory();
+						if(cinv == null)
+						{
+							debug(1, debug+"distribution cinv == null");
+							i++;
+							continue;
+						}
+						debug(1, debug+"distribution Normal Storage start i = "+i);
+						isAmount = DistributionHandlerII.distributeFromShop(cinv, sc.getContents(), itemStack, itemStackAmount,
+								sc.isEndstorage(), dc.isDistributeRandom(),
+								sc.isOptionDurability(), sc.getDurabilityType(), sc.getDurability(),
+								sc.isOptionRepair(), sc.getRepairType(), sc.getRepairCost(),
+								sc.isOptionEnchantment(), sc.isOptionMaterial());
+						if(isAmount == 0)
+						{
+							debug(1, debug+"distribution from shop, all is distributed");
+							cancel();
+							return;
+						}
+						i++;
+					} else if(i >= prList.size() && j < eList.size())
+					{
+						lj = true;
+						StorageChest sc = eList.get(j);
+						debug(1, debug+"distribution endchest "+j+" "+sc.getChestName());
+						Block block = new Location(Bukkit.getWorld(sc.getWorld()),
+								sc.getBlockX(), sc.getBlockY(), sc.getBlockZ()).getBlock();
+						if(block == null)
+						{
+							debug(1, debug+"distribution endchest block == null");
+							j++;
+							continue;
+						}
+						if(block.getState() == null)
+						{
+							debug(1, debug+"distribution endchest block.State == null");
+							j++;
+							continue;
+						}
+						if(!(block.getState() instanceof Container))
+						{
+							debug(1, debug+"distribution endchest not Container");
+							j++;
+							continue;
+						}
+						//ChainDc, is this already in Use, no distribution to this chest
+						DistributionChest chaindc = null;
+						try
+						{
+							chaindc = (DistributionChest) AdvancedStoreHouse.getPlugin()
+									.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+									"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+									server, sc.getWorld(), sc.getBlockX(), sc.getBlockY(), sc.getBlockZ());
+						} catch (IOException e) {}
+						if(chaindc != null)
+						{
+							if(ChestHandler.isDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), chaindc))
+							{
+								debug(1, debug+"endchest StorageChest is Distributionchest and on cooldown!");
+								i++;
+								continue;
+							}
+						}
+						Container container = (Container) block.getState();
+						Inventory cinv = container.getInventory();
+						if(cinv == null)
+						{
+							debug(1, debug+"distribution endchest cinv == null");
+							j++;
+							continue;
+						}
+						debug(1, debug+"distribution EndStorage start j = "+j);
+						isAmount = DistributionHandlerII.distributeFromShop(cinv, sc.getContents(), itemStack, itemStackAmount,
+								sc.isEndstorage(), dc.isDistributeRandom(),
+								sc.isOptionDurability(), sc.getDurabilityType(), sc.getDurability(),
+								sc.isOptionRepair(), sc.getRepairType(), sc.getRepairCost(),
+								sc.isOptionEnchantment(), sc.isOptionMaterial());
+						if(isAmount == 0)
+						{
+							debug(1, debug+"distribution endchest, all is distributed");
+							cancel();
+							return;
+						}
+						j++;
+					} else
+					{
+						debug(2, debug + "distribution has through all StorageChest. Distribution finished!");
+						AdvancedStoreHouse.getPlugin().getShop().putIntoStorage(shopID, itemStack, isAmount);
+						cancel();
+						break;
+					}
+				}
+				if(li)
+				{
+					loopi += loop;
+				}
+				if(lj)
+				{
+					loopj += loop;
+				}
+			}
+		}.runTaskTimer(AdvancedStoreHouse.getPlugin(), 1L, 1L*PluginSettings.settings.getDelayedTicks());
+		
+		//here Chainstart
+		float supposeCooldown = ((float)storagechestamount+(float)waitextra)/ (float)PluginSettings.settings.getChestsPerTick()
+				+(float)PluginSettings.settings.getDelayChainChest() *1000.0F / 50.0F;
+		try
+		{
+			debug(0, "SupposeCooldown: "+storagechestamount+"/"+PluginSettings.settings.getChestsPerTick()+"+"+
+			+PluginSettings.settings.getDelayChainChest()+"*"+1000+"/"+50);
+			debug(0, "SupposeCooldown: "+(long)supposeCooldown);
+			distributeChain(server, (long)supposeCooldown*2, prioList, endList);
+		} catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	private static void distributeMiddle(String server, DistributionChest dc, Inventory inv, boolean activateChain, String debug) throws IOException
 	{
 		debug(0, "DistruteMiddle start");
@@ -460,6 +691,85 @@ public class DistributionHandlerII
 			}
 		}
 		return (base == check) ? true : false;
+	}
+	
+	public static long distributeFromShop(Inventory reciever, ItemStack[] filter,
+			ItemStack is, long itemStackAmount,
+			boolean endstorage, boolean isRandom,
+			boolean optionDurability, StorageChest.Type durabilityType, int durability, 
+			boolean optionRepair, StorageChest.Type repairType, int repaircost,
+			boolean optionEnchantments,
+			boolean optionMaterial
+			)
+	{
+		long returnItemStackAmount = itemStackAmount;
+		ItemStack cc = is;
+		if(returnItemStackAmount > is.getMaxStackSize())
+		{
+			cc.setAmount(is.getMaxStackSize());
+		} else
+		{
+			cc.setAmount((int) returnItemStackAmount);
+		}
+		if(isRandom)
+		{
+			Random r = new Random();
+			int random = r.nextInt(100);
+			if(random > 50)
+			{
+				while(returnItemStackAmount > 0)
+				{
+					HashMap<Integer, ItemStack> sended = reciever.addItem(cc);
+					if(sended.isEmpty())
+					{
+						returnItemStackAmount = returnItemStackAmount - cc.getMaxStackSize();
+					} else
+					{
+						returnItemStackAmount = returnItemStackAmount - cc.getMaxStackSize() + sended.get(0).getAmount();
+						break;
+					}
+				}
+			}
+		} else
+		{
+			if(endstorage)
+			{
+				debug(2, "Endstorage is Sending");
+				while(returnItemStackAmount > 0)
+				{
+					HashMap<Integer, ItemStack> sended = reciever.addItem(cc);
+					if(sended.isEmpty())
+					{
+						returnItemStackAmount = returnItemStackAmount - cc.getMaxStackSize();
+					} else
+					{
+						returnItemStackAmount = returnItemStackAmount - cc.getMaxStackSize() + sended.get(0).getAmount();
+						break;
+					}
+				}
+			} else
+			{
+				if(isSimilar(is, filter,
+						optionDurability, durabilityType, durability,
+						optionRepair, repairType, repaircost,
+						optionEnchantments, optionMaterial))
+				{
+					while(returnItemStackAmount > 0)
+					{
+						HashMap<Integer, ItemStack> sended = reciever.addItem(cc);
+						if(sended.isEmpty())
+						{
+							returnItemStackAmount = returnItemStackAmount - cc.getMaxStackSize();
+						} else
+						{
+							returnItemStackAmount = returnItemStackAmount - cc.getMaxStackSize() + sended.get(0).getAmount();
+							break;
+						}
+					}
+				}
+			}
+		}
+		return returnItemStackAmount;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -792,5 +1102,5 @@ public class DistributionHandlerII
 	        debug(0, "!isSimilar");
 		}
 		return false;
-	}	
+	}
 }

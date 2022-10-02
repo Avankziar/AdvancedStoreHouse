@@ -269,7 +269,6 @@ public class BackgroundTask
 				}
 				try
 				{
-					//FIXME Eventuell wieder auf normalen Handler
 					DistributionHandlerII.distributeStartVersionAutomatic(PluginSettings.settings.getServer(), dc, inventoryc);
 				} catch (IOException e)
 				{
