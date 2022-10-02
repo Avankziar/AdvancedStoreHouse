@@ -580,7 +580,7 @@ public class AdvancedStoreHouse extends JavaPlugin
             		stsy,
             		this,
                     ServicePriority.Normal);
-            log.info(pluginName + " detected InterfaceHub. Hooking!");
+            log.info(pluginName + " detected InterfaceHub >>> PhysicalChestStorage.class is provided!");
             return;
         }
 	}
@@ -639,6 +639,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 				        return;
 				    }
 				    signShopConsumer = rsp.getProvider();
+				    log.info(pluginName + " detected InterfaceHub >>> SignShop.class is consumed!");
 				    cancel();
 				} catch(NoClassDefFoundError e)
 				{
