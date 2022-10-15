@@ -877,4 +877,10 @@ public class ChestHandler
         	return i.toString();
         }
 	}
+	
+	public static Location getLocation(DistributionChest dc)
+	{
+		Block b = new Location(Bukkit.getWorld(dc.getWorld()), dc.getBlockX(), dc.getBlockY(), dc.getBlockZ()).getBlock();
+		return b.getLocation();
+	}
 }

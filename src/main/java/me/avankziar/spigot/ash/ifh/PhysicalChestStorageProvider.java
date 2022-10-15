@@ -631,7 +631,7 @@ public class PhysicalChestStorageProvider implements PhysicalChestStorage
 			e.printStackTrace();
 			return false;
 		}
-		return dc.getOwneruuid().equals(uuid);
+		return dc.getOwneruuid().equals(uuid.toString());
 	}
 	
 	/**

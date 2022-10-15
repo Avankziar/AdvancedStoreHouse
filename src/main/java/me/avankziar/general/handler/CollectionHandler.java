@@ -25,10 +25,9 @@ public class CollectionHandler
 {
 	public static void debug(int lvl, String s)
 	{
-		int level = 0;
+		int level = 5;
 		boolean bo = false;
-		if(bo && lvl <= level
-				)
+		if(bo && lvl <= level)
 		{
 			AdvancedStoreHouse.log.info(s);
 			for(Player player : Bukkit.getOnlinePlayers())
@@ -61,15 +60,14 @@ public class CollectionHandler
 		}
 		debug(0, "Amount PrioList: "+prioListPre.size());
 		//---
-		ArrayList<StorageChest> prioList = new ArrayList<>();
-		ArrayList<StorageChest> prList = prioList;
+		ArrayList<StorageChest> prList = prioListPre;
 		new BukkitRunnable()
 		{
 			int i = 0;
 			int loop = PluginSettings.settings.getChestsPerTick()*PluginSettings.settings.getDelayedTicks();
 			int loopi = loop-1;
 			String debug = "Shop ";
-			long isAmount = itemStackAmount;
+			long isAmount = 0;
 			@Override
 			public void run()
 			{
@@ -95,7 +93,7 @@ public class CollectionHandler
 						}
 						if(!(block.getState() instanceof Container))
 						{
-							debug(1, debug+"distribution not Container");
+							debug(1, debug+"collection not Container");
 							i++;
 							continue;
 						}
@@ -104,26 +102,28 @@ public class CollectionHandler
 						Inventory cinv = container.getInventory();
 						if(cinv == null)
 						{
-							debug(1, debug+"distribution cinv == null");
+							debug(1, debug+"collection cinv == null");
 							i++;
 							continue;
 						}
-						debug(1, debug+"distribution Normal Storage start i = "+i);
-						isAmount = collectForShop(cinv, itemStack, itemStackAmount,
+						debug(1, debug+"collection Normal Storage start i = "+i);
+						isAmount += collectForShop(cinv, itemStack, itemStackAmount,
 								sc.isEndstorage(), dc.isDistributeRandom(),
 								sc.isOptionDurability(), sc.getDurabilityType(), sc.getDurability(),
 								sc.isOptionRepair(), sc.getRepairType(), sc.getRepairCost(),
 								sc.isOptionEnchantment(), sc.isOptionMaterial());
-						if(isAmount == 0)
+						debug(1, debug+"collection isAmount = "+isAmount);
+						if(isAmount >= itemStackAmount)
 						{
-							debug(1, debug+"distribution from shop, all is distributed");
+							debug(1, debug+"collection from shop, all is collected");
+							AdvancedStoreHouse.getPlugin().getShop().putIntoStorage(shopID, itemStack, isAmount);
 							cancel();
 							return;
 						}
 						i++;
 					} else
 					{
-						debug(2, debug + "distribution has through all StorageChest. Distribution finished!");
+						debug(2, debug + "collection has through all StorageChest. Distribution finished!");
 						AdvancedStoreHouse.getPlugin().getShop().putIntoStorage(shopID, itemStack, isAmount);
 						cancel();
 						break;
@@ -143,25 +143,20 @@ public class CollectionHandler
 			boolean optionMaterial
 			)
 	{
-		long returnItemStackAmount = 0;
-		ItemStack cc = is;
-		if(returnItemStackAmount > is.getMaxStackSize())
-		{
-			cc.setAmount(is.getMaxStackSize());
-		} else
-		{
-			cc.setAmount((int) returnItemStackAmount);
-		}
-		
+		long returnItemStackAmount = 0;	
+		ItemStack[] fil = new ItemStack[] {is};
 		for(int slot = 0; slot < sc.getStorageContents().length; slot++)
 		{
-			ItemStack ccsc = sc.getItem(slot);
-			if(ccsc == null || ccsc.getType() == Material.AIR)
+			if(sc.getItem(slot) == null || sc.getItem(slot).getType() == Material.AIR)
 			{
 				continue;
 			}
+			ItemStack ccsc = sc.getItem(slot).clone();
 			ccsc.setAmount(1);
-			if(!ccsc.toString().equals(is.toString()))
+			if(!DistributionHandlerII.isSimilar(ccsc, fil,
+					optionDurability, durabilityType, durability,
+					optionRepair, repairType, repaircost,
+					optionEnchantments, optionMaterial))
 			{
 				continue;
 			}
@@ -177,6 +172,7 @@ public class CollectionHandler
 				returnItemStackAmount += amount;
 				sc.getItem(slot).setAmount(0);
 			}
+			debug(1, "Shop collection rISA:"+returnItemStackAmount+"slot:"+slot+" | Found:"+amount);
 		}
 		return returnItemStackAmount;
 	}
