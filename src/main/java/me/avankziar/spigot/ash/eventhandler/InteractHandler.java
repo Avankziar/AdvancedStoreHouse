@@ -692,7 +692,8 @@ public class InteractHandler implements Listener
 				|| mat == Material.DARK_OAK_SIGN || mat == Material.DARK_OAK_WALL_SIGN
 				|| mat == Material.JUNGLE_SIGN || mat == Material.JUNGLE_WALL_SIGN
 				|| mat == Material.CRIMSON_SIGN || mat == Material.CRIMSON_WALL_SIGN
-				|| mat == Material.WARPED_SIGN || mat == Material.WARPED_WALL_SIGN)
+				|| mat == Material.WARPED_SIGN || mat == Material.WARPED_WALL_SIGN
+				|| mat == Material.MANGROVE_SIGN || mat == Material.MANGROVE_WALL_SIGN)
 		{
 			return true;
 		}
