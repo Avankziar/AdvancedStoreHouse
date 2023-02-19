@@ -19,10 +19,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.ConvertHandler;
@@ -31,7 +29,6 @@ import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.ifh.spigot.administration.Administration;
-import main.java.me.avankziar.ifh.spigot.shop.SignShop;
 import main.java.me.avankziar.spigot.ash.assistance.BackgroundTask;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.cmd.AshCommandExecutor;
@@ -89,7 +86,6 @@ import main.java.me.avankziar.spigot.ash.database.YamlManager;
 import main.java.me.avankziar.spigot.ash.eventhandler.InteractHandler;
 import main.java.me.avankziar.spigot.ash.eventhandler.InventoryClickHandler;
 import main.java.me.avankziar.spigot.ash.eventhandler.InventoryCloseHandler;
-import main.java.me.avankziar.spigot.ash.ifh.PhysicalChestStorageProvider;
 import main.java.me.avankziar.spigot.ash.listener.BlockBreakListener;
 import main.java.me.avankziar.spigot.ash.listener.InventoryClickBlockerListener;
 import main.java.me.avankziar.spigot.ash.listener.JoinQuitListener;
@@ -109,10 +105,8 @@ public class AdvancedStoreHouse extends JavaPlugin
 	private static BackgroundTask backgroundtask;
 	private static CommandHelper commandHelper;
 	private static Utility utility;
-	private static PhysicalChestStorageProvider stsy;
 	
 	private static Administration administrationConsumer;
-	private static SignShop signShopConsumer;
 	
 	public static ArrayList<String> editorplayers;
 	private ArrayList<String> players;
@@ -176,7 +170,6 @@ public class AdvancedStoreHouse extends JavaPlugin
 		try {setupCommandTree();} catch (IOException e)	{}
 		ListenerSetup();
 		setupBstats();
-		setupInterfaceHub();
 	}
 	
 	public void onDisable()
@@ -563,28 +556,6 @@ public class AdvancedStoreHouse extends JavaPlugin
 		return commandMap;
 	}
 	
-	private void setupInterfaceHub()
-	{      
-        setupIFHStorage();
-        
-        setupIFHShop();
-	}
-	
-	private void setupIFHStorage()
-	{
-		if (plugin.getServer().getPluginManager().isPluginEnabled("InterfaceHub")) 
-		{
-			stsy = new PhysicalChestStorageProvider(plugin);
-            plugin.getServer().getServicesManager().register(
-            		main.java.me.avankziar.ifh.spigot.storage.PhysicalChestStorage.class,
-            		stsy,
-            		this,
-                    ServicePriority.Normal);
-            log.info(pluginName + " detected InterfaceHub >>> PhysicalChestStorage.class is provided!");
-            return;
-        }
-	}
-	
 	private void setupIFHAdministration()
 	{ 
 		if(!plugin.getServer().getPluginManager().isPluginEnabled("InterfaceHub")) 
@@ -608,50 +579,6 @@ public class AdvancedStoreHouse extends JavaPlugin
 	public Administration getAdministration()
 	{
 		return administrationConsumer;
-	}
-	
-	private void setupIFHShop() 
-	{
-        if(Bukkit.getPluginManager().getPlugin("InterfaceHub") == null) 
-        {
-            return;
-        }
-        new BukkitRunnable()
-        {
-        	int i = 0;
-			@Override
-			public void run()
-			{
-				try
-				{
-					if(i == 20)
-				    {
-						cancel();
-						return;
-				    }
-				    RegisteredServiceProvider<main.java.me.avankziar.ifh.spigot.shop.SignShop> rsp = 
-		                             getServer().getServicesManager().getRegistration(
-		                            		 main.java.me.avankziar.ifh.spigot.shop.SignShop.class);
-				    if(rsp == null) 
-				    {
-				    	//Check up to 20 seconds after the start, to connect with the provider
-				    	i++;
-				        return;
-				    }
-				    signShopConsumer = rsp.getProvider();
-				    log.info(pluginName + " detected InterfaceHub >>> SignShop.class is consumed!");
-				    cancel();
-				} catch(NoClassDefFoundError e)
-				{
-					cancel();
-				}			    
-			}
-        }.runTaskTimer(plugin, 20L, 20*2);
-	}
-	
-	public SignShop getShop()
-	{
-		return signShopConsumer;
 	}
 	
 	public boolean existHook(String externPluginName)

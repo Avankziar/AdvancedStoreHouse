@@ -41,6 +41,10 @@ Diese Funktionen scheinen mir vom Prinzip her gleich.
 Es muss dann natürlich drauf geachtet werden, dass die "Namens-Option" und zumindest die "Material-Option" sich gegenseitig ausschließen.
 Entweder sind beide aus, oder nur genau eine von beiden kann aktiv sein.
 
+Build 6-4-0
+- IFH-Anbindung als Provider zum spigot.storage.PhysicalChestStorage entfernt.
+- IFH-Anbindung als Consumer zum spigot.shop.SignShop entfernt
+
 Build 6-3-0
 - IFH-Anbindung als Provider zum spigot.storage.PhysicalChestStorage hinzugefügt.
 - IFH-Anbindung als Consumer zum spigot.shop.SignShop hinzugefügt
