@@ -14,6 +14,8 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
 import org.bukkit.block.Dropper;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -142,6 +144,7 @@ public class InteractHandler implements Listener
 		}
 		if(isSign(event.getClickedBlock().getType()))
 		{
+			event.setCancelled(true);
 			sign(event, player, user);
 			return;
 		}
@@ -710,30 +713,31 @@ public class InteractHandler implements Listener
 			return;
 		}
 		Sign sign = (Sign) block.getState();
+		SignSide front = sign.getSide(Side.FRONT);
 		String identifier = plugin.getYamlHandler().getConfig().getString("SIGN.Identifier", "[ASH]");
-		if(!sign.getLine(1).contains(identifier))
+		if(!front.getLine(1).contains(identifier))
 		{
 			return;
 		}
-		if(MatchApi.isInteger(ChatColor.stripColor(sign.getLine(2))) == false)
+		if(MatchApi.isInteger(ChatColor.stripColor(front.getLine(2))) == false)
 		{
 			return;
 		}
-		int id = Integer.parseInt(ChatColor.stripColor(sign.getLine(2)));
+		int id = Integer.parseInt(ChatColor.stripColor(front.getLine(2)));
 		if(!plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", id))
 		{
 			return;
 		}
 		String SWITCH = plugin.getYamlHandler().getConfig().getString("SIGN.SWITCH", "SWITCH");
 		String DISTRIBUTE = plugin.getYamlHandler().getConfig().getString("SIGN.DISTRIBUTE", "DISTRIBUTE");
-		if(!sign.getLine(3).contains(SWITCH)
-				&& !sign.getLine(3).contains(DISTRIBUTE)
-				&& !MatchApi.isInteger(ChatColor.stripColor(sign.getLine(3))))
+		if(!front.getLine(3).contains(SWITCH)
+				&& !front.getLine(3).contains(DISTRIBUTE)
+				&& !MatchApi.isInteger(ChatColor.stripColor(front.getLine(3))))
 		{
 			return;
 		}
 		DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(
-				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", Integer.parseInt(sign.getLine(2)));
+				MysqlHandler.Type.DISTRIBUTIONCHEST, "`id` = ?", Integer.parseInt(front.getLine(2)));
 		if(dc == null)
 		{
 			return;
@@ -758,7 +762,7 @@ public class InteractHandler implements Listener
 				debug(event.getPlayer(), "LWC.canAccessProtection");
 			}
 		}*/
-		if(sign.getLine(3).contains(SWITCH))
+		if(front.getLine(3).contains(SWITCH))
 		{
 			if(dc.getPriorityType() != PriorityType.SWITCH)
 			{
@@ -784,22 +788,22 @@ public class InteractHandler implements Listener
 			}
 			plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
 			return;
-		} else if(sign.getLine(3).contains(DISTRIBUTE))
+		} else if(front.getLine(3).contains(DISTRIBUTE))
 		{
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Sign.DISTRIBUTE.Start")
 					.replace("%id%", String.valueOf(dc.getId()))
 					.replace("%name%", dc.getChestName())));
 			DistributionHandlerII.distributeStartVersionRemoteTriggering(dc);
 			return;
-		} else if(MatchApi.isInteger(ChatColor.stripColor(sign.getLine(3))))
+		} else if(MatchApi.isInteger(ChatColor.stripColor(front.getLine(3))))
 		{
 			if(dc.getPriorityType() == PriorityType.SWITCH)
 			{
 				dc.setPriorityType(PriorityType.PLACE);
 			}
-			dc.setPriorityNumber(Integer.parseInt(ChatColor.stripColor(sign.getLine(3))));
+			dc.setPriorityNumber(Integer.parseInt(ChatColor.stripColor(front.getLine(3))));
 			player.sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("Sign.PLACE.SetPLACE")
-					.replace("%prio%", ChatColor.stripColor(sign.getLine(3)))
+					.replace("%prio%", ChatColor.stripColor(front.getLine(3)))
 					.replace("%id%", String.valueOf(dc.getId()))
 					.replace("%name%", dc.getChestName())));
 			plugin.getMysqlHandler().updateData(MysqlHandler.Type.DISTRIBUTIONCHEST, dc, "`id` = ?", dc.getId());
