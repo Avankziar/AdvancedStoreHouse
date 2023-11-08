@@ -171,7 +171,6 @@ public class ARGStorageChest_Search extends ArgumentModule
 		}
 		final ItemStack is = player.getInventory().getItemInMainHand().clone();
 		final String data = ChestHandler.getGroundSpecs(is);
-		final String hoveritem = plugin.getUtility().convertItemStackToJson(is);
 		final String displayname = (is.getItemMeta() != null) 
 				? (is.getItemMeta().hasDisplayName() ? is.getItemMeta().getDisplayName() : is.getType().toString()) 
 				: is.getType().toString();
@@ -179,12 +178,11 @@ public class ARGStorageChest_Search extends ArgumentModule
 				plugin.getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, "`id` ASC",
 						"`distributionchestid` = ? AND `server` = ? AND `searchcontent` LIKE ?",
 						dc.getId(), server, "%"+data+"%"));
-		player.spigot().sendMessage(ChatApi.apiChatItem(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.SearchItem")
+		player.spigot().sendMessage(ChatApi.tctl(plugin.getYamlHandler().getLang().getString("CmdAsh.Search.SearchItem")
 				.replace("%item%", displayname)
 				.replace("%dcid%", String.valueOf(dc.getId()))
 				.replace("%dcname%", dc.getChestName())
-				.replace("%count%", String.valueOf(sclist.size())), 
-				null, null, hoveritem));
+				.replace("%count%", String.valueOf(sclist.size()))));
 		new InteractSubHandler().animation(plugin, player, dc, sclist);
 	}
 }
