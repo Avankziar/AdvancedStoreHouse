@@ -1,5 +1,6 @@
 package main.java.me.avankziar.general.handler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,8 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import main.java.me.avankziar.general.objects.ChatApi;
 import main.java.me.avankziar.general.objects.DistributionChest;
@@ -814,7 +817,9 @@ public class ChestHandler
 		        	}
 		        	i.setAmount(1);
 		        	f.setAmount(1);
-		        	if(i.getItemMeta().toString().equals(f.getItemMeta().toString()))
+		        	String s1 = toBase64(i);
+		        	String s2 = toBase64(f);
+		        	if(s1.equals(s2))//OLD i.getItemMeta().toString().equals(f.getItemMeta().toString()))
 		        	{
 		        		debug("isSimliar : long");
 		        		return true;
@@ -826,7 +831,9 @@ public class ChestHandler
 	        	f.setAmount(1);
 	        	i.setDurability((short) 0);
 	        	f.setDurability((short) 0);
-	        	if(i.toString().equals(f.toString()))
+	        	String s1 = toBase64(i);
+	        	String s2 = toBase64(f);
+	        	if(s1.equals(s2))//OLD i.toString().equals(f.toString()))
 	        	{
 	        		debug("isSimliar : short");
 	        		return true;
@@ -835,6 +842,25 @@ public class ChestHandler
 		}
 		debug("!isSimilar");
 		return false;
+	}
+	
+	public static String toBase64(ItemStack is)
+	{
+		if(is == null)
+		{
+			return null;
+		}
+		try 
+		{
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
+            dataOutput.writeObject(is);
+            dataOutput.close();
+            return Base64Coder.encodeLines(outputStream.toByteArray());
+        } catch (Exception e) 
+		{
+            throw new IllegalStateException("Unable to save item stacks.", e);
+        }
 	}
 	
 	@SuppressWarnings("deprecation")
