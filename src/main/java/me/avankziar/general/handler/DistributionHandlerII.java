@@ -540,6 +540,7 @@ public class DistributionHandlerII
 			boolean optionEnchantments,
 			boolean optionMaterial)
 	{
+		final ItemStack i = item.clone();
 		for(ItemStack is : filter)
 		{
 			if (is == null || item == null) 
@@ -547,9 +548,8 @@ public class DistributionHandlerII
 				//debug(0, "i || o == null || i:"+(is == null)+" | o:"+(item == null));
 	            continue;
 	        }
-	        final ItemStack i = item.clone();
-	        final ItemStack f = is.clone();
 	        
+	        final ItemStack f = is.clone();	        
 	        if(optionMaterial)
 	        {
 	        	if(i.getType() == f.getType())
@@ -716,11 +716,21 @@ public class DistributionHandlerII
 		        	}
 		        	i.setAmount(1);
 		        	f.setAmount(1);
-		        	if(i.getItemMeta().toString().equals(f.getItemMeta().toString()))
-		        	{
-		        		debug(-1, "isSimliar : long");
-		        		return true;
-		        	}
+		        	if(AdvancedStoreHouse.getPlugin().getItemStackComparison() != null)
+			        {
+		        		if(AdvancedStoreHouse.getPlugin().getItemStackComparison().isSimilar(i, f))
+			        	{
+			        		debug(-1, "isSimliar : long");
+			        		return true;
+			        	}
+			        } else
+			        {
+			        	if(i.getItemMeta().toString().equals(f.getItemMeta().toString()))
+			        	{
+			        		debug(-1, "isSimliar : long");
+			        		return true;
+			        	}
+			        }
 	        	}
 	        } else if(i.hasItemMeta() && !f.hasItemMeta())
         	{
@@ -791,7 +801,7 @@ public class DistributionHandlerII
             		debug(-1,"im.toString : "+i.getItemMeta().toString());
         			debug(-1,"2. im.toString == fm.toString : "+(i.getItemMeta().toString().equals(f.getItemMeta().toString())));
             	}
-    			if(i.getItemMeta() instanceof EnchantmentStorageMeta )
+    			if(i.getItemMeta() instanceof EnchantmentStorageMeta)
 	        	{
 	        		debug(-1, "similar middle is EnchantmentStorageMeta");
 	        		EnchantmentStorageMeta iesm = (EnchantmentStorageMeta) i.getItemMeta();
@@ -839,11 +849,21 @@ public class DistributionHandlerII
 	        			}
 	        		}
 	        	}
-    			if(i.getItemMeta().toString().equals(f.getItemMeta().toString()))
-	        	{
-	        		debug(0, "isSimliar : middle");
-	        		return true;
-	        	}
+	        	if(AdvancedStoreHouse.getPlugin().getItemStackComparison() != null)
+		        {
+	        		if(AdvancedStoreHouse.getPlugin().getItemStackComparison().isSimilar(i, f))
+		        	{
+	        			debug(0, "isSimliar : middle");
+		        		return true;
+		        	}
+		        } else
+		        {
+		        	if(i.getItemMeta().toString().equals(f.getItemMeta().toString()))
+		        	{
+		        		debug(0, "isSimliar : middle");
+		        		return true;
+		        	}
+		        }
         	} else
         	{
         		if(optionEnchantments)
@@ -854,11 +874,21 @@ public class DistributionHandlerII
 	        	f.setAmount(1);
 	        	i.setDurability((short) 0);
 	        	f.setDurability((short) 0);
-	        	if(i.toString().equals(f.toString()))
-	        	{
-	        		debug(0, "isSimliar : short");
-	        		return true;
-	        	}
+	        	if(AdvancedStoreHouse.getPlugin().getItemStackComparison() != null)
+		        {
+	        		if(AdvancedStoreHouse.getPlugin().getItemStackComparison().isSimilar(i, f))
+		        	{
+	        			debug(0, "isSimliar : short");
+		        		return true;
+		        	}
+		        } else
+		        {
+		        	if(i.getItemMeta().toString().equals(f.getItemMeta().toString()))
+		        	{
+		        		debug(0, "isSimliar : short");
+		        		return true;
+		        	}
+		        }
         	}
 	        debug(0, "!isSimilar");
 		}

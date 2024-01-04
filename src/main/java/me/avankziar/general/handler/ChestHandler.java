@@ -772,76 +772,133 @@ public class ChestHandler
 	        }
 	        final ItemStack i = item.clone();
 	        final ItemStack f = is.clone();
-	        debug("i & f getType != |||| i:"+i.getType()+" | f:"+f.getType());
-	        if(i.getType() != f.getType())
+	        if(AdvancedStoreHouse.getPlugin().getItemStackComparison() != null)
 	        {
-	        	debug("i & f getType != || i:"+i.getType()+" | f:"+f.getType());
-	        	continue;
-	        }
-	        if(i.hasItemMeta() == true && f.hasItemMeta() == true)
-	        {
-	        	debug("i & f hasItemMeta == true");
-	        	if(i.getItemMeta() != null && f.getItemMeta() != null)
-	        	{
-	        		debug("i & f getItemMeta != null");
-	        		if(i.getItemMeta() instanceof Damageable && f.getItemMeta() instanceof Damageable)
-	        		{
-	        			Damageable id = (Damageable) i.getItemMeta();
-	        			id.setDamage(0);
-	        			i.setItemMeta((ItemMeta) id);
-	        			Damageable od = (Damageable) f.getItemMeta();
-	        			od.setDamage(0);
-	        			f.setItemMeta((ItemMeta) od);
-	        		}
-		        	if(i.getItemMeta() instanceof Repairable && f.getItemMeta() instanceof Repairable)
-	            	{
-	            		Repairable ir = (Repairable) i.getItemMeta();
-	            		ir.setRepairCost(0);
-	            		i.setItemMeta((ItemMeta) ir);
-	            		Repairable or = (Repairable) f.getItemMeta();
-	            		or.setRepairCost(0);
-	            		f.setItemMeta((ItemMeta) or);
-	            	}
-		        	if(i.getItemMeta() instanceof EnchantmentStorageMeta && f.getItemMeta() instanceof EnchantmentStorageMeta)
-		        	{
-		        		EnchantmentStorageMeta iesm = (EnchantmentStorageMeta) i.getItemMeta();
-		        		i.setItemMeta(ChestHandler.orderStorageEnchantments(iesm));
-		        		EnchantmentStorageMeta oesm = (EnchantmentStorageMeta) f.getItemMeta();
-		        		f.setItemMeta(ChestHandler.orderStorageEnchantments(oesm));
-		        	}
-		        	if(i.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK 
-		        			&& f.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK)
-		        	{
-		        		i.setItemMeta(ChestHandler.orderEnchantments(i.getItemMeta()));
-		        		f.setItemMeta(ChestHandler.orderEnchantments(f.getItemMeta()));	
-		        	}
-		        	i.setAmount(1);
-		        	f.setAmount(1);
-		        	String s1 = toBase64(i);
-		        	String s2 = toBase64(f);
-		        	if(s1.equals(s2))//OLD i.getItemMeta().toString().equals(f.getItemMeta().toString()))
-		        	{
-		        		debug("isSimliar : long");
-		        		return true;
-		        	}
-	        	}
+	        	debug("i & f getType != |||| i:"+i.getType()+" | f:"+f.getType());
+	 	        if(AdvancedStoreHouse.getPlugin().getItemStackComparison().matchType(i, f))
+	 	        {
+	 	        	debug("i & f getType != || i:"+i.getType()+" | f:"+f.getType());
+	 	        	continue;
+	 	        }
+	 	        if(i.hasItemMeta() == true && f.hasItemMeta() == true)
+	 	        {
+	 	        	debug("i & f hasItemMeta == true");
+	 	        	if(i.getItemMeta() != null && f.getItemMeta() != null)
+	 	        	{
+	 	        		debug("i & f getItemMeta != null");
+	 	        		if(i.getItemMeta() instanceof Damageable && f.getItemMeta() instanceof Damageable)
+	 	        		{
+	 	        			Damageable id = (Damageable) i.getItemMeta();
+	 	        			id.setDamage(0);
+	 	        			i.setItemMeta((ItemMeta) id);
+	 	        			Damageable od = (Damageable) f.getItemMeta();
+	 	        			od.setDamage(0);
+	 	        			f.setItemMeta((ItemMeta) od);
+	 	        		}
+	 		        	if(i.getItemMeta() instanceof Repairable && f.getItemMeta() instanceof Repairable)
+	 	            	{
+	 	            		Repairable ir = (Repairable) i.getItemMeta();
+	 	            		ir.setRepairCost(0);
+	 	            		i.setItemMeta((ItemMeta) ir);
+	 	            		Repairable or = (Repairable) f.getItemMeta();
+	 	            		or.setRepairCost(0);
+	 	            		f.setItemMeta((ItemMeta) or);
+	 	            	}
+	 		        	i.setAmount(1);
+	 		        	f.setAmount(1);
+	 		        	return AdvancedStoreHouse.getPlugin().getItemStackComparison().isSimilar(i, f);
+	 	        	}
+	 	        } else
+	 	        {
+	 	        	i.setAmount(1);
+	 	        	f.setAmount(1);
+	 	        	i.setDurability((short) 0);
+	 	        	f.setDurability((short) 0);
+	 	        	String s1 = toBase64(i);
+	 	        	String s2 = toBase64(f);
+	 	        	if(s1.equals(s2))//OLD i.toString().equals(f.toString()))
+	 	        	{
+	 	        		debug("isSimliar : short");
+	 	        		return true;
+	 	        	}
+	 	        }
+	 	       debug("!isSimilar");
+	 	       return false;
 	        } else
 	        {
-	        	i.setAmount(1);
-	        	f.setAmount(1);
-	        	i.setDurability((short) 0);
-	        	f.setDurability((short) 0);
-	        	String s1 = toBase64(i);
-	        	String s2 = toBase64(f);
-	        	if(s1.equals(s2))//OLD i.toString().equals(f.toString()))
-	        	{
-	        		debug("isSimliar : short");
-	        		return true;
-	        	}
-	        }
-		}
+	        	debug("i & f getType != |||| i:"+i.getType()+" | f:"+f.getType());
+	 	        if(i.getType() != f.getType())
+	 	        {
+	 	        	debug("i & f getType != || i:"+i.getType()+" | f:"+f.getType());
+	 	        	continue;
+	 	        }
+	 	        if(i.hasItemMeta() == true && f.hasItemMeta() == true)
+	 	        {
+	 	        	debug("i & f hasItemMeta == true");
+	 	        	if(i.getItemMeta() != null && f.getItemMeta() != null)
+	 	        	{
+	 	        		debug("i & f getItemMeta != null");
+	 	        		if(i.getItemMeta() instanceof Damageable && f.getItemMeta() instanceof Damageable)
+	 	        		{
+	 	        			Damageable id = (Damageable) i.getItemMeta();
+	 	        			id.setDamage(0);
+	 	        			i.setItemMeta((ItemMeta) id);
+	 	        			Damageable od = (Damageable) f.getItemMeta();
+	 	        			od.setDamage(0);
+	 	        			f.setItemMeta((ItemMeta) od);
+	 	        		}
+	 		        	if(i.getItemMeta() instanceof Repairable && f.getItemMeta() instanceof Repairable)
+	 	            	{
+	 	            		Repairable ir = (Repairable) i.getItemMeta();
+	 	            		ir.setRepairCost(0);
+	 	            		i.setItemMeta((ItemMeta) ir);
+	 	            		Repairable or = (Repairable) f.getItemMeta();
+	 	            		or.setRepairCost(0);
+	 	            		f.setItemMeta((ItemMeta) or);
+	 	            	}
+	 		        	if(i.getItemMeta() instanceof EnchantmentStorageMeta && f.getItemMeta() instanceof EnchantmentStorageMeta)
+	 		        	{
+	 		        		EnchantmentStorageMeta iesm = (EnchantmentStorageMeta) i.getItemMeta();
+	 		        		i.setItemMeta(ChestHandler.orderStorageEnchantments(iesm));
+	 		        		EnchantmentStorageMeta oesm = (EnchantmentStorageMeta) f.getItemMeta();
+	 		        		f.setItemMeta(ChestHandler.orderStorageEnchantments(oesm));
+	 		        	}
+	 		        	if(i.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK 
+	 		        			&& f.getItemMeta().hasEnchants() && i.getType() != Material.ENCHANTED_BOOK)
+	 		        	{
+	 		        		i.setItemMeta(ChestHandler.orderEnchantments(i.getItemMeta()));
+	 		        		f.setItemMeta(ChestHandler.orderEnchantments(f.getItemMeta()));	
+	 		        	}
+	 		        	i.setAmount(1);
+	 		        	f.setAmount(1);
+	 		        	String s1 = toBase64(i);
+	 		        	String s2 = toBase64(f);
+	 		        	if(s1.equals(s2))//OLD i.getItemMeta().toString().equals(f.getItemMeta().toString()))
+	 		        	{
+	 		        		debug("isSimliar : long");
+	 		        		return true;
+	 		        	}
+	 	        	}
+	 	        } else
+	 	        {
+	 	        	i.setAmount(1);
+	 	        	f.setAmount(1);
+	 	        	i.setDurability((short) 0);
+	 	        	f.setDurability((short) 0);
+	 	        	String s1 = toBase64(i);
+	 	        	String s2 = toBase64(f);
+	 	        	if(s1.equals(s2))//OLD i.toString().equals(f.toString()))
+	 	        	{
+	 	        		debug("isSimliar : short");
+	 	        		return true;
+	 	        	}
+	 	        }
+	 		}
+	 		debug("!isSimilar");
+	 		return false;
+ 		}
 		debug("!isSimilar");
-		return false;
+ 		return false;
 	}
 	
 	public static String toBase64(ItemStack is)

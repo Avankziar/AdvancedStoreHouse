@@ -43,6 +43,10 @@ Entweder sind beide aus, oder nur genau eine von beiden kann aktiv sein.
 
 Build 6-6-0
 - Spigot 1.20.4 Support
+- IFH Interface spigot.comparison.ItemStackComparison hinzugefügt. Nur Softdependency
+  D.h. sollte man RootAdministration Vs. 1-4-0 installiert haben, wird die Vergleichsmethodik von dort genommen.
+  Der Grund dafür ist, dass sich in der MC 1.20.2 bzw. 1.20.4 in dem ItemStack und ItemMeta etc. viel geändert hat, dass sich
+  mit der alten Methode in ASH nur Versionsintern erzeugte Items vergleichen lassen.
 
 Build 6-5-2
 - /ash distributionchest search, itemstack fehler fix

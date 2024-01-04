@@ -21,6 +21,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import main.java.me.avankziar.general.handler.ChestHandler;
 import main.java.me.avankziar.general.handler.ConvertHandler;
@@ -29,6 +30,7 @@ import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
 import main.java.me.avankziar.ifh.spigot.administration.Administration;
+import main.java.me.avankziar.ifh.spigot.comparison.ItemStackComparison;
 import main.java.me.avankziar.spigot.ash.assistance.BackgroundTask;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.cmd.AshCommandExecutor;
@@ -106,7 +108,8 @@ public class AdvancedStoreHouse extends JavaPlugin
 	private static CommandHelper commandHelper;
 	private static Utility utility;
 	
-	private static Administration administrationConsumer;
+	private static Administration administrationConsumer;	
+	private ItemStackComparison itemStackComparisonConsumer;
 	
 	public static ArrayList<String> editorplayers;
 	private ArrayList<String> players;
@@ -169,6 +172,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 		setupStrings();
 		try {setupCommandTree();} catch (IOException e)	{}
 		ListenerSetup();
+		setupIFHItemStackComparison();
 		setupBstats();
 	}
 	
@@ -579,6 +583,49 @@ public class AdvancedStoreHouse extends JavaPlugin
 	public Administration getAdministration()
 	{
 		return administrationConsumer;
+	}
+	
+	private void setupIFHItemStackComparison() 
+	{
+		if(!plugin.getServer().getPluginManager().isPluginEnabled("InterfaceHub")) 
+	    {
+	    	return;
+	    }
+        new BukkitRunnable()
+        {
+        	int i = 0;
+			@Override
+			public void run()
+			{
+				try
+				{
+					if(i == 20)
+				    {
+						cancel();
+				    	return;
+				    }
+				    RegisteredServiceProvider<main.java.me.avankziar.ifh.spigot.comparison.ItemStackComparison> rsp = 
+		                             getServer().getServicesManager().getRegistration(
+		                            		 main.java.me.avankziar.ifh.spigot.comparison.ItemStackComparison.class);
+				    if(rsp == null) 
+				    {
+				    	i++;
+				        return;
+				    }
+				    itemStackComparisonConsumer = rsp.getProvider();
+				    log.info(pluginName + " detected InterfaceHub >>> ItemStackComparison.class is consumed!");
+				    cancel();
+				} catch(NoClassDefFoundError e)
+				{
+					cancel();
+				}			    
+			}
+        }.runTaskTimer(plugin, 0L, 20*2);
+	}
+	
+	public ItemStackComparison getItemStackComparison()
+	{
+		return itemStackComparisonConsumer;
 	}
 	
 	public boolean existHook(String externPluginName)
