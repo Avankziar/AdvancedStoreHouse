@@ -102,13 +102,16 @@ public class MysqlSetup
 	    {
 	    	bool = false;
 	    } 
+	    if (bool == false)
+    	{
+    		// Load old Drivers for spigot
+    		try
+    		{
+    			Class.forName("com.mysql.jdbc.Driver");
+    		}  catch (Exception e) {}
+    	}
 	    try
 	    {
-	    	if (bool == false)
-	    	{
-	    		// Load old Drivers for spigot
-	    		Class.forName("com.mysql.jdbc.Driver");
-	    	}
             Properties properties = new Properties();
             properties.setProperty("user", user);
             properties.setProperty("password", password);

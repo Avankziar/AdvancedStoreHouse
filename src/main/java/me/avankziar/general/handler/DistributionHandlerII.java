@@ -540,7 +540,7 @@ public class DistributionHandlerII
 			boolean optionEnchantments,
 			boolean optionMaterial)
 	{
-		final ItemStack i = item.clone();
+		
 		for(ItemStack is : filter)
 		{
 			if (is == null || item == null) 
@@ -548,7 +548,7 @@ public class DistributionHandlerII
 				//debug(0, "i || o == null || i:"+(is == null)+" | o:"+(item == null));
 	            continue;
 	        }
-	        
+			final ItemStack i = item.clone();
 	        final ItemStack f = is.clone();	        
 	        if(optionMaterial)
 	        {
