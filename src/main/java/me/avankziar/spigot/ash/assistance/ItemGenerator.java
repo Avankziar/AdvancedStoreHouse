@@ -1,13 +1,15 @@
 package main.java.me.avankziar.spigot.ash.assistance;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,9 +21,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 
 import main.java.me.avankziar.general.handler.TimeHandler;
 import main.java.me.avankziar.general.objects.ChatApi;
@@ -189,14 +190,19 @@ public class ItemGenerator
 		return st;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static ItemStack getSkull(String url) 
 	{
-        ItemStack skull = new ItemStack(Material.PLAYER_HEAD, 1, (short) 3);
+	    PlayerProfile profile = getProfile(url);
+	    ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+	    SkullMeta meta = (SkullMeta) head.getItemMeta();
+	    meta.setOwnerProfile(profile); // Set the owning player of the head to the player profile
+	    head.setItemMeta(meta);
+	    return head;
+        /*ItemStack skull = new ItemStack(Material.PLAYER_HEAD, 1, (short) 3);
         if (url == null || url.isEmpty())
             return skull;
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        GameProfile profile = new GameProfile(UUID.randomUUID(), "");
         byte[] encodedData = org.apache.commons.codec.binary.Base64.encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
         profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
         Field profileField = null;
@@ -212,8 +218,26 @@ public class ItemGenerator
             e.printStackTrace();
         }
         skull.setItemMeta(skullMeta);
-        return skull;
+        return skull;*/
     }
+	
+	/*
+	 * BIG Thanks to https://blog.jeff-media.com/creating-custom-heads-in-spigot-1-18-1/
+	 */
+	private static final UUID RANDOM_UUID = UUID.fromString("92864445-51c5-4c3b-9039-517c9927d1b4"); // We reuse the same "random" UUID all the time
+	private static PlayerProfile getProfile(String url) {
+	    PlayerProfile profile = Bukkit.createPlayerProfile(RANDOM_UUID); // Get a new player profile
+	    PlayerTextures textures = profile.getTextures();
+	    URL urlObject;
+	    try {
+	        urlObject = new URL(url); // The URL to the skin, for example: https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
+	    } catch (MalformedURLException exception) {
+	        throw new RuntimeException("Invalid URL", exception);
+	    }
+	    textures.setSkin(urlObject); // Set the skin of the player profile to the URL
+	    profile.setTextures(textures); // Set the textures back to the profile
+	    return profile;
+	}
 	
 	public static String getColor(boolean boo)
 	{
