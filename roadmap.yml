@@ -41,6 +41,9 @@ Diese Funktionen scheinen mir vom Prinzip her gleich.
 Es muss dann natürlich drauf geachtet werden, dass die "Namens-Option" und zumindest die "Material-Option" sich gegenseitig ausschließen.
 Entweder sind beide aus, oder nur genau eine von beiden kann aktiv sein.
 
+Build 6-7-0
+- Java 21 Dependency
+
 Build 6-6-1
 - NPE beim Öffnen vom Lagerkisten OptionsGUI fixed
 
