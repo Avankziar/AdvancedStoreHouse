@@ -43,6 +43,10 @@ Entweder sind beide aus, oder nur genau eine von beiden kann aktiv sein.
 
 Build 6-7-0
 - Java 21 Dependency
+- MC 1.21 Support
+- Weil in der 1.21 sich 2 oder 3 Material Enums gändert haben(Grass zu Short_Grass oder so), 
+  könnte es sein dass genau diese Items dann kaputt gehen.
+  Ich rate deshalb dringst vor dem Update ein Backup zu machen.
 
 Build 6-6-1
 - NPE beim Öffnen vom Lagerkisten OptionsGUI fixed

@@ -179,6 +179,7 @@ public class Utility
 	
 	public String convertItemStackToJson(ItemStack itemStack) //FIN
 	{
+		//FIxME Möglicher Fehler in 1.21
 		/*
 		 * so baut man das manuell
 		 * ItemStack is = createHoverItem(p, bookpath+".hover.item."+ar[2], bok);

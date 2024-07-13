@@ -34,9 +34,9 @@ import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
 import main.java.me.avankziar.spigot.ash.database.YamlManager.GuiType;
 
+@SuppressWarnings("deprecation")
 public class ItemGenerator
 {	
-	@SuppressWarnings("deprecation")
 	public static ItemStack create(String ID, YamlConfiguration itm, int amount, GuiType type, 
 			DistributionChest dc, StorageChest sc, boolean mustReplaceLore,
 			SettingLevel settingLevel) throws IOException

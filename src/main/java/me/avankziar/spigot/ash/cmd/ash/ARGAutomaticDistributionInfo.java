@@ -20,6 +20,7 @@ public class ARGAutomaticDistributionInfo extends ArgumentModule
 		this.plugin = plugin;
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public void run(CommandSender sender, String[] args)
 	{

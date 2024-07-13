@@ -374,44 +374,49 @@ public class ChestHandler
 	public static void initEnchantments()
 	{
 		enchantments = new ArrayList<>();
-		enchantments.add(Enchantment.ARROW_DAMAGE);
-		enchantments.add(Enchantment.ARROW_FIRE);
-		enchantments.add(Enchantment.ARROW_INFINITE);
-		enchantments.add(Enchantment.ARROW_KNOCKBACK);
+		enchantments.add(Enchantment.AQUA_AFFINITY);
+		enchantments.add(Enchantment.BANE_OF_ARTHROPODS);
 		enchantments.add(Enchantment.BINDING_CURSE);
+		enchantments.add(Enchantment.BLAST_PROTECTION);
+		enchantments.add(Enchantment.BREACH);
 		enchantments.add(Enchantment.CHANNELING);
-		enchantments.add(Enchantment.DAMAGE_ALL);
-		enchantments.add(Enchantment.DAMAGE_ARTHROPODS);
-		enchantments.add(Enchantment.DAMAGE_UNDEAD);
+		enchantments.add(Enchantment.DENSITY);
 		enchantments.add(Enchantment.DEPTH_STRIDER);
-		enchantments.add(Enchantment.DIG_SPEED);
-		enchantments.add(Enchantment.DURABILITY);
+		enchantments.add(Enchantment.EFFICIENCY);
+		enchantments.add(Enchantment.FEATHER_FALLING);
 		enchantments.add(Enchantment.FIRE_ASPECT);
 		enchantments.add(Enchantment.FROST_WALKER);
+		enchantments.add(Enchantment.FIRE_PROTECTION);
+		enchantments.add(Enchantment.FLAME);
+		enchantments.add(Enchantment.FORTUNE);
+		enchantments.add(Enchantment.FROST_WALKER);
 		enchantments.add(Enchantment.IMPALING);
+		enchantments.add(Enchantment.INFINITY);
 		enchantments.add(Enchantment.KNOCKBACK);
-		enchantments.add(Enchantment.LOOT_BONUS_BLOCKS);
-		enchantments.add(Enchantment.LOOT_BONUS_MOBS);
+		enchantments.add(Enchantment.LOOTING);
 		enchantments.add(Enchantment.LOYALTY);
-		enchantments.add(Enchantment.LUCK);
+		enchantments.add(Enchantment.LUCK_OF_THE_SEA);
 		enchantments.add(Enchantment.LURE);
 		enchantments.add(Enchantment.MENDING);
 		enchantments.add(Enchantment.MULTISHOT);
-		enchantments.add(Enchantment.OXYGEN);
 		enchantments.add(Enchantment.PIERCING);
-		enchantments.add(Enchantment.PROTECTION_ENVIRONMENTAL);
-		enchantments.add(Enchantment.PROTECTION_EXPLOSIONS);
-		enchantments.add(Enchantment.PROTECTION_FALL);
-		enchantments.add(Enchantment.PROTECTION_FIRE);
-		enchantments.add(Enchantment.PROTECTION_PROJECTILE);
+		enchantments.add(Enchantment.POWER);
+		enchantments.add(Enchantment.PROJECTILE_PROTECTION);
+		enchantments.add(Enchantment.PROTECTION);
+		enchantments.add(Enchantment.PUNCH);
 		enchantments.add(Enchantment.QUICK_CHARGE);
+		enchantments.add(Enchantment.RESPIRATION);
 		enchantments.add(Enchantment.RIPTIDE);
+		enchantments.add(Enchantment.SHARPNESS);
+		enchantments.add(Enchantment.SMITE);
+		enchantments.add(Enchantment.SWIFT_SNEAK);
 		enchantments.add(Enchantment.SILK_TOUCH);
 		enchantments.add(Enchantment.SOUL_SPEED);
 		enchantments.add(Enchantment.SWEEPING_EDGE);
 		enchantments.add(Enchantment.THORNS);
 		enchantments.add(Enchantment.VANISHING_CURSE);
-		enchantments.add(Enchantment.WATER_WORKER);
+		enchantments.add(Enchantment.UNBREAKING);
+		enchantments.add(Enchantment.WIND_BURST);
 	}
 	
 	public static int getItemsCount(ItemStack[] items)
