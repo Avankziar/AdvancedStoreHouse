@@ -6,7 +6,7 @@
 	<groupId>main.java.me.avankziar</groupId>
 	<artifactId>advancedstorehouse</artifactId>
 	<version>6-7-0</version>
-	<name>AfkRecord</name>
+	<name>AdvancedStoreHouse</name>
 	<url>https://github.com/${repository-owner}/${repository-name}.git</url>
     <scm>
         <url>https://github.com/${repository-owner}/${repository-name}.git</url>
