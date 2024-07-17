@@ -29,8 +29,6 @@ import main.java.me.avankziar.general.handler.KeyHandler;
 import main.java.me.avankziar.general.handler.PluginUserHandler;
 import main.java.me.avankziar.general.objects.PluginSettings;
 import main.java.me.avankziar.general.objects.PluginUser;
-import main.java.me.avankziar.ifh.spigot.administration.Administration;
-import main.java.me.avankziar.ifh.spigot.comparison.ItemStackComparison;
 import main.java.me.avankziar.spigot.ash.assistance.BackgroundTask;
 import main.java.me.avankziar.spigot.ash.assistance.Utility;
 import main.java.me.avankziar.spigot.ash.cmd.AshCommandExecutor;
@@ -94,6 +92,8 @@ import main.java.me.avankziar.spigot.ash.listener.JoinQuitListener;
 import main.java.me.avankziar.spigot.ash.listener.PlayerCommandPreprocessListener;
 import main.java.me.avankziar.spigot.ash.listener.SignChangeListener;
 import main.java.me.avankziar.spigot.ash.metrics.Metrics;
+import me.avankziar.ifh.spigot.administration.Administration;
+import me.avankziar.ifh.spigot.comparison.ItemStackComparison;
 
 public class AdvancedStoreHouse extends JavaPlugin
 {
@@ -568,7 +568,7 @@ public class AdvancedStoreHouse extends JavaPlugin
 	    }
 		try
 	    {
-	    	RegisteredServiceProvider<main.java.me.avankziar.ifh.spigot.administration.Administration> rsp = 
+	    	RegisteredServiceProvider<me.avankziar.ifh.spigot.administration.Administration> rsp = 
                      getServer().getServicesManager().getRegistration(Administration.class);
 		    if (rsp == null) 
 		    {
@@ -604,9 +604,9 @@ public class AdvancedStoreHouse extends JavaPlugin
 						cancel();
 				    	return;
 				    }
-				    RegisteredServiceProvider<main.java.me.avankziar.ifh.spigot.comparison.ItemStackComparison> rsp = 
+				    RegisteredServiceProvider<me.avankziar.ifh.spigot.comparison.ItemStackComparison> rsp = 
 		                             getServer().getServicesManager().getRegistration(
-		                            		 main.java.me.avankziar.ifh.spigot.comparison.ItemStackComparison.class);
+		                            		 me.avankziar.ifh.spigot.comparison.ItemStackComparison.class);
 				    if(rsp == null) 
 				    {
 				    	i++;
