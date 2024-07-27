@@ -44,9 +44,13 @@ Entweder sind beide aus, oder nur genau eine von beiden kann aktiv sein.
 Build 6-7-0
 - Java 21 Dependency
 - MC 1.21 Support
-- Weil in der 1.21 sich 2 oder 3 Material Enums gändert haben(Grass zu Short_Grass oder so), 
-  könnte es sein dass genau diese Items dann kaputt gehen.
-  Ich rate deshalb dringst vor dem Update ein Backup zu machen.
+- Es haben sich mit der 1.21 bestehende Materialnamen geändert. Damit geht einher, dass diese Lager mit diesem Item nicht mehr funktionieren.
+  Das betriff folgende Materialien:
+  - SCUTE > TURTLE_SCUTE
+  - GRASS > SHORT_GRASS
+  Auch kann es Probleme mit Bannern & Tränke geben, das sich dort ebenso viel geändert hat!
+  Bitte somit Updates machen und checken ob sich diese speziellen 1.20.4 Lager in 1.21 übertragen lassen.
+  Falls nicht, kommt kein Weg daran vorbei, diese Lager VOR dem Update abzubauen/zu löschen und im Nachhinein wieder auszubauen.
 
 Build 6-6-1
 - NPE beim Öffnen vom Lagerkisten OptionsGUI fixed
