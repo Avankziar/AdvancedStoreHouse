@@ -125,26 +125,22 @@ public class BlockBreakListener implements Listener
 			String scid = "";
 			if(sc != null)
 			{
-				String.valueOf(sc.getId());
-				if(plugin.getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
-						" `id` = ?", sc.getDistributionChestID()))
+				if(!sc.getOwneruuid().equals(event.getPlayer().getUniqueId().toString()))
 				{
-					DistributionChest dc = (DistributionChest) plugin.getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
-							" `id` = ?", sc.getDistributionChestID());
-					if(!dc.getOwneruuid().equals(event.getPlayer().getUniqueId().toString()) 
-							&& !event.getPlayer().hasPermission(Utility.PERMBYPASSDELETE))
+					if(!event.getPlayer().hasPermission(Utility.PERMBYPASSDELETE))
 					{
 						event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("NotOwner")));
 						event.setCancelled(true);
 						return;
 					}
 				}
+				String.valueOf(sc.getId());
+				event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockBreak.DeleteSC")
+						.replace("%id%", scid)));
+				plugin.getMysqlHandler().deleteData(MysqlHandler.Type.STORAGECHEST, 
+						" `server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 			}
-			event.getPlayer().sendMessage(ChatApi.tl(plugin.getYamlHandler().getLang().getString("CmdAsh.BlockBreak.DeleteSC")
-					.replace("%id%", scid)));
-			plugin.getMysqlHandler().deleteData(MysqlHandler.Type.STORAGECHEST, 
-					" `server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 			return;
 		}
 		debug(event.getPlayer(), "BlockBreak didnt find any chest");
