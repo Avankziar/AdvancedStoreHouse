@@ -41,6 +41,11 @@ Diese Funktionen scheinen mir vom Prinzip her gleich.
 Es muss dann natürlich drauf geachtet werden, dass die "Namens-Option" und zumindest die "Material-Option" sich gegenseitig ausschließen.
 Entweder sind beide aus, oder nur genau eine von beiden kann aktiv sein.
 
+6-8-0
+- Spigot 1.21.4 support
+- Api muss nun 1.21.3 oder höher sein.
+- Sound Update fix
+
 Build 6-7-1
 - StorageChest von Fremden Spieler abbauen lassen - fix
 

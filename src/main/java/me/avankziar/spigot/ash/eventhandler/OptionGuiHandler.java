@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
+import org.bukkit.Registry;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -1251,8 +1251,8 @@ public class OptionGuiHandler
 	public void guiSound(Location loc)
 	{
 		loc.getWorld().playSound(loc,
-				Sound.valueOf(AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig()
-						.getString("GUISound", "BLOCK_ANCIENT_DEBRIS_HIT").toUpperCase()),
+				Registry.SOUNDS.get(NamespacedKey.minecraft(AdvancedStoreHouse.getPlugin().getYamlHandler().getConfig()
+						.getString("GUISound", "BLOCK_ANCIENT_DEBRIS_HIT").toLowerCase())),
 				3.0F, 0.5F);
 	}
 	
