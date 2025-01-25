@@ -33,6 +33,7 @@ import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.general.objects.StorageChest.Type;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
+import me.avankziar.ifh.spigot.event.inventory.InventoryPostUpdateEvent;
 
 public class DistributionHandlerII
 {
@@ -458,6 +459,20 @@ public class DistributionHandlerII
 					}
 				}
 			}
+		}
+		try
+		{ 
+			Bukkit.getPluginManager().callEvent(new InventoryPostUpdateEvent(false, sender));
+		} catch(Error | Exception e)
+		{
+			//Do nothing
+		}
+		try
+		{ 
+			Bukkit.getPluginManager().callEvent(new InventoryPostUpdateEvent(false, reciever));
+		} catch(Error | Exception e)
+		{
+			//Do nothing
 		}
 		return (base == check) ? true : false;
 	}

@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>main.java.me.avankziar</groupId>
 	<artifactId>advancedstorehouse</artifactId>
-	<version>6-8-0</version>
+	<version>6-9-0</version>
 	<name>AdvancedStoreHouse</name>
 	<url>https://github.com/${repository-owner}/${repository-name}.git</url>
     <scm>
@@ -147,7 +147,7 @@
 		<dependency>
 			<groupId>me.avankziar</groupId>
 			<artifactId>interfacehub</artifactId>
-			<version>2-3-0</version>
+			<version>2-4-0</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
