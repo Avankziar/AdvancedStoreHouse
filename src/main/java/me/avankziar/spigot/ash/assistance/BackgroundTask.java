@@ -267,13 +267,7 @@ public class BackgroundTask
 					}
 					return;
 				}
-				try
-				{
-					DistributionHandlerII.distributeStartVersionAutomatic(PluginSettings.settings.getServer(), dc, inventoryc);
-				} catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				DistributionHandlerII.distributeStartVersionAutomatic(PluginSettings.settings.getServer(), dc, inventoryc);
 				i++;
 				if(i < dcList.size())
 				{

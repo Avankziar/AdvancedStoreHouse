@@ -669,17 +669,11 @@ public class InteractHandler implements Listener
 					i++;
 					return;
 				}
-				try
-				{
-					DistributionHandlerII.distributeStartVersionButton(
-							server, 
-							loc, 
-							inventory,
-							dc);
-				} catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				DistributionHandlerII.distributeStartVersionButton(
+						server, 
+						loc, 
+						inventory,
+						dc);
 				i++;
 			}
 		}.runTaskTimer(plugin, 0L,

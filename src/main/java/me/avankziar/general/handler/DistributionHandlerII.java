@@ -33,7 +33,6 @@ import main.java.me.avankziar.general.objects.StorageChest;
 import main.java.me.avankziar.general.objects.StorageChest.Type;
 import main.java.me.avankziar.spigot.ash.AdvancedStoreHouse;
 import main.java.me.avankziar.spigot.ash.database.MysqlHandler;
-import me.avankziar.ifh.spigot.event.inventory.InventoryPostUpdateEvent;
 
 public class DistributionHandlerII
 {
@@ -52,7 +51,7 @@ public class DistributionHandlerII
 		}
 	}
 	
-	public static void distributeStartVersionPhysical(String server, Location loc, Inventory inv) throws IOException
+	public static void distributeStartVersionPhysical(String server, Location loc, Inventory inv)
 	{
 		if(!AdvancedStoreHouse.getPlugin().getMysqlHandler().exist(MysqlHandler.Type.DISTRIBUTIONCHEST,
 				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
@@ -77,9 +76,16 @@ public class DistributionHandlerII
 			}
 		}
 		debug(0, "Distrute VersionPhysical start");
-		DistributionChest dc = (DistributionChest) AdvancedStoreHouse.getPlugin().getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
-				"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
-				server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+		DistributionChest dc = null;
+		try
+		{
+			dc = (DistributionChest) AdvancedStoreHouse.getPlugin().getMysqlHandler().getData(MysqlHandler.Type.DISTRIBUTIONCHEST,
+					"`server` = ? AND `world` = ? AND `blockx` = ? AND `blocky` = ? AND `blockz` = ?",
+					server, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 		if(ChestHandler.isDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc))
 		{
 			debug(0, "Dc is already in distribution");
@@ -88,7 +94,7 @@ public class DistributionHandlerII
 		distributeMiddle(server, dc, inv, true, "Normal ");
 	}
 	
-	public static void distributeStartVersionButton(String server, Location loc, Inventory inv, DistributionChest dc) throws IOException
+	public static void distributeStartVersionButton(String server, Location loc, Inventory inv, DistributionChest dc)
 	{
 		if(dc == null)
 		{
@@ -104,7 +110,7 @@ public class DistributionHandlerII
 		distributeMiddle(server, dc, inv, true, "Normal ");
 	}
 	
-	public static void distributeStartVersionRemoteTriggering(DistributionChest dc) throws IOException
+	public static void distributeStartVersionRemoteTriggering(DistributionChest dc)
 	{
 		Block dcblock = new Location(Bukkit.getWorld(dc.getWorld()), dc.getBlockX(), dc.getBlockY(), dc.getBlockZ()).getBlock();
 		if(dcblock == null)
@@ -133,7 +139,7 @@ public class DistributionHandlerII
 		distributeMiddle(dc.getServer(), dc, inv, true, "Normal ");
 	}
 	
-	public static void distributeStartVersionAutomatic(String server, DistributionChest dc, Inventory inv) throws IOException
+	public static void distributeStartVersionAutomatic(String server, DistributionChest dc, Inventory inv)
 	{
 		debug(3, "Distrute VersionAutomatic start");
 		if(ChestHandler.isDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc))
@@ -144,7 +150,7 @@ public class DistributionHandlerII
 		distributeMiddle(server, dc, inv, true, "Normal ");
 	}
 	
-	private static void distributeMiddle(String server, DistributionChest dc, Inventory inv, boolean activateChain, String debug) throws IOException
+	private static void distributeMiddle(String server, DistributionChest dc, Inventory inv, boolean activateChain, String debug)
 	{
 		debug(0, "DistruteMiddle start");
 		if(ChestHandler.isContentEmpty(inv.getContents()))
@@ -153,9 +159,16 @@ public class DistributionHandlerII
 			return;
 		}
 		String order = !dc.isNormalPriority() == true ? "`priority` DESC, `id` ASC" : "`priority` ASC, `id` ASC";
-		final ArrayList<StorageChest> endList = ConvertHandler.convertListIII(
-				AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, order, 
-						"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), true, server));
+		ArrayList<StorageChest> endList = new ArrayList<>();
+		try
+		{
+			endList = ConvertHandler.convertListIII(
+					AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, order, 
+							"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ?", dc.getId(), true, server));
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 		LinkedHashMap<String, LinkedHashMap<Integer, ItemStack>> map = new LinkedHashMap<>();
 		ChestHandler.setDistributionChestOnCooldown(AdvancedStoreHouse.getPlugin(), dc, 100, inv.getLocation());
 		int count = 0;
@@ -222,16 +235,28 @@ public class DistributionHandlerII
 			debug(0, "orderII : "+orderII);
 			if(dc.getPriorityType() == PriorityType.SWITCH)
 			{
-				prioList = ConvertHandler.convertListIII(
-						AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, orderII,
-								"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ? AND `searchcontent` LIKE ?",
-								dc.getId(), false, server, "%"+data+"%"));
+				try
+				{
+					prioList = ConvertHandler.convertListIII(
+							AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, orderII,
+									"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ? AND `searchcontent` LIKE ?",
+									dc.getId(), false, server, "%"+data+"%"));
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			} else
 			{
-				prioList = ConvertHandler.convertListIII(
-						AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, orderII,
-								"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ? AND `priority` = ? AND `searchcontent` LIKE ?",
-								dc.getId(), false, server, dc.getPriorityNumber(), "%"+data+"%"));
+				try
+				{
+					prioList = ConvertHandler.convertListIII(
+							AdvancedStoreHouse.getPlugin().getMysqlHandler().getAllListAt(MysqlHandler.Type.STORAGECHEST, orderII,
+									"`distributionchestid` = ? AND `endstorage` = ? AND `server` = ? AND `priority` = ? AND `searchcontent` LIKE ?",
+									dc.getId(), false, server, dc.getPriorityNumber(), "%"+data+"%"));
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
 			debug(0, "Amount PrioList: "+prioList.size()+" | Amount Endlist: "+endList.size());
 			int actuallyScAmount = prioList.size()+endList.size();
@@ -284,26 +309,28 @@ public class DistributionHandlerII
 					//here Chainstart
 					float supposeCooldown = ((float)storagechestamount+(float)waitextra)/ (float)PluginSettings.settings.getChestsPerTick()
 							+(float)PluginSettings.settings.getDelayChainChest() *1000.0F / 50.0F;
-					try
-					{
-						debug(0, "SupposeCooldown: "+storagechestamount+"/"+PluginSettings.settings.getChestsPerTick()+"+"+
-						+PluginSettings.settings.getDelayChainChest()+"*"+1000+"/"+50);
-						debug(0, "SupposeCooldown: "+(long)supposeCooldown);
-						distributeChain(server, (long)supposeCooldown, prioList, endList);
-					} catch (IOException e) 
-					{
-						e.printStackTrace();
-					}
+					debug(0, "SupposeCooldown: "+storagechestamount+"/"+PluginSettings.settings.getChestsPerTick()+"+"+
+							+PluginSettings.settings.getDelayChainChest()+"*"+1000+"/"+50);
+							debug(0, "SupposeCooldown: "+(long)supposeCooldown);
+							distributeChain(server, (long)supposeCooldown, prioList, endList);
 				}
 			}
 		}.runTaskLater(AdvancedStoreHouse.getPlugin(), 1L*wait);
 	}
 	
 	public static void distributeChain(String server, long supposeCooldown,
-			ArrayList<StorageChest> prioList, ArrayList<StorageChest> endList) throws IOException
+			ArrayList<StorageChest> prioList, ArrayList<StorageChest> endList)
 	{
 		debug(3, "ChainDc distribution starts");
-		final ArrayList<DistributionChest> chain = ChestHandler.getChainChest(AdvancedStoreHouse.getPlugin(), prioList, endList, server);
+		ArrayList<DistributionChest> chains = new ArrayList<>();
+		try
+		{
+			chains = ChestHandler.getChainChest(AdvancedStoreHouse.getPlugin(), prioList, endList, server);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		ArrayList<DistributionChest> chain = chains;
 		debug(0, "ChainDc.size: "+chain.size());
 		if(chain.size() == 0)
 		{
@@ -363,13 +390,7 @@ public class DistributionHandlerII
 					i++;
 					return;
 				}
-				try
-				{
-					distributeMiddle(server, dcc, inventoryc, false, "ChainDc ");
-				} catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				distributeMiddle(server, dcc, inventoryc, false, "ChainDc ");
 				i++;
 			}
 		}.runTaskTimer(AdvancedStoreHouse.getPlugin(), supposeCooldown,
@@ -462,18 +483,14 @@ public class DistributionHandlerII
 		}
 		try
 		{ 
-			Bukkit.getPluginManager().callEvent(new InventoryPostUpdateEvent(false, sender));
-		} catch(Error | Exception e)
-		{
-			//Do nothing
-		}
+			Class.forName("me.avankziar.ifh.spigot.event.inventory.InventoryPostUpdateEvent");
+			CallInventoryPostUpdateEvent.callEvent(false, sender);
+		} catch(NoClassDefFoundError | ClassNotFoundException e){}
 		try
 		{ 
-			Bukkit.getPluginManager().callEvent(new InventoryPostUpdateEvent(false, reciever));
-		} catch(Error | Exception e)
-		{
-			//Do nothing
-		}
+			Class.forName("me.avankziar.ifh.spigot.event.inventory.InventoryPostUpdateEvent");
+			CallInventoryPostUpdateEvent.callEvent(false, reciever);
+		} catch(NoClassDefFoundError | ClassNotFoundException e){}
 		return (base == check) ? true : false;
 	}
 	
